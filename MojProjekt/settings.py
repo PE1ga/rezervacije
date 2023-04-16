@@ -1,9 +1,9 @@
-#import environ
+import environ
 
 from pathlib import Path
 
-#env = environ.Env()
-#environ.Env.read_env()
+environ.Env.read_env()
+env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -151,6 +151,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST= "smtp.gmail.com"
 EMAIL_HOST_USER= "peter.gasperin57@gmail.com"
-EMAIL_HOST_PASSWORD= "hmhszxzvtdmtmoof"
+EMAIL_HOST_PASSWORD= env("EMAIL_HOST_PASSWORD")   #"hmhszxzvtdmtmoof"
 RECIPIENT_ADDRESS= "peter.gasperin@siol.net"
 
