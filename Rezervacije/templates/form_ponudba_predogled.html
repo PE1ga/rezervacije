@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- % load bootstrap5 %} -->
+
+{% block title %}
+    Izbor sobe za ponudbo 
+{% endblock %}
+
+
+{% block content %}
+
+<form action="{% url 'rezervacije:form_ponudba_poslji' %}" method="post" >
+    {% csrf_token %}
+    <textarea style="height: 800px; margin-left: 10px;"name="html_text"> {{ htmlTekst }}</textarea>
+    <script src="https://cdn.tiny.cloud/1/ {{api_key }}/tinymce/5/tinymce.min.js"></script>
+    <script>
+      tinymce.init({
+        selector: 'textarea',
+        plugins: 'link',
+        toolbar: 'undo redo | bold italic underline | link',
+      });
+    </script>
+    <button type="submit">POŠLJI</button>
+  </form>
+
+
+
+<!-- 
+<form action="{% url 'rezervacije:form_ponudba_poslji' %}" method="post" >
+    {% csrf_token %}
+    <textarea style="height: 1000px;width: 1000px;"name="html_text"> 
+        {{htmlTekst|safe}}
+    </textarea>
+<button>Pošlji</button> 
+</form> -->
+
+{% endblock %}

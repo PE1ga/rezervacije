@@ -1,0 +1,222 @@
+<form method="post">
+    {% csrf_token %}
+    
+    <!--% bootstrap_alert "Something went wrong" alert_type='danger' %-->
+    
+    <div class="row g-3">
+        
+        <div class="col-md-4">
+            <div class="form-group {% if forma.od.errors %}has-error{% endif %}">
+                <label for=" forma.od.id_for_label }}" class="col-sm-4 col-form-label"> {{ forma.od.label }}</label>
+                <!-- forma.od.label_tag }}-->
+                {{ forma.od }}
+                {% for error in forma.od.errors %}
+                <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+
+                
+            
+            </div>
+        </div>
+            
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.od.id_for_label }}" class="col-sm-4 col-form-label" >{{ forma.do.label }}</label>
+                {{ forma.do }}
+                {% for error in forma.do.errors %}
+                <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.tip.id_for_label }}" class="col-sm-4 col-form-label">{{ forma.tip.label }}</label>
+                {{ forma.tip }}
+                {% for error in forma.tip.errors %}
+                <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.imestranke.id_for_label }}" class="col-sm-4 col-form-label">Ime</label>
+                {{ forma.imestranke }}
+                {% for error in forma.imestranke.errors %}
+                <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.stsobe.id_for_label }}" class="col-sm-6 col-form-label">Št. sobe</label>
+                {{ forma.stsobe }}
+                {% for error in forma.stsobe.errors %}
+                <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.agencija.id_for_label }}" class="col-sm-4 col-form-label">{{ forma.agencija.label }}</label>
+                {{ forma.agencija }}
+                {% for error in forma.agencija.errors %}
+                <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.SO.id_for_label }}" class="col-sm-6 col-form-label">Št. oseb</label>
+                {{ forma.SO }}
+                {% for error in forma.SO.errors %}
+                <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.SOTR.id_for_label }}" class="col-sm-8 col-form-label">Od tega otrok</label>
+                {{ forma.SOTR }}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.SOMA.id_for_label }}" class="col-sm-10 col-form-label">Od tega malčkov</label>
+                {{ forma.SOMA }}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.DR.id_for_label }}" class="col-sm-4 col-form-label">Država</label>
+                {{ forma.DR }}
+                {% for error in forma.DR.errors %}
+                <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.StanjeTTAX.id_for_label }}" class="col-sm-6 col-form-label">T. Taksa</label>
+                {{ forma.StanjeTTAX }}
+                {% for error in forma.StanjeTTAX.errors %}
+                <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.RNA.id_for_label }}" class="col-sm-4 col-form-label">RNA</label>
+                {{ forma.RNA }}
+                {% for error in forma.RNA.errors %}
+                    <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.CENA.id_for_label }}" class="col-sm-4 col-form-label">Cena</label>
+                {{ forma.CENA }}
+                {% for error in forma.CENA.errors %}
+                    <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.AvansEUR.id_for_label }}" class="col-sm-4 col-form-label">Avans</label>
+                {{ forma.AvansEUR }}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.dniPredr.id_for_label }}" class="col-sm-8 col-form-label">Dni predr.</label>
+                {{ forma.dniPredr }}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.email.id_for_label }}" class="col-sm-4 col-form-label">Email</label>
+                {{ forma.email }}
+            </div>
+        </div>
+
+        
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.zahteve.id_for_label }}" class="col-sm-4 col-form-label">Zahteve</label>
+                {{ forma.zahteve }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.Alergije.id_for_label }}" class="col-sm-4 col-form-label">Alergije</label>
+                {{ forma.Alergije }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ forma.datumvnosa.id_for_label }}" class="col-sm-8 col-form-label">Datum Vnosa</label>
+                {{ forma.datumvnosa }}
+            </div>
+        </div>
+    
+    
+    
+    
+    </div>
+    <div class="container float-left">
+        {% buttons submit='OK' reset="Cancel" %}{% endbuttons %}
+    <!--<input type="submit" value="Submit">-->
+    </div>
+    
+    <script>
+        // če je avans, naj bo fild avanseur required
+        document.querySelector('#id_RNA').addEventListener('change', function() {
+            if (this.value === 'Avans') {
+                document.querySelector('#id_AvansEUR').required = true;
+            } else {
+                document.querySelector('#id_AvansEUR').required = false;
+            }
+        });
+
+        // če je  agencija ... naj bo Ttax JE,....
+        function update_ttax_field() {
+        var id_agencije = document.getElementById("id_agencija").value;
+        var id_StanjeTTAX = document.getElementById("id_StanjeTTAX");
+
+        if (id_agencije === "Siteminder" || id_agencije === "Nasi" || id_agencije === "Cesta" ) 
+        {
+            id_StanjeTTAX.value = "Ttax JE VKLJ";
+        } else {
+            id_StanjeTTAX.value = "Ttax NI VKLJ";
+        }
+        }
+
+        document.getElementById("id_agencija").addEventListener("change", update_ttax_field);
+            
+    
+    
+    
+    
+    </script>
+    
+
+</form>

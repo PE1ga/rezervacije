@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Virtual CCD podrobnosti
+{% endblock %}
+
+
+{% block content %}
+
+<table class="table table-bordered" style="width: 200px; margin-left: 10px;">
+    <th>{{rezervacija.imestranke}} </th>
+    <tr>
+        <td>{{rezervacija.agencija}} </td>
+    </tr>
+    <tr>
+        <td>{{rezervacija.CENA}} EUR </td>
+    </tr>
+    <tr>
+        <td><button class="btn btn-danger" type="submit">
+            <a href="spremeniStatus/{{rezervacija.id}}">POTRDI</a>
+        </button> </td>
+    </tr>
+</table>
+ 
+
+
+{% endblock %}

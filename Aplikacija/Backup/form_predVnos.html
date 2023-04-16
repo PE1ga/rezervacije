@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% load bootstrap5 %}
+
+{% block title %}
+    Izbor sobe za novo rezervacijo 
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="container-fluid">
+    <div style="width: 400px;">
+        <form role="formIzborSob" action="" method="post">
+            {% csrf_token %}
+            {% bootstrap_form_errors forma type='non_fields' %}
+            {% bootstrap_form forma layout="horizontal" %}
+            {% buttons submit='OK' reset='Cancel' layout='horizontal' %}{% endbuttons %}
+        
+        </form>
+    </div>
+</div>
+
+
+    
+
+{% endblock %}

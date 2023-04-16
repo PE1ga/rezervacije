@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+{% block title %}
+    Obdelava ponudbe 
+{% endblock %}
+
+
+{% block content %}
+<style>
+td {text-align: left;
+       
+    
+    }
+  /* form-control css */  
+input {text-align: center;
+    
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+input:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+    
+    
+</style>
+
+
+
+
+<button onclick="goBack()" class="btn btn-lg bg-warning"> Back</button>
+
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
+
+<p style="font-size: larger; color: red; font-weight: bolder; margin-left: 10px;">{{OkMess}}</p>
+<form method="post">
+    {% csrf_token %}  
+    <div class="box1">
+    <table class="table">
+        {% for field in forma %}
+          {% if forloop.counter0|divisibleby:4 %}
+            <tr>
+          {% endif %}
+          <td>
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                <div class="alert alert-danger">{{ field.errors }}</div>
+                {% endif %}
+            </td>
+          
+            {% if forloop.counter0|add:1|divisibleby:4 or forloop.last %}
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </table>
+    <button name="update_knof" type="submit" class="btn btn-primary">UPDATE</button>
+    <button name="delete_knof" type="submit" class="btn btn-secondary">DELETE</button>
+    <button name="potrditev_knof" type="submit" class="btn btn-secondary"
+        {% if forma.status.value == '2_1_Vneseno' %}disabled{% endif %}>POTRDITEV</button>
+    
+    <button name="hvala_knof" type="submit" class="btn btn-danger"
+        {% if forma.status.value == '1_Poslano' %}disabled{% endif %}>HVALA ZA AVANS</button>
+    
+    </div>     
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <table class="table table-bordered">
+    
+    <tr>
+    <td>Datum Vnosa<br><input type="text" value="{{ponudba.datumVnosa}}"></td>
+    <td>Status<br><input type="text" value="{{ponudba.status}}"></td>
+    <td>Ime<br><input type="text" value="{{ponudba.ime}}"></td>
+    <td>OD:<br> <input type="text" value="{{ponudba.od}}"></td>
+    <td>DO:<br> <input type="text" value="{{ponudba.do}}"></td>
+    </tr>
+    <tr>
+    <td>Rna<br><input type="text" value="{{ponudba.rna}}"></td>
+    <td>Odp. dni<br><input type="text" value="{{ponudba.odpoved}}"></td>
+    <td>Št. Odraslih<br><input type="text" value="{{ponudba.stOdr}}"></td>
+    <td>Št. Otrok<br><input type="text" value="{{ponudba.stOtr}}"></td>
+    <td>Tip Sobe<br><input type="text" value="{{ponudba.tip}}"></td>
+    </tr>
+    <tr>
+    <td>Cena<br><input type="text" value="{{ponudba.cena}}"></td>
+    <td>Avans €<br><input type="text" value="{{ponudba.avans}}"></td>
+    <td>Dodatno ležišče<br><input type="text" value="{{ponudba.dodatnoLezisce}}"></td>
+    <td>Multiroom<br><input type="text" value="{{ponudba.multiroom}}"></td>
+    <td>Rok Plačila av.<br><input type="text" value="{{ponudba.rokPlacilaAvansa}}"></td>
+    </tr>
+    
+</table> -->
+
+{% endblock %}

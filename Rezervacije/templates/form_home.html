@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+<!-- % load bootstrap5 %} -->
+
+{% block title %}
+    Formular Home Stran
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid" style="border: solid 5px black;">
+    <form class="form-control-sm" method="get">
+        {{ form.as_p }}
+        <input class="btn btn-primary" type="submit" value="Search" id = "search_button">
+        <button class="btn btn-warning" type="button" id="clear_button" onclick="document.getElementById('id_search_field').value = ''">Pobriši</button>
+      </form>
+<script>
+$("#clear_button").click(function(){
+  $("#id_search_field").val('');
+  
+});
+
+</script>
+
+
+
+  
+  <div class="pagination">
+    <span class="step-links">
+      {% if gost.has_previous %}
+          <a href="?page=1">&laquo; Prva</a>
+          <a href="?page={{ gost.previous_page_number }}">Prejšnja</a>
+      {% endif %}
+  
+      <span class="current-page">
+          Stran {{ gost.number }} od {{ gost.paginator.num_pages }}.
+      </span>
+  
+      {% if gost.has_next %}
+          <a href="?page={{ gost.next_page_number }}">Naslednja</a>
+          <a href="?page={{ gost.paginator.num_pages }}">Zadnja &raquo;</a>
+      {% endif %}
+    </span>
+  </div>
+  
+
+<div  class="table-responsive">
+    <!-- div class="row">
+        div class="col-md-12"> -->
+              <h4>Seznam vseh rezervacij</h4>  
+        <table class="table table-striped table-bordered table-sm border-primary align-middle" >
+        <thead class="table-dark">
+
+            <th>Id</th>
+            <th>Ime</th>
+            <th>Agencija</th>
+            <th>Cena</th>
+            <th>Od</th>
+            <th>Do</th>
+            <th>Št. sobe</th>
+            <th>RNA</th>
+            <th>Zahteve</th>
+            <th>Delete</th>
+        </thead>
+        
+        {% for x in gost %}
+        <tr>
+        
+        
+            <!--<td><button class ="btn btn-warning" style="width: 50px;"><a href="% url 'form_update' x.id %}"> x.id }}</a></button></td> -->
+        <td><button class ="btn btn-warning" style="width: 50px;"><a href="/updateIzGrafa/{{ x.id }}">Rez</a></button></td> 
+        <td>{{ x.imestranke }}</td> 
+        <td>{{ x.agencija }}</td>
+        <td>{{ x.CENA }} EUR</td>
+        <td>{{ x.od }} </td>
+        <td>{{ x.do }}</td>
+        <td>{{ x.stsobe }}</td>
+        <td>{{ x.RNA }} </td>
+        <td>{{ x.zahteve }}</td>
+        <td><a href="{% url 'rezervacije:form_delete' x.id %}">delete</a></td>
+
+
+        </tr>
+
+
+    {% endfor %}
+    </table>
+
+    <div class="pagination">
+        <span class="step-links">
+          {% if gost.has_previous %}
+              <a href="?page=1">&laquo; Prva</a>
+              <a href="?page={{ gost.previous_page_number }}">Prejšnja</a>
+          {% endif %}
+      
+          <span class="current-page">
+              Stran {{ gost.number }} od {{ gost.paginator.num_pages }}.
+          </span>
+      
+          {% if gost.has_next %}
+              <a href="?page={{ gost.next_page_number }}">Naslednja</a>
+              <a href="?page={{ gost.paginator.num_pages }}">Zadnja &raquo;</a>
+          {% endif %}
+        </span>
+      </div>
+
+
+    
+
+
+
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

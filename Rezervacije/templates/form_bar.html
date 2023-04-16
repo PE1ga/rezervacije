@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+
+
+{% block title %}
+   
+{% endblock %}
+
+
+{% block content %}
+<style>
+    
+    .containerDN {
+    z-index: 99;
+    border: solid red 3px;
+    grid-gap: 2px; 
+    width: 97vw ;
+    height: 88vh;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 25% 35% 40%;
+    grid-template-rows: 33% 33% 33%;
+    grid-template-areas: 
+    "soba artikli arhiv"
+    "izracun artikli arhiv"
+    "izracun artikli zahteve"
+    ;
+    
+    
+    
+}
+
+.nazivi {
+    font-weight: bolder;
+    color: brown;
+    width: auto;
+}
+.stolpec2 {
+    max-width: 10px;
+}
+.stolpec4 {
+    max-width: 10px;
+}
+
+ @media  (max-width: 1200px) {
+  .containerDN {
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    max-width: 700px;
+    height: auto;
+  } 
+  .table{max-width: 300px;}
+  .box1 {
+    width: 100%;
+  }
+.nazivi {
+    font-weight: bolder;
+    color: brown;
+    width: 120px;
+}
+
+.stolpec2 {
+    min-width: 110px;
+}
+.stolpec4 {
+    min-width: 160px;
+}
+}
+
+
+
+
+body {
+  width: 100vw;
+    background-color: whitesmoke;
+  
+}
+
+
+.soba, .artikli, .arhiv, .izracun{
+border: solid green 3px;
+}
+
+.soba {
+    grid-area: soba;
+}
+
+.artikli {
+    grid-area: artikli;
+}
+.arhiv {
+    grid-area: arhiv;
+    
+} 
+
+.izracun {
+    grid-area: izracun;
+}
+
+
+
+
+
+
+</style>
+<div class="containerDN">
+<div class="soba">
+    <form action="" method="post">
+        {% csrf_token %}
+        {{forma}}
+        <input type="hidden" name="btn_st_sobe" value="btn_st_sobe">
+        <script>
+            document.getElementById("id_soba").onchange = function() {
+            var btnName = document.getElementsByName("btn_st_sobe")[0];
+            btnName.value = "btn_st_sobe";
+            this.form.submit();
+            };
+        </script>
+        
+        <!-- <button name="btn_st_sobe" type="submit">Izberi</button> -->
+    </form>
+    <table class="table table-bordered table-responsive-lg" >
+        <tr>
+        <td>Soba: {{gost.stsobe}}</td><td>Ime: {{gost.imestranke}}</td>
+        </tr>
+        <tr>
+        <td>Od: {{gost.od}}</td><td>Od: {{gost.do}}</td>
+        </tr>
+
+    </table>
+</div>
+
+
+<div class="artikli" style="overflow: scroll;">Artikli
+    <form action="" method="post">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            {% for field in cenik %}
+            {% if forloop.counter0|divisibleby:3 %}
+                <tr>
+            {% endif %}
+                <td>
+                <button class="btn btn-info" style="width: 180px; height: 70px;" name="btn_artikel" value="{{field.id}}"> {{ field.opis }}  </button>
+                </td>
+            
+                {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
+                </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+        </form>
+
+
+
+</div>
+
+
+
+<div class="izracun"><p style="font-size: 25px; color: red;"> {{error_msg}}</p>
+    <p  style="font-size: 25px;">{{artikel.opis}} </p>
+    <form action="" method="post">
+        {% csrf_token %}
+    
+        <button class="btn btn-success" type="submit" name="btn_stevilka" value="1">1</button>
+        <button class="btn btn-success" type="submit" name="btn_stevilka" value="2">2</button>
+        <button class="btn btn-success" type="submit" name="btn_stevilka" value="3">3</button>
+        <button class="btn btn-success" type="submit" name="btn_stevilka" value="4">4</button>
+        <button class="btn btn-success" type="submit" name="btn_stevilka" value="5">5</button>
+        <button class="btn btn-success" type="submit" name="btn_stevilka" value="6">6</button>
+        <button class="btn btn-success" type="submit" name="btn_stevilka" value="7">7</button>
+        <button class="btn btn-success" type="submit" name="btn_stevilka" value="8">8</button>
+        <button class="btn btn-success" type="submit" name="btn_stevilka" value="9">9</button>
+        <button class="btn btn-success" type="submit" name="btn_stevilka" value="10">10</button>
+    
+        <br><br>
+    <input type="text" name="st_artiklov" placeholder="Količina:">
+    <button class="btn btn-primary" type="submit" name="btn_izracun_artikla">Izračunaj</button>
+        <br>
+        <p style="font-size: 25px; color: blue;"> Skupaj: {{cena_artiklov}} EUR </p>
+    </form>
+
+</div>
+
+<div class="arhiv" style="overflow: scroll;">
+    <table class="table table-bordered">
+        <th>id</th>
+        <th>Naziv</th>
+        <th>Količina</th>
+        <th>EM</th>
+        <th>Datum/ura</th>
+        <th>Del</th>
+    <tr>
+    {% for x in gostova_narocila %}
+    <td>{{x.artikel.id}}</td>
+    <td>{{x.artikel.opis}}</td>
+    <td>{{x.kolicina}}</td>
+    <td>{{x.artikel.enota}}</td>
+    <td>{{x.kdaj}}</td>
+    <form action="" method="post">
+        {% csrf_token %}
+    <td><button class="btn btn-warning" type="submit" name="btn_brisi_artikel" value="{{x.id}}">Briši</button></td>
+    </form>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+ <div class="zahteve">Zahteve</div>
+</div>
+
+
+
+
+{% endblock %}
+    
+

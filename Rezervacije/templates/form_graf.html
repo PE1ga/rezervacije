@@ -1,0 +1,444 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+
+{% endblock %}
+
+
+
+{% block content %}
+{% load static %}
+<!-- <link rel="stylesheet" href="{% static 'css/style.css' %}" /> -->
+
+<style>
+
+/* body {
+        margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.4;
+    } */
+    
+.rg-container {
+      margin: 0 auto;
+      padding: 1em 0.5em;
+      color: #222;
+    }
+    
+caption {
+      margin-bottom: 1em;
+      text-align: left;
+    }
+    
+table {
+      width: 1600px;
+      margin-bottom: 0.5em;
+      font-size: 1.2em;
+      border-collapse: collapse;
+      border-spacing: 0;
+      table-layout: fixed;
+
+      
+        border: 2px solid rgb(54, 7, 7);
+        border-radius: 5px;
+        
+        outline: 1px solid rgb(49, 1, 1);
+    }
+    
+thead {
+      border-bottom: 3px solid #ddd;
+    }
+    
+tr {
+      border-bottom: 1px solid black;
+      
+      color: #222;
+    }
+    
+    /* tbody tr:hover {
+      background-color: #15d6cd !important;
+    }
+    
+    .zebra tr:nth-child(even) {
+      background-color: #0ccb25;
+    } */
+thead {
+			position: sticky;
+			top: 20px;
+		}
+th {
+    background-color: lightgrey; 
+    font-weight: bold;
+    padding: 0.35em;
+    font-size: 0.8em;  /*0.9em; */
+    text-align: center;
+    width: auto;
+    height: 20px;
+    }
+.first th {
+  position: sticky;
+  top: 0px;
+  height: 20p;
+    }
+.second th {
+    position: sticky;
+    top: 29px;
+    }
+
+th:first-child, td:first-child  {
+			position: sticky;
+			left: 0;
+			z-index: 1;
+		}
+
+th:first-child {
+        background-color: greenyellow;
+    }
+
+
+
+
+td {
+    padding: 0.35em;
+    font-size: 0.75em;
+    word-wrap: break-word;
+    text-align: center;
+    border-right: 1px solid black;
+    height: 4px;
+    width: 9px;
+    font-weight: bold;
+    }
+    
+td:hover {
+      font-weight: bold;
+    }
+    
+   
+   /* tbody {
+   overflow: scroll; 
+    }
+    label {font-size: 10px;}*/
+
+
+
+
+
+.form_in_gumbi{
+    border: 2px solid blue;  
+    display: flex; 
+    flex-direction: column
+}
+
+.tip_sobe_mejna_crta {
+        /* background-color: white;  */
+        border-bottom: solid 5px orange;
+        }
+
+.container_graf{
+    border: solid 5px palevioletred;
+    display: flex; 
+   
+    float: left;
+    flex-direction:row-reverse;
+    justify-content: space-between;
+    /* flex-wrap:wrap; */
+    position: relative;
+    }
+.tabela_graf{
+    border: #15d6cd 2px solid; 
+    overflow-x: scroll;}
+
+@media (max-width: 1200px) {
+    .form_in_gumbi{
+      border: 2px solid blue;  
+      display: flex; 
+      flex-direction: row;
+      
+  }
+  
+  .container_graf {
+    display: flex;
+    flex-direction: column;
+    width: 97vw;
+    /* overflow-x: scroll; */
+  }
+}
+
+
+</style>
+
+
+<script>
+    var tableCells = document.getElementsByTagName("td");
+    for (var i = 0; i < tableCells.length; i++) {
+        tableCells[i].setAttribute("title", "This is the hover text");
+    }
+</script>
+
+<!--DANES -->
+<script>
+    function addDateAndSubmit() {
+    var currentDate = new Date();
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth() + 1; // getMonth() returns 0-11 so we need to add 1
+    var year = currentDate.getFullYear();
+    var dateString = day + "." + month + "." + year;
+    document.getElementById("id_datum").value = dateString;
+    document.forms[0].submit();
+}
+</script>
+
+<!--+ 7 days-->
+<script> 
+function addSevenDaysToInput() {
+    var dateField = document.getElementById('id_datum');
+    var dateArray = dateField.value.split('.');
+    var day = parseInt(dateArray[0]);
+    var month = parseInt(dateArray[1]) - 1;
+    var year = parseInt(dateArray[2]);
+
+    var currentDate = new Date(year, month, day);
+    var newDate = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    day = newDate.getDate();
+    month = newDate.getMonth() + 1;
+    year = newDate.getFullYear();
+
+    dateField.value = day + "." + month + "." + year;
+    document.forms[0].submit();
+}
+</script> 
+<!--- 7 days-->
+<script> 
+    function MinusSevenDaysToInput() {
+    var dateField = document.getElementById('id_datum');
+    var dateArray = dateField.value.split('.');
+    var day = parseInt(dateArray[0]);
+    var month = parseInt(dateArray[1]) - 1;
+    var year = parseInt(dateArray[2]);
+
+    var currentDate = new Date(year, month, day);
+    var newDate = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    day = newDate.getDate();
+    month = newDate.getMonth() + 1;
+    year = newDate.getFullYear();
+
+    dateField.value = day + "." + month + "." + year;
+    document.forms[0].submit();
+    }
+    </script> 
+    
+
+
+
+        
+      
+      <!-- <div class="container mx-auto float-left" style="border: solid 5px black; overflow: scroll;"> -->
+        <div class="container_graf">    
+            <div class="form_in_gumbi" >
+                <form class="form-control" role="form" action="" method="post">
+                    {% csrf_token %}
+                    <!-- % bootstrap_form formDatum layout="horizontal" %} -->
+                <!-- <div class="row" style="border: solid 5px green; width: auto;"> -->
+                
+                <!-- <div class="col-sm-3 mb-1"> -->
+                    <!-- % bootstrap_field formDatum.datum layout='vertical' placeholder="datum" size='sm' show_label=True %} -->
+                    {{ formDatum.datum.label_tag }}
+                    {{ formDatum.datum }}
+                    {{ formDatum.datum.errors }}
+
+                <!-- </div> -->
+                
+                <!-- <div class="col-sm-2 mb-1"> -->
+                    <!-- % bootstrap_field formDatum.tipSobe layout='vertical' size='sm'  show_label=True %} -->
+                    {{ formDatum.tipSobe.label_tag }}
+                    {{ formDatum.tipSobe }}
+                    {{ formDatum.tipSobe.errors }}
+                <!-- </div> -->
+                
+                 <!-- <div class="col-sm-5 mt-3 "> mt pomeni margin TOP -->
+                    <button class="btn btn-primary" name="izbDat" type="submit izborDatuma">Išči </button>
+                    <button class="btn btn-danger" onclick="MinusSevenDaysToInput()">- 7 D</button>
+                    <button class="btn btn-danger" onclick="addDateAndSubmit()">Danes</button>
+                    <button class="btn btn-danger" onclick="addSevenDaysToInput()">+ 7 D</button>
+                </div>
+            
+               
+            </form>
+            
+
+<!--     
+    
+<div class="container mx-auto float-left" style="max-width:800px" >
+    <button class="btn btn-danger" onclick="MinusSevenDaysToInput()">- 7 D</button>
+    <button class="btn btn-danger" onclick="addDateAndSubmit()">Danes</button>
+    <button class="btn btn-danger" onclick="addSevenDaysToInput()">+ 7 D</button>
+</div> 
+<br>    -->
+
+    
+    
+
+
+    
+
+    <!--  TABELA ******************************** -->
+ <div class="tabela_graf">
+
+
+
+    <table >   
+{% for p in rezervacije %}
+
+
+    {% if p.S0 == "xxx" %}
+    <!-- <thead class="header-row"> -->
+        <tr class="first">    
+        {% for k, v in p.items %}
+        {% if k == "S16" %}
+        <th style="background-color: red ; border-left: 6px solid red;"> {{ v }} </th>
+        {% else %}
+        <th> {{ v }}</th>
+        {% endif %}
+        {% endfor %}
+    </tr>
+    {% endif %}
+    
+    {% if p.S0 == "Dan" %}
+    <tr class="second"> 
+        {% for k, v in p.items %}
+            {% if k == "S16" %}
+            <th style="background-color: red ; border-left: 6px solid red;"> {{ v }} </th>
+            {% else %}
+            <th > {{ v }}</th>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    </thead>
+</tr>
+
+
+<tr> <!--REZERVACIJSKI DEL >> od B3 dalje-->
+    {% if p.S0|add:"0" in listSob %}
+   
+    {% for k, v in p.items %}
+    
+   
+        <!-- prvi stolpec -->
+        {% if k == "S0" %}    
+            <td style="background-color: khaki;"> {{ v }}
+        
+        {% elif ":" in v or k == "S16" %}
+            <!-- Stolpec DNS -->
+            {% if k == "S16" %}
+                {% if ">" in v and ":" in v %}
+                    {% if danes_dat in v %}    
+                        <td style="background-color: darkgreen; border-left: 6px solid red;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a style="color:white;" href="/updateIzGrafa/{{ v }}">O></a></td>
+                    {% else %}
+                        <td style="background-color: lightpink; border-left: 6px solid red;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O></a></td>
+                    {% endif %}
+                {% elif ":" in v %} 
+                    {% if danes_dat in v %}
+                    <td style="background-color: darkgreen; color:white; border-left: 6px solid red;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a style="color:white;" href="/updateIzGrafa/{{ v }}">O</a></td>
+                    {% else %}
+                    <td style="background-color: lightpink; border-left: 6px solid red;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O</a></td>
+                    
+                    {% endif %}
+                    
+                {% endif %}
+                
+                {% if ":" not in v %}
+                    {% if p.S0|add:"0" == 12 or p.S0|add:"0" == 37 or p.S0|add:"0" == 50 or p.S0|add:"0" == 43 or p.S0|add:"0" == 45 or p.S0|add:"0" == 51 or p.S0|add:"0" == 40 %}
+                        
+                    {% if v != "" %}
+                            <td class="tip_sobe_mejna_crta" style="background-color: lightblue;border-left: 6px solid red;"> {{ v }} </td>
+                        {% else %}
+                            <td class="tip_sobe_mejna_crta" style="background-color: white;border-left: 6px solid red;"> {{ v }} </td>
+                        {% endif %}
+                    {% else %}
+                        {% if v != "" %}
+                            <td style="background-color: lightblue;border-left: 6px solid red;"> {{ v }} </td>
+                        {% else %}
+                            <td style="background-color: white;border-left: 6px solid red;"> {{ v }} </td>
+                        {% endif %}
+                {% endif %}
+            {% endif %}
+            
+        <!--vse celice razen v  S16 z začetkom rezervacije-->    
+        {% else %} 
+            {% if ">" in v and ":" in v %}
+                {% if danes_dat in v %}
+                    <td style="background-color: darkgreen" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a style="color: white;" href="/updateIzGrafa/{{ v }}">O></a></td>
+                {% else %}
+                    <td style="background-color: lightpink;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O></a></td>
+                {% endif %}
+
+            {% elif ":" in v %} <!--S16 rezervacije na ta dan z 1 dnevom  O>  -->
+                {% if danes_dat in v %}       
+                    <td style="background-color: darkgreen;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a style="color: white;" href="/updateIzGrafa/{{ v }}">O</a></td>    
+                {% else %}
+                    <td style="background-color: lightpink;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O</a></td>
+                {% endif %}
+        {% endif %}
+            <!-- <td style="background-color: lightpink;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O</a></td> -->
+        {% endif %}
+    
+    <!-- vse ostale celice od b3 dalje, ki niso v S16 -->
+    {% else %}
+        {% if p.S0|add:"0" == 12 or p.S0|add:"0" == 37 or p.S0|add:"0" == 50 or p.S0|add:"0" == 43 or p.S0|add:"0" == 45 or p.S0|add:"0" == 51 or p.S0|add:"0" == 40 %}
+            {% if v != "" %}
+                <td class="tip_sobe_mejna_crta" style="background-color: lightblue;"> {{ v }} </td>
+            {% else %}
+                <td class="tip_sobe_mejna_crta" style="background-color: white;"> {{ v }} </td>
+            {% endif %}
+        {% else %}
+            {% if v != "" %}
+            <td style="background-color: lightblue;"> {{ v }} </td>
+            {% else %}
+            <td style="background-color: white;"> {{ v }} </td>
+            {% endif %}
+        {% endif %}    
+    {% endif %}
+  
+        {% endfor %}
+{% endif %}
+</tr>
+    
+
+
+<tr>
+{% if p.S0 == "Zaj"  or p.S0 == "StS" or p.S0 == "Prh" or p.S0 == "Men" %}
+    
+    {% for k, v in p.items %}        
+    
+        {% if k == "S0" %}
+        <td style="background-color: lightgreen;"> {{ v }} </td> 
+        {% elif k == "S16" %}
+        <td style="background-color: white ; font-style: italic;color: brown;border-left: 6px solid red;" > {{ v }} </td>
+        {% else %}
+        <td style="background-color: white ; font-style: italic;color: brown;" > {{ v }} </td>
+        {% endif %}
+    
+    {% endfor %}
+    
+{% endif %}
+
+</tr>
+
+
+
+{% endfor %}
+
+
+
+</table>
+</div>   
+
+</div>
+</div>
+{% endblock %}
+
+    

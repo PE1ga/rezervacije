@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+<!-- % load bootstrap5 %} -->
+{% block meta_title %} 
+<title>Dashboard</title>
+{% endblock %}
+
+{% block title %}
+    
+{% endblock %}
+
+
+{% block content %}
+<style>
+    .containerDash {
+    display: grid;
+    grid-template-columns: 25% 25% 25% 24%;
+    grid-template-rows: 33% 33% 33%;
+    grid-template-areas: 
+    "nocitve avansi listagostov zadnjerez"
+    "idponudb ccd listagostov zadnjerez"
+    "skupajeur eurnaagencijo odpovedi prostesobe";
+    
+    border: solid red 3px;
+    grid-gap: 2px; 
+    width: 97vw ;
+    height: 88vh;
+    margin: 0;
+    padding: 0;
+}
+@media screen and (max-width: 600px) {
+  .containerDash {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+  }
+  
+  
+  
+  
+  .box1 {
+    width: 100%;
+  }
+}
+
+
+/* body {
+  width: 100vw;
+    /* background-color: yellow; */
+  /* margin: 70px;
+  padding: 0; */
+/*} */
+
+
+.nocitve, .avansi, 
+.listagostov,  
+.idponudb, .ccd, .skupajeur, 
+.eurnaagencijo, .odpovedi, .prostesobe, 
+.zadnjerez, .listagostov{
+border: solid green 3px;
+}
+
+.nocitve {
+    grid-area: nocitve;
+}
+.avansi {
+    grid-area: avansi;
+}
+.listagostov {
+    grid-area: listagostov;
+} 
+.idponudb {
+    grid-area: idponudb;
+}
+.ccd {
+    grid-area: ccd;
+}
+.skupajeur {
+    grid-area: skupajeur;
+}
+.eurnaagencijo {
+    grid-area: eurnaagencijo;
+}
+.odpovedi {
+    grid-area: odpovedi;
+}
+.prostesobe {
+    grid-area: prostesobe;
+}
+.zadnjerez {
+    grid-area: zadnjerez;
+}
+.listagostov{
+    grid-area: listagostov;
+}
+
+
+
+
+
+</style>
+
+<div class="containerDash" style="z-index: 99;">
+    <div class="nocitve" style="overflow: scroll;">
+        Nočitve
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Y</th>
+                    <th>m</th>
+                    <th>€</th>
+                    <th>noč</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, row in df_nocitve.iterrows %}
+                    <tr>
+                        <td>{{ row.y }}</td>
+                        <td>{{ row.m }}</td>
+                        <td>{{ row.cena }}</td>
+                        <td>{{ row.nocitev }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="avansi">
+        Avansi
+    </div>
+
+
+
+    <div class="listagostov">
+        Lista Gostov
+        <table class="table">
+            
+        {% for index, row in lista_gostov.iterrows %}
+        <tr>
+            <td><button class ="btn btn-warning" style="width: 40px;" onclick="location.href='/updateIzGrafa/{{row.id}}'">{{row.stsobe}}</button></td>
+            <td>{{row.imestranke}}</td>
+
+        </tr>    
+        {% endfor %}
+        </table>
+    </div>
+
+
+
+    <div class="zadnjerez" style="overflow: scroll;">
+        Zadnje Rezervacije
+        <table class="table">
+            
+            {% for index, row in zadnje_rezervacije.iterrows %}
+            <tr>
+                <td><button class ="btn btn-warning" style="width: 40px;" onclick="location.href='/updateIzGrafa/{{row.id}}'">{{row.stsobe}}</button></td>
+                
+                
+                <td>{{row.imestranke}}</td>
+    
+            </tr>    
+            {% endfor %}
+            </table>
+    </div>
+    
+
+    <div class="idponudb">
+        Id Ponudb<br>
+        
+        {% for x in id_ponudb %}
+        
+        <a href="{% url 'rezervacije:form_vnos_iz_ponudbe' x %}">{{x}}</a><br>
+        {% endfor %}
+    </div>
+
+    <div class="ccd">
+        CCD
+    </div>
+
+    <div class="skupajeur">
+        Skupaj EUR
+    </div>
+
+    <div class="eurnaagencijo">
+        EUR na agencijo
+    </div>
+
+    <div class="odpovedi">
+        Odpovedi
+        <table class="table">
+            
+            {% for index, row in zadnje_odpovedi.iterrows %}
+            <tr>
+                <td>{{row.stsobe}}</td>
+                <td>{{row.imestranke}}</td>
+    
+            </tr>    
+            {% endfor %}
+            </table>
+    </div>
+
+    <div class="prostesobe">
+        Proste sobe
+    </div>
+
+
+
+
+
+
+
+
+</div>
+
+
+
+{% endblock %}

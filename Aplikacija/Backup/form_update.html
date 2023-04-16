@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% load bootstrap5 %}
+
+{% block title %}
+    Formular Update Rezervacija številka: {{gost.id}}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+    <div style="width: 400px;">
+<form action="" method="post"  >                                   <!--"form_home/{{ IdGosta }}/update">    -->
+    {% csrf_token %}
+    {% bootstrap_form forma layout="horizontal" %}
+    
+    <input type="submit" value="UPDATE rezervacijo">
+ </form>
+</div></div>
+
+
+
+
+
+
+
+{% endblock %}

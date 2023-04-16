@@ -1,0 +1,344 @@
+
+{% extends 'base.html' %}
+
+<!--% load bootstrap5 %}-->
+
+{% block title %}
+    ROČNI vnos nove rezervacije  
+{% endblock %}
+
+
+{% block content %}
+<!--
+<style>
+    .container {
+  max-width: 50%;
+  align-items: baseline;
+}
+</style>
+-->
+
+<p class="container-fluid">Ali je formular submitted? {{ submitted }}</p>
+            
+{% if submitted == True %}
+<p class="container-fluid">Form je uspešno shranjen!</p>
+
+{% else %}
+
+
+
+
+
+
+
+<p style="margin-left: 10px; color: red;"> Napaka v polju: 
+    {% for error in forma.errors %}
+    {{ error }}, 
+    {% endfor %}</p>
+
+
+
+
+<style>
+
+    li {
+        color: red;
+    }
+
+</style>
+
+<div class="container row" style="border: solid 5px black;">
+    
+    
+    <!-- <form method="post">
+        {% csrf_token %} -->
+        
+
+        
+        <form method="post" id="myForm">
+        {% csrf_token %}  
+        <table class="table">
+            {% for field in forma %}
+              {% if forloop.counter0|divisibleby:3 %}
+                <tr>
+              {% endif %}
+              <td>
+                {% if field.name == "zahteve" %}
+                    {{ field.label_tag }}
+                    <button  onclick="clearZahteve()" class="btn btn-sm btn-danger" type="button" name="brisi_zahteve">Briši</button>
+                    {{ field }}
+                    {% if field.errors %}
+                    <div class="alert alert-danger">{{ field.errors }}</div>
+                    {% endif %}
+    
+                {% elif field.name == "status_rez" %}
+                    {{field.label_tag}}
+                    <input class="form-control" type="text" name="{{ field.name }}" value="{{ field.initial }}" as_hidden>
+                
+                    <!-- {% if field.errors %}
+                    <div class="alert alert-danger">{{ field.errors }}</div>
+                    {% endif %} -->
+
+
+
+    
+                {% else %}
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                    <div class="alert alert-danger">{{ field.errors }}</div>
+                    {% endif %}
+              
+                {% endif %}
+                </td>
+              {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </table>
+        </form>
+
+
+        <div class="container float-left">
+            
+        <input class="btn btn-outline-primary" type="submit" value="Submit">
+        </div>
+        
+        <script>
+           // Gumb_briši zahteve
+            function clearZahteve() {
+                document.getElementById("id_zahteve").innerHTML = "";
+            } 
+            
+        
+        // Submit the form when any input or select field is changed
+        var inputFields = document.getElementsByTagName('input');
+        var selectFields = document.getElementsByTagName('select');
+        var allFields = Array.prototype.slice.call(inputFields).concat(Array.prototype.slice.call(selectFields));
+        for (var i = 0; i < allFields.length; i++) {
+            allFields[i].addEventListener('change', function() {
+                document.getElementById('myForm').submit();
+            });
+        }
+
+            
+            
+            
+            
+            
+            
+            
+            
+            // če je avans, naj bo fild avanseur required
+            document.querySelector('#id_RNA').addEventListener('change', function() {
+                if (this.value === 'Avans') {
+                    document.querySelector('#id_AvansEUR').required = true;
+                } else {
+                    document.querySelector('#id_AvansEUR').required = false;
+                }
+            });
+
+            // če je  agencija ... naj bo Ttax JE,....
+            function update_ttax_field() {
+            var id_agencije = document.getElementById("id_agencija").value;
+            var id_StanjeTTAX = document.getElementById("id_StanjeTTAX");
+
+            if (id_agencije === "Siteminder" || id_agencije === "Nasi" || id_agencije === "Cesta" ) 
+            {
+                id_StanjeTTAX.value = "Ttax JE VKLJ";
+            } else {
+                id_StanjeTTAX.value = "Ttax NI VKLJ";
+            }
+            }
+
+            document.getElementById("id_agencija").addEventListener("change", update_ttax_field);
+                
+        
+        
+        
+        
+        </script>
+        
+
+    </form>
+{% endif %}
+
+    
+
+
+
+
+    </div>
+{% endblock %}
+
+
+ <!--<table>
+        % for field in forma %}
+          % if forloop.counter0|divisibleby:3 %}
+            </tr><tr>
+          % endif %}
+          <td>  field.label_tag }}</td>
+          <td> field }}</td>
+          <td>  field.errors }}</td>
+        % endfor %}
+      </table>
+    -->
+
+
+
+
+
+
+
+
+<!--
+
+<div class="container-fluid ">
+<form method="post">
+    % csrf_token %}
+    % bootstrap_form_errors forma type='non_fields' %}
+    
+    <div class="row">
+        
+        <div class="form-control col">
+            
+            
+            <div class="form-control">
+                <label for="{{ forma.od.id_for_label }}" class="col-sm-4 col-form-label">{{ forma.od.label }}</label>
+                {{ forma.od }}
+            </div>
+            
+
+            <div class="form-control">
+                <label for="{{ forma.od.id_for_label }}" class="col-sm-4 col-form-label" >{{ forma.do.label }}</label>
+                {{ forma.do }}
+            </div>
+        </div>
+        
+        
+        <div class="form-control col">
+            <div class="form-control">
+                <label for="{{ forma.SO.id_for_label }}" class="col-sm-4 col-form-label">{{ forma.SO.label }}</label>
+                {{ forma.SO }}
+            </div>
+            
+            <div class="form-control">
+                <label for="{{ forma.agencija.id_for_label }}" class="col-sm-4 col-form-label">{{ forma.agencija.label }}</label>
+                {{ forma.agencija }}
+            </div>
+        </div>
+        
+        
+        <div class="form-control col">
+            <div class="form-control">
+                <label for="{{ forma.SO.id_for_label }}" class="col-sm-4 col-form-label">{{ forma.SO.label }}</label>
+                {{ forma.SO }}
+            </div>
+            <div class="form-control">
+                <label for="{{ forma.agencija.id_for_label }}" class="col-sm-4 col-form-label">{{ forma.agencija.label }}</label>
+                {{ forma.agencija }}
+            </div>
+        </div>
+    
+    </div>
+    <input type="submit" value="Submit">
+</form>
+</div>
+
+-->
+
+
+
+<!--
+
+<form class="row g-3 needs-validation" novalidate>
+    <div class="col-md-4 position-relative">
+      <label for="{{ forma.od.id_for_label }}" class="form-label">{{forma.od.label}}</label>
+      
+      <input type="text" class="form-control" id="validationTooltip01" value="{{forma.od.value}}" required>
+      <div class="valid-tooltip">
+        Looks good!
+      </div>
+    </div>
+    <div class="col-md-4 position-relative">
+      <label for="validationTooltip02" class="form-label">Last name</label>
+      <input type="text" class="form-control" id="validationTooltip02" value="Otto" required>
+      <div class="valid-tooltip">
+        Looks good!
+      </div>
+    </div>
+    <div class="col-md-4 position-relative">
+      <label for="validationTooltipUsername" class="form-label">Username</label>
+      <div class="input-group has-validation">
+        <span class="input-group-text" id="validationTooltipUsernamePrepend">@</span>
+        <input type="text" class="form-control" id="validationTooltipUsername" aria-describedby="validationTooltipUsernamePrepend" required>
+        <div class="invalid-tooltip">
+          Please choose a unique and valid username.
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 position-relative">
+      <label for="validationTooltip03" class="form-label">City</label>
+      <input type="text" class="form-control" id="validationTooltip03" required>
+      <div class="invalid-tooltip">
+        Please provide a valid city.
+      </div>
+    </div>
+    <div class="col-md-3 position-relative">
+      <label for="validationTooltip04" class="form-label">State</label>
+      <select class="form-select" id="validationTooltip04" required>
+        <option selected disabled value="">Choose...</option>
+        <option>...</option>
+      </select>
+      <div class="invalid-tooltip">
+        Please select a valid state.
+      </div>
+    </div>
+    <div class="col-md-3 position-relative">
+      <label for="validationTooltip05" class="form-label">Zip</label>
+      <input type="text" class="form-control" id="validationTooltip05" required>
+      <div class="invalid-tooltip">
+        Please provide a valid zip.
+      </div>
+    </div>
+    <div class="col-12">
+      <button class="btn btn-primary" type="submit">Submit form</button>
+    </div>
+  </form>
+
+
+-->
+
+
+
+
+
+
+<!--
+
+<p class="container-fluid" >Ali je formular submitted? {{ submitted }}</p>
+
+{% if submitted == True %}
+    Form je uspešno shranjen!
+
+{% else %}
+
+<div class="container-fluid">
+    <div style="width: 400px;">
+        <form role="form" action="" method="post">
+            % csrf_token %}
+            % bootstrap_form_errors forma type='non_fields' %}
+            % bootstrap_form forma layout="vertical" %}
+            % buttons submit='OK' reset='Cancel' layout='vertical' %}% endbuttons %}
+        
+        </form>
+    </div>
+</div>
+
+{% endif %}
+
+    
+
+    % endblock %}
+
+    -->

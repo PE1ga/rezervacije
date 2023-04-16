@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+<!-- % load bootstrap5 %} -->
+{% block meta_title %} 
+<title>Dashboard</title>
+{% endblock %}
+
+{% block title %}
+    
+{% endblock %}
+
+
+{% block content %}
+{% load static %}
+
+
+
+
+
+
+<style>
+
+@media print {
+        /* Hide non-essential elements */
+        header, footer, nav, .sidebar, .ad, .no-print {
+          display: none !important;
+        }
+        .container{
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+    }
+    .container {
+
+display: grid;
+grid-template: 1fr 1fr 0.5fr 0.8fr 4fr 1fr 1fr / 30% 33% 33% ; /* rows / columns  */
+grid-template-areas: 
+    "logo . st_racuna" 
+    "naslov_hotela . datumi" 
+    ". . datum_tiskanja"
+    "ime ime . "
+    "tabela_racun tabela_racun tabela_racun "
+    ". . skupaj "
+    "davek davek davek"
+    ;
+
+gap: 10px 20px; /* če sta obe cifri enaki, vnesi samo 1 številko */
+/* border: 3px solid lightgray; */
+
+justify-items: stretch;  /* poravnava boxa v svojem GRIDU*/
+align-items: stretch; /* poravnava boxa v svojem GRIDU*/
+
+/* justify-content: start;  to je poravnava GRIDA v CONTAINER */
+align-content: start; /* to je poravnava GRIDA v CONTAINER*/
+
+height: 100vh;
+width: 100vw * 1;
+float: left;
+
+    }
+.logo {grid-area: logo;}
+.st_racuna {grid-area:st_racuna;}
+.naslov_hotela {grid-area:naslov_hotela;}
+.datumi {grid-area: datumi;}
+.datum_tiskanja {grid-area:datum_tiskanja;}
+.ime {grid-area: ime;}
+.tabela_racun {grid-area: tabela_racun;}
+.skupaj {grid-area: skupaj;}
+.davek {grid-area: davek;}
+    
+
+
+
+ /* .box {background-color: gold;}  */
+
+th{
+    font-size: 0.8rem;
+    line-height:0.7rem;
+}
+/*Črta pod 2. headerjem*/
+tr:nth-of-type(2) th {
+    border-bottom: 2px solid black;
+    padding-bottom: 2px;
+  }
+
+.th_crta {
+    border-bottom: 3px black solid;
+}
+
+</style>
+
+<div class="container">
+    <div class="box logo">
+        
+                <img width="160px" height="80px" src="{% static 'images/logo.jpg' %}">    
+    </div>
+    <div class="box st_racuna">Pon. {{gost.stsobe}}00587</div>
+    <div class="box naslov_hotela">
+        <p style="font-family: Arial; font-size: larger; font-weight: bolder;">
+        Hotel Gašperin<br>
+        Ribčev Laz 36a<br>
+        4265 Bohinjsko jezero</p>
+        </div>
+    <div class="box datumi">
+            Od / From: {{gost.od}} <br>
+            Do / To: {{gost.do}}<br>
+            Noči / Nights: {{gost.st_noci}}<br>
+
+    </div>
+    <div class="box datum_tiskanja">Datum: {% now "d.m.Y" %}</div>
+    
+    <div class="box ime">
+        Ime / Name:<br> <p style="font-size: 1.5rem; font-weight: bold;" >{{gost.imestranke}}</p>
+    </div>
+    
+    
+    <div class="box tabela_racun" >
+        <table class="table" style="line-height:0.7rem; font-size: small;">
+            <tr>
+                <th style="width: 250px;">Opis</th>
+                <th style="text-align: center; width: 80px;">Cena</th>
+                <th style="text-align: center; width: 80px;">Količina</th>
+                <th style="text-align: center; width: 80px;">Enota</th>
+                <th style="text-align: center; width: 80px;">DDV</th>
+                <th style="text-align: center; width: 120px;">Buto cena</th>
+                <th style="text-align: center; width: 120px;">Bruto znesek</th>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <th style="text-align: center;">Price</th>
+                <th style="text-align: center;">Amount</th>
+                <th style="text-align: center;">Unit</th>
+                <th style="text-align: center;">VAT</th>
+                <th style="text-align: center;">Prc. incl VAT</th>
+                <th style="text-align: center;">Tot.with VAT</th>
+            </tr>
+            
+            {% for vrstica in tabela %}
+                 <tr>
+                    {% for k,v in vrstica.items %}
+                    {% if k == "opis" %}
+                    <td style="text-align: left;">{{v}}</td>
+                    {% else %}
+                    <td style="text-align: center;">{{v}}</td>
+                    {% endif %}
+                    {% endfor %}
+                </tr>
+                
+            {% endfor %}
+            
+            
+            
+            
+        
+        
+        </table>
+
+    </div>
+
+    <div class="box skupaj" style="text-align: right; line-height:0.7rem;">
+    <p>SKUPAJ: {{tabela_skupaj.0}} EUR</p>
+    <p>DDV: {{tabela_skupaj.1}} EUR</p>
+    <p style="color: red;">- : {{tabela_skupaj.2}} EUR</p>
+    <p style="font-size: 1rem; font-weight: bold;text-decoration: underline;">ZA PLAČILO: {{tabela_skupaj.3}} EUR</p>
+    
+ 
+
+
+    </div>
+
+
+    <div class="box davek" style="margin-top: 20px; line-height:0.7rem; font-size: small; text-align: center;">
+        <table class="table table-bordered">
+            <th style="border-bottom: 2px black solid;">Davčna stopnja</th>
+            <th style="border-bottom: 2px black solid;">Osnova za DDV</th>
+            <th style="border-bottom: 2px black solid;">DDV</th>
+            <th style="border-bottom: 2px black solid;">Znesek z DDV</th>
+            {% for list in tabela_ddv %}
+            <tr>
+                {% for item in list %}
+                <td>{{item}}</td>
+                {% endfor %}
+            </tr>
+            
+            {% endfor %}
+
+        </table>
+    </div>
+
+</div>
+<script>
+    function printPage() {
+        window.print();
+    }
+
+    window.onafterprint = window.close;
+</script>
+
+<button class="btn btn-dark no-print" onclick="printPage()">Print</button>
+
+
+
+{% endblock %}

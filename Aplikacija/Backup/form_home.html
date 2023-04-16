@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% load bootstrap5 %}
+
+{% block title %}
+    Formular Home Stran
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+    {% if gost.has_other_pages %}
+    <ul class="pagination">
+        {% if gost.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ gost.previous_page_number }}">«</a></li>
+        {% else %}
+            <li class="disabled"><span>«</span></li>
+        {% endif %}
+   {% for i in gost.paginator.page_range %}
+        {% if gost.number == i %}
+            <li class="active"><span> __{{ i }}__ <span class="sr-only">(current)</span></span></li>
+        {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+   {% endfor %}
+   {% if gost.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ gost.next_page_number }}">»</a></li>
+   {% else %}
+        <li class="disabled"><span>»</span></li>
+   {% endif %}
+    </ul>
+  {% endif %}
+
+  
+
+
+    <div class="row">
+        <div class="col-md-12">
+              <h4>Seznam vseh rezervacij</h4>  
+        <table class="table table-striped table-bordered" width="100%">
+        <th>Id</th>
+        <th>Ime</th>
+        <th>Agencija</th>
+        <th>Cena</th>
+        <th>Od</th>
+        <th>Do</th>
+        <th>Številka sobe</th>
+        <th>RNA</th>
+        <th>Zahteve</th>
+
+        <th>Delete</th>
+        {% for x in gost %}
+        <tr>
+        <td><button class ="btn btn-warning" style="width: 50px;"><a href="{% url 'form_update' x.id %}">{{ x.id }}</a></button></td> 
+        <td>{{ x.imestranke }}</td> 
+        <td>{{ x.agencija }}</td>
+        <td>{{ x.CENA }} EUR</td>
+        <td>{{ x.od }} </td>
+        <td>{{ x.do }}</td>
+        <td>{{ x.stsobe }}</td>
+        <td>{{ x.RNA }} </td>
+        <td>{{ x.zahteve }}</td>
+        <td><a href="{% url 'form_delete' x.id %}">delete</a></td>
+
+
+        </tr>
+
+
+    {% endfor %}
+    </table>
+
+    
+
+
+    
+
+
+
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

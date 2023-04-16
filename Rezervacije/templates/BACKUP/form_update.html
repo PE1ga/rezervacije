@@ -1,0 +1,513 @@
+{% extends 'base.html' %}
+
+<!-- % load bootstrap5 %} -->
+
+{% block title %}
+    Formular Update Rezervacija številka: {{gost.id}} - {{gost.imestranke}}  <p style="margin-left: 10px; color: red; font-weight: bold;"> {{OkMess}} </p>
+{% endblock %}
+
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+<style>
+    
+    label {
+        color: blue;
+        font-weight: bold;
+        font-size: large;
+
+    }
+    .col-md-4 {
+        margin-top: 5px;
+    }
+    .container1{
+    border: solid 5px blue;
+    display: flex; 
+   
+    float: left;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap:wrap;
+    position: relative;
+    }
+
+    .box1{
+        border: solid 2px rgb(243, 9, 79);
+        width: 700px;
+        align-content: end;
+    }
+    .box2{
+
+        overflow: scroll;
+        height: 800px;
+        position: relative;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+
+@media (max-width: 300px) {
+  .container1 {
+    flex-direction: column;
+    width: 100vw;
+  }
+  .box1 {
+    width: 100%;
+  }
+}
+
+</style>
+
+
+
+<script>
+    // Gumb_briši zahteve
+    function clearZahteve() {
+        document.getElementById("id_zahteve").innerHTML = "";
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+<div class="container1">
+<div class="box1"  >
+    {% for error in forma.errors %}
+    <div class="alert alert-danger">Napaka v polju {{ error }}</div>
+    {% endfor %}
+    <form method="post">
+    {% csrf_token %}  
+    <table class="table">
+        {% for field in forma %}
+          {% if forloop.counter0|divisibleby:3 %}
+            <tr>
+          {% endif %}
+          <td>
+            {% if field.name == "zahteve" %}
+                {{ field.label_tag }}
+                <button  onclick="clearZahteve()" class="btn btn-sm btn-danger" type="button" name="brisi_zahteve">Briši</button>
+                {{ field }}
+                {% if field.errors %}
+                <div class="alert alert-danger">{{ field.errors }}</div>
+                {% endif %}
+
+
+
+            {% else %}
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                <div class="alert alert-danger">{{ field.errors }}</div>
+                {% endif %}
+          
+            {% endif %}
+            </td>
+          {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </table>
+    
+      <div class="form-control">
+        <button type="submit" name="submit_knof" class="btn btn-danger" >UPDATE</button>
+            
+        <!-- <button class="btn btn-primary" type="submit" name="potrdi">OK</button>
+        <button class="btn btn-primary" type="submit" name="izbrisi">DELETE</button> -->
+        <!--<input type="submit" value="Submit">-->
+        </div>
+</form>
+    
+    
+    
+    
+    
+    
+    
+    {% for error in forma.errors %}
+    <div class="alert alert-danger">Napaka v polju {{ error }}</div>
+    {% endfor %}
+   
+    <form method="post">
+        {% csrf_token %}
+        <!-- % bootstrap_form_errors forma type='non_fields' %} -->
+        <!--% bootstrap_alert "Something went wrong" alert_type='danger' %-->
+        
+        <div class="row g-3">
+            
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.od.id_for_label }}" class="col-sm-4 col-form-label">{{ forma.od.label }}</label>
+                    {{ forma.od }}
+                </div>
+            </div>
+                
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.od.id_for_label }}" class="col-sm-4 col-form-label" >{{ forma.do.label }}</label>
+                    {{ forma.do }}
+                </div>
+            </div>
+            
+            
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.tip.id_for_label }}" class="col-sm-4 col-form-label">{{ forma.tip.label }}</label>
+                    {{ forma.tip }}
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.imestranke.id_for_label }}" class="col-sm-4 col-form-label">Ime</label>
+                    {{ forma.imestranke }}
+                </div>
+            </div>
+            
+            
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.stsobe.id_for_label }}" class="col-sm-6 col-form-label">Št. sobe</label>
+                    {{ forma.stsobe }}
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.agencija.id_for_label }}" class="col-sm-4 col-form-label">{{ forma.agencija.label }}</label>
+                    {{ forma.agencija }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.SO.id_for_label }}" class="col-sm-6 col-form-label">Št. oseb</label>
+                    {{ forma.SO }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.SOTR.id_for_label }}" class="col-sm-8 col-form-label">Od tega otrok</label>
+                    {{ forma.SOTR }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.SOMA.id_for_label }}" class="col-sm-10 col-form-label">Od tega malčkov</label>
+                    {{ forma.SOMA }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.DR.id_for_label }}" class="col-sm-4 col-form-label">Država</label>
+                    {{ forma.DR }}
+                </div>
+            </div>
+            
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.StanjeTTAX.id_for_label }}" class="col-sm-6 col-form-label">T. Taksa</label>
+                    {{ forma.StanjeTTAX }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.RNA.id_for_label }}" class="col-sm-4 col-form-label">RNA</label>
+                    {{ forma.RNA }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.CENA.id_for_label }}" class="col-sm-4 col-form-label">Cena</label>
+                    {{ forma.CENA }}
+                    {% for error in forma.CENA.errors %}
+                    <p style="color: red;" >{{error}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.AvansEUR.id_for_label }}" class="col-sm-4 col-form-label">Avans</label>
+                    {{ forma.AvansEUR }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.dniPredr.id_for_label }}" class="col-sm-8 col-form-label">Dni predr.</label>
+                    {{ forma.dniPredr }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.email.id_for_label }}" class="col-sm-4 col-form-label">Email</label>
+                    {{ forma.email }}
+                </div>
+            </div>
+
+            
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.zahteve.id_for_label }}" class="col-sm-4 col-form-label">Zahteve</label>
+                    <button  onclick="clearZahteve()" class="btn btn-sm btn-info" type="button" name="brisi_zahteve">Briši</button>
+                    
+                    {{ forma.zahteve }}
+                </div>
+            
+                
+            
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.Alergije.id_for_label }}" class="col-sm-4 col-form-label">Alergije</label>
+                    {{ forma.Alergije }}
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="IzbrTipSobe" class="col-sm-8 col-form-label">Drug Tip Sobe</label>
+                    <input class="form-control" type="text" name="IzbrTipSobe">
+                </div>
+            </div>
+            
+            
+            
+            
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="{{ forma.datumvnosa.id_for_label }}" class="col-sm-8 col-form-label">Datum Vnosa</label>
+                    {{ forma.datumvnosa }}
+                </div>
+            </div>
+        
+        
+        
+        
+        <br><br><br>
+        <div class="col-md-4"></div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+        <div class="form-control">
+        <button type="submit" name="submit_knof" class="btn btn-danger" >UPDATE</button>
+            
+        <!-- <button class="btn btn-primary" type="submit" name="potrdi">OK</button>
+        <button class="btn btn-primary" type="submit" name="izbrisi">DELETE</button> -->
+        <!--<input type="submit" value="Submit">-->
+        </div>
+    </div>
+    </div>
+    </form>
+
+
+</div> 
+
+    
+
+<div class="box2" >
+    <!--  GUMBI NAD TABELO ********************** -->
+    <form method="get">
+        {% csrf_token %}
+    <div class="sub_box2" style="margin-top: 10px; display: flex; justify-content: flex-start; align-items: center; gap: 10px;">
+        <input type="text" name="datumTabela" value="{{DatumTabela}}" class="form-control" style="width: 150px;">
+        <input type="text" name="IzbrTipSobe1" value="{{IzbrTipSobe}}" class="form-control" style="width: 50px;">
+
+        <button class="btn btn-secondary" type="submit" name="nazaj">&lt;&lt;</button>
+        <button class="btn btn-secondary" type="submit" name="vse" value="pokazi_vse_sobe">VSE</button>
+        <!--<button class="btn btn-secondary" type="submit" name="c_sobe" value="pokazi_c_sobe">c</button> -->
+        <button class="btn btn-secondary" type="submit" name="naprej">&gt;&gt;</button>
+    </div>
+     
+        </form>
+        
+        
+        <p style="color: red">{{errorMess}}</p>
+
+    
+    
+    
+    <!--  TABELA ******************************** -->
+   
+    
+    <table>   
+        {% for p in rezervacije %}
+      
+        {% if p.S0 == "xxx" %}
+        <thead class="header-row">
+            <tr class="first">    
+            {% for k, v in p.items %}
+            {% if k == "S16" %}
+            <th style="background-color: red ; border-left: 6px solid red;"> {{ v }} </th>
+            {% else %}
+            <th style="background-color: orange ;"> {{ v }}</th>
+            {% endif %}
+            {% endfor %}
+        </tr>
+        {% endif %}
+        
+        {% if p.S0 == "Dan" %}
+        <tr class="second"> 
+            {% for k, v in p.items %}
+                {% if k == "S16" %}
+                <th style="background-color: red ; border-left: 6px solid red;"> {{ v }} </th>
+                {% else %}
+                <th style="background-color: orange ;"> {{ v }}</th>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        </thead>
+    </tr>
+    
+    
+    <!-- TABELA Z VSEMI REZERVACIJAMI -->
+    <tr> 
+        {% if p.S0|add:"0" in listSob %}    <!--    in listSob %} >  0-->
+        
+        {% for k, v in p.items %}
+            {% if k == "S0" %}    
+                <td style="background-color: lightblue;"> {{ v }}
+            
+            {% elif ":" in v or k == "S16" %}
+                {% if k == "S16" %}
+                    {% if ">" in v and ":" in v %} <!--S16 rezervacije na ta dan z 1 dnevom  O>  -->
+                        {% if IDstr in v %} <!--če je ID obravanega gosta v tej celici, jo obarvaj drugače, da v grafu takoj vidim kdo je to  -->
+                            <td style="background-color: blue; border-left: 6px solid red;" 
+                                onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O></a></td>
+                        {% else %}
+                            <td style="background-color: lightgreen; border-left: 6px solid red;" 
+                                onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O></a></td>
+                        {% endif %}
+
+                    {% elif ":" in v %} 
+                        {% if IDstr in v %} <!--če je id obravanega gosta v tej celici, jo obarvaj drugače, da v grafu takoj vidim kdo je to  -->
+                            <td style="background-color: blue; border-left: 6px solid red;" 
+                                onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O</a></td>
+                        {% else %}
+                            <td style="background-color: lightgreen; border-left: 6px solid red;" 
+                                onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O</a></td>
+                        {% endif %}
+                    
+                    {% endif %}
+                {% if ":" not in v %}
+                    <td style="background-color: white;border-left: 6px solid red;"> {{ v }} </td>
+                {% endif %}
+                
+                
+            {% else %} <!--VSI OSTALI STOLPCI RAZEN S16-->
+                    <td style="background-color: lightgreen;" onmouseover="this.title='{{ v }}'" 
+                    onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O</a></td>
+                {% endif %}
+            {% else %}
+                <td style="background-color: white ;"> {{ v }} </td>
+            {% endif %}
+      
+            {% endfor %}
+        {% endif %}
+    </tr>
+        
+    
+    
+    
+    
+    
+    
+    
+    
+        <tr>
+        {% if p.S0 == "Zaj"  or p.S0 == "StS" or p.S0 == "Prh" or p.S0 == "Men" %}
+            
+                {% for k, v in p.items %}        
+                
+                    {% if k == "S0" %}
+                    <td style="background-color: lightgreen;"> {{ v }} </td> 
+                    {% elif k == "S16" %}
+                    <td style="background-color: white ; font-style: italic;color: brown;border-left: 6px solid red;" > {{ v }} </td>
+                    {% else %}
+                    <td style="background-color: white ; font-style: italic;color: brown;" > {{ v }} </td>
+                    {% endif %}
+                
+                {% endfor %}
+            
+        {% endif %}
+    
+        </tr>
+    
+    
+    
+    
+    {% endfor %}
+    
+    
+    
+    </table>
+    
+    </div>
+    
+</div>
+
+
+
+
+
+
+
+
+{% endblock %}
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+<div class="container-fluid">
+    <div style="width: 400px;">
+<form action="" method="post"  >                                   !--"form_home/{{ IdGosta }}/update">    --><!--
+    % csrf_token %}
+    % bootstrap_form forma layout="horizontal" %}
+    
+    <input type="submit" value="UPDATE rezervacijo">
+ </form>
+</div></div>
+-->
+
+
+
+
+
+

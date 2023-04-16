@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+{% block title %}
+    Seznam vseh ponudb 
+{% endblock %}
+
+
+{% block content %}
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+    <th>ID</th>
+    <th>DatVn</th>
+    <th>Status</th>
+    <th>Ime</th>
+    <th>Od</th>
+    <th>Do</th>
+    <th>Rna</th>
+    <th>Cena</th>
+    <th>MR</th>
+    </thead>
+
+{% for ponudba in page_obj %}
+<tr>
+    <td><a href="/form_ponudba_obdelava/{{ ponudba.id }}">{{ ponudba.id }}</a></td>
+    <td>{{ponudba.datumVnosa}}</td>
+    <td>{{ponudba.status}}</td>
+    <td>{{ponudba.ime}}</td>
+    <td>{{ponudba.od}}</td>
+    <td>{{ponudba.do}}</td>
+    <td>{{ponudba.rna}}</td>
+    <td>{{ponudba.cena}}</td>
+    <td>{{ponudba.multiroom}}</td>
+    
+</tr>
+{% endfor %}
+</table>
+
+<div class="pagination">
+  <span class="step-links">
+    {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; Prva</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Prejšnja</a>
+    {% endif %}
+
+    <span class="current-page">
+        Stran {{ page_obj.number }} od {{ page_obj.paginator.num_pages }}.
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Naslednja</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Zadnja &raquo;</a>
+    {% endif %}
+  </span>
+</div>
+<br>
+
+<form action="" method="post">
+    {% csrf_token %}
+    <button type="submit" name="pokazi_arhiv" class="btn border-primary">Nepotrjeno</button>
+    <button type="submit" name="aktivne_ponudbe" class="btn border-danger">Aktivne Ponudbe</button>
+    <button type="submit" name="vse_ponudbe" class="btn border-dark">Vse Ponudbe</button>
+</form>
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

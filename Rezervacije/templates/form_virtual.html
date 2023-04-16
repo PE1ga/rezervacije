@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Virtual CCD 
+{% endblock %}
+
+
+{% block content %}
+
+
+  
+<form class="form-control-lg"  role="formIzborSob" action="" method="post">
+    {% csrf_token %}
+   {{forma}}
+   <button class="btn btn-danger" type="submit">Submit</button>
+
+</form>
+
+
+<table class="table table-bordered table-hover table-responsive-sm table-striped">
+    <th></th>
+    <th>Ime</th>
+    <th>Od</th>
+    <th>Do</th>
+    <th>Cena</th>
+    <th>Agencija</th>
+    
+    {% for x in virtualRez %}
+    <tr>
+        <td><button class ="btn btn-warning" style="width: 80px;"><a href="{% url 'rezervacije:form_virt_podrobno' x.id %}">Detajli</a></button></td>
+        <td>{{x.imestranke}}</td>
+        <td>{{x.od}}</td>
+        <td>{{x.do}}</td>
+        <td>{{x.CENA}}</td>
+        <td>{{x.agencija}}</td>
+
+
+
+    </tr>
+
+    {% endfor %}
+</table>
+
+<div class="pagination" style="margin-left: 20px;">
+    <span class="step-links">
+      {% if virtualRez.has_previous %}
+          <a href="?page=1">&laquo; Prva</a>
+          <a href="?page={{ virtualRez.previous_page_number }}">Prejšnja</a>
+      {% endif %}
+  
+      <span class="current-page">
+          Stran {{ virtualRez.number }} od {{ virtualRez.paginator.num_pages }}.
+      </span>
+  
+      {% if virtualRez.has_next %}
+          <a href="?page={{ virtualRez.next_page_number }}">Naslednja</a>
+          <a href="?page={{ virtualRez.paginator.num_pages }}">Zadnja &raquo;</a>
+      {% endif %}
+    </span>
+  </div>
+
+
+
+
+
+
+
+
+{% endblock %}

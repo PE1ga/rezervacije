@@ -1,0 +1,34 @@
+
+{% extends 'base.html' %}
+
+{% load bootstrap5 %}
+
+{% block title %}
+    Formular test
+{% endblock %}
+
+
+{% block content %}
+
+
+<p>Ali je formular submitted? {{ submitted }}</p>
+
+{% if submitted == True %}
+form je uspešno shranjen
+
+{% else %}
+
+<div style="width: 400px;">
+    <form role="form" action="" method="post">
+        {% csrf_token %}
+        {% bootstrap_form_errors forma type='non_fields' %}
+        {% bootstrap_form forma layout="horizontal" %}
+        {% buttons submit='OK' reset='Cancel' layout='horizontal' %}{% endbuttons %}
+        
+    </form>
+</div>
+    {% endif %}
+
+    
+
+    {% endblock %}

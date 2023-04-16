@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+   
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+    @media print {
+        /* Hide non-essential elements */
+        header, footer, nav, .sidebar, .ad, .no-print {
+          display: none !important;
+        }
+      
+        /* Adjust the layout for printing */
+        /* body {
+          margin: 0;
+          padding: 0;
+          font-size: 12pt;
+          line-height: 1.5;
+        } */
+      }
+
+
+.td_wingcardXXXX {
+    width: 6.6cm;
+    height: 5.3cm;
+    /* border: green solid; */
+    margin: 0;
+    margin-top: 0;
+    border: 0;
+    padding: 0; 
+    background-color: gold;
+}
+
+</style>
+<!-- div za avtomatskim prilagajanjem velikosti glede na vsebino -->
+<!-- <div class="container" style="  display: inline-block; width: auto; height: auto;
+                                border: black solid 1px;
+                               
+                                ">
+  --> 
+
+
+{% load static %}
+
+
+
+<table style="border-collapse: collapse;">
+ 
+{% for prihod in prihodi %}
+    
+    {% if forloop.counter0|divisibleby:2 %}
+        {% if forloop.counter == 6 %}
+            
+        <!-- page break !!!!! -->
+        <tr style="page-break-after: always; ">
+        {% else %}
+        <tr >
+        {% endif %}
+    {% endif %}
+        <td class="td_wingcard">
+        <div style="display: flex; orientation: row;">
+            <div class="box1" style="line-height: 50%; width:7.5cm ; height: 5.3cm; margin: 0; border: black solid 1px;">
+                
+                <table class="table table-borderless" style="table-layout: fixed;" >
+                    <colgroup>
+                        <col style="width: 45%;">
+                        <col style="width: 55%;">
+                      </colgroup>
+                    <tr>
+                        <td><img width="60px" height="30px" img src="{% static 'images/logo.jpg' %}"></td>  
+                            <td style="vertical-align: middle; font-size: 1.2rem; font-weight: bold;">Hotel Gašperin</td>
+                    </tr>
+                    <tr>
+                        <td>Room / Soba:</td> <td>{{prihod.stsobe}}</td>
+                    </tr>
+                    <tr>
+                        <td>Ime / Name:</td> <td style="white-space: nowrap; overflow: hidden; font-weight: bold;">{{prihod.imestranke}}</td>
+                    </tr>
+                    <tr>
+                        <td>Noči / Nights:</td> <td>{{prihod.st_noci}}</td>
+                    </tr>
+                    <tr>
+                        <td>Checkout:</td> <td>{{prihod.do_dt|date:"d.m."}} do/till 11:00</td>
+                    </tr>
+                    <tr>
+                        <td style="color: red; font-weight: bold; white-space: nowrap;">Plačati / To pay:</td> 
+                            <td style="color: red; font-weight: bold;">{{prihod.Mes_Let}} EUR</td>
+                    </tr>
+                </table>
+                
+                
+                
+    
+            </div>
+            <div class="box2" style="position: relative; 
+                                    font-size: 1rem; 
+                                    width: 1cm; height: 5.3cm; 
+                                    margin: 0; 
+                                    border: black solid 1px; ">
+                <p style="position: absolute; 
+                            top: 40px; 
+                            left: 0; 
+                            right: 0; 
+                            transform: rotate(90deg); 
+                            transform-origin: center center; 
+                            inline-size: auto; 
+                            white-space: nowrap;
+                            font-weight: bold;">wifi: gasp22f11</p>
+            </div>
+        </div>
+        </td>
+        {% if forloop.counter0|add:1|divisibleby:2 or forloop.last %}
+        </tr>
+        {% endif %}
+    {% endfor %}
+    
+    </table>
+    
+    </div>
+    <button class="no-print btn btn-dark"  onclick="window.print()">Print</button>
+    
+    
+    {% endblock %}

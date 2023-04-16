@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Izbor sobe za ponudbo 
+{% endblock %}
+
+
+{% block content %}
+<style>
+    input {
+        width: 100px;
+        text-align: center;
+    }
+    
+    
+    
+    .container1 {
+    border: solid 5px blue;
+    display: flex; 
+   
+    float: left;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap:wrap;
+    position: relative;
+    }
+
+    .box1{
+        border: solid 2px rgb(243, 9, 79);
+        width: 700px;
+        align-content: end;
+    }
+    .box2{
+
+        overflow: scroll;
+        height: 800px;
+        position: relative;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+
+@media (max-width: 700px) {
+  .container1 {
+    flex-direction: column;
+    width: 100vw;
+  }
+  .box1 {
+    width: 100%;
+    
+
+  }
+}
+
+</style>
+
+<div class="container1">
+
+
+<div class="box1 float-left " style="width: auto; margin-right: 20px;">
+
+    <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Tip</th>
+            <th>Free</th>
+            <th>Št Oseb</th>
+            <th>Št Otrok</th>
+            <th>Cena</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key, value in dictProstihSob.items %}
+            <tr>
+            {% if value == 0 %}
+            <td style="color:red">{{ key }}</td>
+            {% else %}  
+            <td> {{ key }}</td>
+            {% endif %}
+            <td style="text-align: center">{{ value }}</td>
+            
+            {% if value != 0 %}
+            <form action="{% url 'rezervacije:form_ponudba_tipSobe' key %}" method="post">
+                {% csrf_token %}
+                <td><input id="stOseb_{{key}}" name="stOseb_{{key}}" required  type="text" placeholder="št oseb" class="form-control"></td>
+                <td><input id="stOtrok_{{key}}" name="stOtrok_{{key}}" type="text" placeholder="št otrok" class="form-control"></td>
+                <td><input id="cena_{{key}}" name="cena_{{key}}" required type="text" placeholder="cena" class="form-control">
+                <td><button type="submit" class="btn btn-primary">Potrdi</button></td>
+            </form>
+            {% endif %}
+            
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+</div>
+
+<!--Informacija o dosedanjih vnešenih podatkih-->
+<div style="border: solid 2px red; margin-bottom: 20px;" class="box1">
+  <table class="table">
+    
+    {% for k, v in dictVhodovPonudba.items %}
+    {% if k == 'tipSobe' %}
+      {# Skip rendering content for this iteration of the loop #}
+    {% else %}
+      <tr>
+        <td>{{k}}</td>
+          {% if k == "odpoved" %}  <td>{{v}} dni</td>
+          {% else %}
+        <td>{{v}}</td>
+          {% endif %}
+      </tr>
+      {% endif %}
+      {% endfor %}
+  </table>
+  
+  <table class="table">
+    {% for k, v in dictVhodovPonudba.items %}
+    {% if k == 'tipSobe' %}
+      {% for x in v %}
+      <tr>
+        <td>Soba {{forloop.counter}}:</td>
+        <td>Oseb: {% with x.0 as item %}{{item}}{% endwith %}</td>
+        <td>Otrok: {% with x.1 as item %}{{item}}{% endwith %}</td>
+        <td>Tip: {% with x.2 as item %}{{item}}{% endwith %}</td>
+        <td><a href="{% url 'rezervacije:form_ponudba_brisi_sobo' forloop.counter %}" class="btn btn-primary">Briši</a></td>
+  
+      </tr>
+      {% endfor %}
+    {# Skip rendering content for this iteration of the loop #}
+    {% endif %}
+    {% endfor %}
+  
+  </table>
+  
+  </div>
+
+
+<div class="box1 " style="width: auto;">
+<!-- OPCIJE - DODATNE ZAHTEVE... -->
+<form action="{% url 'rezervacije:form_ponudba_shrani' %}" method="post">
+  {% csrf_token %}
+<div style=" display: flex; flex-direction: column;">
+  <select id="option-select" class="form-control" >
+    <option value="">Izberi</option>
+    <option value="Veseli nas, da ste nam ponovno poslali povpraševanje.">Veseli nas..</option>
+    <option value="Družinskih in štiriposteljnih sob v želenem terminu nimamo več, zato vam lahko ponudimo dvoposteljne sobe.">Družinskih sob ni več..</option>
+    <option value="V tem terminu imamo na voljo tudi cenejše sobe. Če želite, lahko pripravim ponudbo tudi za cenejšo sobo.">Imamo tudi cenejše...</option>
+  </select>
+  
+  
+  <textarea style="width: 400px; height: 400px;" id="option-textarea" name="dodatne_zahteve"></textarea>
+  
+  
+  
+  <button type="button" id="clear-button" class="btn btn-danger" style="width:100px; height: 50px;">Clear</button><br>
+  <button class="btn btn-secondary" type="submit" style="width:100px; height: 50px;"> Shrani</button>
+</div>
+
+</form>
+</div>
+
+
+
+</div> 
+
+<script>
+  // Get the elements
+  const select = document.getElementById("option-select");
+  const textarea = document.getElementById("option-textarea");
+  const clearButton = document.getElementById("clear-button");
+
+  // Add event listener to the select element
+  select.addEventListener("change", (event) => {
+    // Get the selected option value
+    const selectedOption = event.target.value;
+
+    // Append the selected option value to the textarea
+    textarea.value = `${textarea.value}${selectedOption}<br>`;
+  });
+
+  // Add event listener to the clear button
+  clearButton.addEventListener("click", () => {
+    // Clear the textarea
+    textarea.value = "";
+  });
+</script>
+{% endblock %}

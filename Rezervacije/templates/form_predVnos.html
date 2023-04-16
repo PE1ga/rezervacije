@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- % load bootstrap5 %} -->
+
+{% block title %}
+    Izbor sobe za novo rezervacijo 
+{% endblock %}
+
+
+{% block content %}
+
+<!--<script src="{% static 'script/main.js' %}"></script>-->
+<div class="container float-left">
+
+<div class="container mx-auto float-left " style="max-width:800px; padding-bottom: 20px;" >
+    <button class="btn btn-danger" onclick="addDateAndSubmit()">Danes</button>
+    <button class="btn btn-danger" onclick="JutriAndSubmit()">Jutri</button>
+    <button class="btn btn-danger" onclick="Plus1DanInSubmit()">+1 D</button>
+    <button class="btn btn-danger" onclick="Plus2DanInSubmit()">+2 D</button>
+    <button class="btn btn-danger" onclick="Plus3DanInSubmit()">+3 D</button>
+    <button class="btn btn-danger" onclick="Plus4DanInSubmit()">+4 D</button>
+    <button class="btn btn-danger" onclick="Plus5DanInSubmit()">+5 D</button>
+    <button class="btn btn-danger" onclick="Plus6DanInSubmit()">+6 D</button>
+    <button class="btn btn-danger" onclick="Plus7DanInSubmit()">+7 D</button>
+
+</div> 
+
+
+<div class="container-fluid">
+    <div style="width: 400px;">
+        <p style="margin-bottom: 20px; font-size: 2rem; font-weight: bold; color: blue;">{{ime}}</p>
+        <form role="formIzborSob" action="" method="post">
+            {% csrf_token %}
+        
+            {% for field in forma %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {% if field.help_text %}
+                  <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {{ field }}
+                {% for error in field.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+            {% endfor %}
+            
+              </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+
+        
+        
+        
+        
+        
+        
+        
+</div>
+
+</div>
+
+<script>
+    //DANES
+    function addDateAndSubmit() {
+    var currentDate = new Date();
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth() + 1; // getMonth() returns 0-11 so we need to add 1
+    var year = currentDate.getFullYear();
+    var dateString = day + "." + month + "." + year;
+    document.getElementById("id_od").value = dateString;
+}
+//Jutri
+function JutriAndSubmit() {
+    var currentDate = new Date();
+    var Jutri = new Date(currentDate);
+    Jutri.setDate(Jutri.getDate() + 1)
+    var day = Jutri.getDate();
+    var month = Jutri.getMonth() + 1; // getMonth() returns 0-11 so we need to add 1
+    var year = Jutri.getFullYear();
+    var dateString = day + "." + month + "." + year;
+    document.getElementById("id_od").value = dateString;
+   
+}
+
+
+
+
+// + 1 dan
+function Plus1DanInSubmit() {
+    var dateField = document.getElementById('id_od');
+    var DatumDO = document.getElementById('id_do');
+    var dateArray = dateField.value.split('.');
+    var day = parseInt(dateArray[0]);
+    var month = parseInt(dateArray[1]) - 1;
+    var year = parseInt(dateArray[2]);
+    var currentDate = new Date(year, month, day);
+    var newDate = new Date(currentDate.getTime() + 1 * 24 * 60 * 60 * 1000);
+    day = newDate.getDate();
+    month = newDate.getMonth() + 1;
+    year = newDate.getFullYear();
+    DatumDO.value = day + "." + month + "." + year;
+   
+}
+function Plus2DanInSubmit() {
+    var dateField = document.getElementById('id_od');
+    var DatumDO = document.getElementById('id_do');
+    var dateArray = dateField.value.split('.');
+    var day = parseInt(dateArray[0]);
+    var month = parseInt(dateArray[1]) - 1;
+    var year = parseInt(dateArray[2]);
+    var currentDate = new Date(year, month, day);
+    var newDate = new Date(currentDate.getTime() + 2 * 24 * 60 * 60 * 1000);
+    day = newDate.getDate();
+    month = newDate.getMonth() + 1;
+    year = newDate.getFullYear();
+    DatumDO.value = day + "." + month + "." + year;
+   
+}
+
+function Plus3DanInSubmit() {
+    var dateField = document.getElementById('id_od');
+    var DatumDO = document.getElementById('id_do');
+    var dateArray = dateField.value.split('.');
+    var day = parseInt(dateArray[0]);
+    var month = parseInt(dateArray[1]) - 1;
+    var year = parseInt(dateArray[2]);
+    var currentDate = new Date(year, month, day);
+    var newDate = new Date(currentDate.getTime() + 3 * 24 * 60 * 60 * 1000);
+    day = newDate.getDate();
+    month = newDate.getMonth() + 1;
+    year = newDate.getFullYear();
+    DatumDO.value = day + "." + month + "." + year;
+   
+}
+
+function Plus4DanInSubmit() {
+    var dateField = document.getElementById('id_od');
+    var DatumDO = document.getElementById('id_do');
+    var dateArray = dateField.value.split('.');
+    var day = parseInt(dateArray[0]);
+    var month = parseInt(dateArray[1]) - 1;
+    var year = parseInt(dateArray[2]);
+    var currentDate = new Date(year, month, day);
+    var newDate = new Date(currentDate.getTime() + 4 * 24 * 60 * 60 * 1000);
+    day = newDate.getDate();
+    month = newDate.getMonth() + 1;
+    year = newDate.getFullYear();
+    DatumDO.value = day + "." + month + "." + year;
+   
+}
+
+function Plus5DanInSubmit() {
+    var dateField = document.getElementById('id_od');
+    var DatumDO = document.getElementById('id_do');
+    var dateArray = dateField.value.split('.');
+    var day = parseInt(dateArray[0]);
+    var month = parseInt(dateArray[1]) - 1;
+    var year = parseInt(dateArray[2]);
+    var currentDate = new Date(year, month, day);
+    var newDate = new Date(currentDate.getTime() + 5 * 24 * 60 * 60 * 1000);
+    day = newDate.getDate();
+    month = newDate.getMonth() + 1;
+    year = newDate.getFullYear();
+    DatumDO.value = day + "." + month + "." + year;
+   
+}
+
+function Plus6DanInSubmit() {
+    var dateField = document.getElementById('id_od');
+    var DatumDO = document.getElementById('id_do');
+    var dateArray = dateField.value.split('.');
+    var day = parseInt(dateArray[0]);
+    var month = parseInt(dateArray[1]) - 1;
+    var year = parseInt(dateArray[2]);
+    var currentDate = new Date(year, month, day);
+    var newDate = new Date(currentDate.getTime() + 6 * 24 * 60 * 60 * 1000);
+    day = newDate.getDate();
+    month = newDate.getMonth() + 1;
+    year = newDate.getFullYear();
+    DatumDO.value = day + "." + month + "." + year;
+   
+}
+
+function Plus7DanInSubmit() {
+    var dateField = document.getElementById('id_od');
+    var DatumDO = document.getElementById('id_do');
+    var dateArray = dateField.value.split('.');
+    var day = parseInt(dateArray[0]);
+    var month = parseInt(dateArray[1]) - 1;
+    var year = parseInt(dateArray[2]);
+    var currentDate = new Date(year, month, day);
+    var newDate = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+    day = newDate.getDate();
+    month = newDate.getMonth() + 1;
+    year = newDate.getFullYear();
+    DatumDO.value = day + "." + month + "." + year;
+   
+}
+</script>    
+
+{% endblock %}

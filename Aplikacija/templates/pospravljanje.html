@@ -1,0 +1,357 @@
+{% extends 'baseApl.html' %}
+{% load static %}
+{% block title %}Pospravljanje{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+<style>
+.container{
+        border: solid 5px blue;
+        width: auto;
+        display: flex; 
+        float: left;
+        flex-direction: column;
+        justify-content: space-between; 
+        flex-wrap: wrap; /* da stlači vse itemse v div  napsortni he nowrap*/
+        position: relative;
+        
+    }
+[class ^="box-"]{                       /*!!!!!!!!!!!!!*/
+    justify-content: space-between;
+    text-align: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    
+        
+    }
+.box_gumbi{
+    display: flex; 
+    flex-wrap: wrap;
+    float: left;
+    flex-direction: row;
+    justify-content:space-evenly; /* prazen prostor spredaj in med itemi je enakomerno razdeljen prostor */
+    align-items: baseline;  /* obstaja še flex-start in flex-end ter baseline >> da so vsi itemi poravnani na spodnjem robu*/
+    align-content: center; /* deluje samo, če imaš več vrstic raznih itemov - npr form fildov.... */
+    position: relative;
+    
+}
+
+
+table {border-collapse: collapse; }
+table, tr, td, th {border: 2px solid black; text-align:center; font-size:2rem; padding: 5px;}
+td {height: auto;}
+h1, p {font-size: 2rem;}
+h2 {font-size: 2rem;}
+/*a {color: solid rgb(39, 3, 239); font-size:2rem}
+a:hover {color: rgb(243, 4, 68);}
+a:visited {color: brown;}*/
+tr{height: 70px;}
+
+button {
+    border: 2px;
+    background-color: rgb(130, 127, 127);
+    color: rgb(243, 243, 7);
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 2rem;
+    margin: 0px 0px;
+    cursor:crosshair;
+    width:100%;
+    height:100%;
+    
+}
+
+</style>
+   
+<div class="container" >
+
+    <div class="box">
+    <p> {{ ObDatum.DatumObravnavani }} - POSPRAVLJANJE__<strong><a style="color: rgb(255, 0, 30);">Še: {{ STSOB }} sob </a></strong> </p> 
+    </div>
+
+
+<div class="box_gumbi">
+
+    <a><button class="btn btn-primary"  
+        type="submit" onclick="location.href='/'" >DOMOV</button></a>
+            {% if SeSobPrih > 0 %}
+            <a><button class="btn btn-danger" 
+                type="submit" onclick="location.href='/pospravljanje_prihodi/'" >PRIHODI {{ SeSobPrih }}</button></a>
+            {% else %}
+            <a><button class="btn btn-danger" 
+                type="submit" onclick="location.href='/pospravljanje_prihodi/'" >PRIHODI</button></a>
+            {% endif %}
+            
+            {% if request.user.groups.all.0.name == "boss" %}
+            
+           <!-- % if user.username == "Peter" or user.username == "Kellie" %} -->
+                <a><button class="btn btn-primary"
+                    type="submit" onclick="location.href='/zajtrk/'" >ZAJTRK</button></a>
+            {% endif %}
+            
+</div>
+            
+    
+            
+        
+<div class="box">
+  
+    <meta http-equiv="refresh" content="30" /> 
+    
+    
+    <!--{{ user }}    -->
+    
+    
+
+<!-- OHRANJA POZICIJO NA STRANI PO REFRESHU -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var sep = '\uE000'; // an unusual char: unicode 'Private Use, First'
+        
+        window.addEventListener('pagehide', function(e) {
+                window.name += sep + window.pageXOffset + sep + window.pageYOffset;
+            });
+
+            if(window.name && window.name.indexOf(sep) > -1)
+            {
+                var parts = window.name.split(sep);
+                if(parts.length >= 3)
+                {
+                    window.name = parts[0];
+                    window.scrollTo(parseFloat(parts[parts.length - 2]), parseFloat(parts[parts.length - 1]));
+                }
+            }
+        });
+        </script>
+
+
+
+
+
+                 
+
+
+        <table>
+            <th>Soba</th>
+            <th>Akcija</th>
+            <th>Za oseb</th>
+            <th style="width: 100px">Status</th>
+            <th>Potrditev</th>
+            <!-- <th>Reset</th> -->
+
+        {% for x in SobeSeznam %}
+        <tr >
+                
+            <!-- ŠTEVILKA SOBE - Če ADMIN - potem so st sob z linki na detalje -obarvaj jo glede na to, v katerem nadstropju se nahaja -->                
+            
+            
+            <!--% if user.username == "Peter" or user.username == "Kellie" or user.username == "Delavec" %} -->
+            {% if request.user.groups.all.0.name == "boss" or request.user.groups.all.0.name == "worker" %}
+                
+                {% if x.Soba >= 10 and x.Soba < 20 %}
+                    <td><strong><a style="color: rgb(100, 16, 115);" href="detajli/{{ x.id }}">{{ x.Soba }}</a> </strong></td>
+                {% elif x.Soba >= 20 and x.Soba < 30 %}
+                    <td><strong><a style="color: green;" href="detajli/{{ x.id }}">{{ x.Soba }}</a></strong> </td>
+                {% elif x.Soba >= 30 and x.Soba < 40 %}
+                    <td><strong><a style="color: rgb(22, 15, 231);" href="detajli/{{ x.id }}">{{ x.Soba }}</a></strong> </td>
+                {% elif x.Soba >= 40 and x.Soba < 50 %}
+                    <td><strong><a style="color: rgb(191, 9, 9);" href="detajli/{{ x.id }}">{{ x.Soba }}</a></strong> </td>
+                {% elif x.Soba >= 50 and x.Soba < 60 %}
+                    <td><strong><a style="color: rgb(18, 17, 17);" href="detajli/{{ x.id }}">{{ x.Soba }}</a></strong> </td>
+                {% endif %}
+            
+            {% else %}
+            
+                {% if x.Soba >= 10 and x.Soba < 20 %}
+                    <td><strong><a style="color: rgb(100, 16, 115);">{{ x.Soba }}</a> </strong></td>
+                {% elif x.Soba >= 20 and x.Soba < 30 %}
+                    <td><strong><a style="color: green;" >{{ x.Soba }}</a></strong> </td>
+                {% elif x.Soba >= 30 and x.Soba < 40 %}
+                    <td><strong><a style="color: rgb(22, 15, 231);">{{ x.Soba }}</a></strong> </td>
+                {% elif x.Soba >= 40 and x.Soba < 50 %}
+                    <td><strong><a style="color: rgb(191, 9, 9);">{{ x.Soba }}</a></strong> </td>
+                {% elif x.Soba >= 50 and x.Soba < 60 %}
+                    <td><strong><a style="color: rgb(18, 17, 17);">{{ x.Soba }}</a></strong> </td>
+                {% endif %}
+            
+            
+            {% endif %}
+            
+            
+            <!--AKCIJA menjava, prihod, odhod -->
+            {% if x.Akcija.lower == "menjava" %}
+                <td style="background-color: rgb(255, 0, 0);">{{ x.Akcija }} </td>
+            
+            {% elif x.Akcija.lower == "odhod" %}
+                <td style="background-color: rgb(234, 255, 0);">{{ x.Akcija }} </td>
+            {% else %}
+                <td> {{ x.Akcija }} </td>
+            {% endif %}
+
+            
+            <!-- ZA OSEB če je odhod>> povej za koliko oseb pripravi sobo -->
+            {% if x.Za_Oseb == 0 %}  <!-- če je 0, potem naj bo celica prazna -->
+                <td></td>
+            {% else %} <!-- Preveri, če je manj ali več gostov kot jih mora biti v 2 ali 4 posteljnih sobah in če ne- OPOZORI  -->
+            
+                {% for y in DvoPosteljneSobe %}  
+                    {% if x.Soba == y %}  
+                        {% if x.Za_Oseb != 2 %}    
+                            <td><img src="{% static 'slike/pazi.jpg' %}" alt="pazi"> <strong> {{ x.Za_Oseb }} </strong> </td>
+                        {% else %}
+                            <td> {{ x.Za_Oseb }}</td>
+                        {% endif %}
+                        
+                    {% endif %}
+                {% endfor %}
+                    
+                {% for f in StiriPosteljneSobe %}
+                    {% if x.Soba == f %}
+                        {% if x.Za_Oseb != 4 %}            
+                            <td><img src="{% static 'slike/pazi.jpg' %}" alt="pazi"><strong> {{ x.Za_Oseb }} </strong></td>
+                        {% else %}
+                            <td>{{ x.Za_Oseb }}</td>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+
+            {% endif %}
+
+
+
+
+
+
+            
+            
+            
+            <!-- STATUS - če je ok, obarvaj celico z zeleno -->
+            
+            
+
+            {% if x.Status == "OK" %}
+                <td style="background-color:lightgreen;">{{ x.Status }} </td>
+            
+            {% elif x.Status == "NE ČISTI!" %}
+                <td style="background-color: white; color: red;">{{ x.Status }} </td>
+            
+            {% elif x.Status == "ŠLI VEN" %}
+                <td style="background-color: white;">{{ x.Status }} </td>
+            
+            {% elif x.Status == "KO" %}
+                <td><img src="{% static 'slike/vseOK.png' %}" alt="OK_kljukica"></td>
+            
+            {% elif x.Status == "PONOVI ČIŠČENJE" %}
+                <td style="font-size: 35px; background-color: rgb(255,0,0);">{{ x.Status }} </td>
+            
+            {% else %} 
+                <td>{{ x.Status }} </td>
+            
+            {% endif %}
+
+            
+            <!--POTRDITEV GUMB-->
+            <!-- linki OK in reset - aktivirajo viewse za spremmebo statusa v OK, oz izbriše OK iz statusa -->
+            <!-- ČE delavec, ima gumb funkcijo, da potrdi čiščenje (OK), če pa ADMIN, pa ima gumb funkcijo, KonOK - kontrola čiščenja OK -->
+    
+    {% if request.user.groups.all.0.name == "boss" %}
+
+    <!--% if user.username == "Peter" or user.username == "Kellie" %} -->
+        {% if x.Akcija == "odhod" %}
+        
+            
+            {% if x.Status == "OK" %}
+                <td style="background-color: rgb(234, 255, 0);"><button style="color: tomato; font-weight: bold;" type="submit" 
+                    onclick="location.href='KontrolaConfirm/{{ x.id }}'">Kontrola</button></td>
+            {% elif x.Status == "KO" %}
+                <td><button  type="submit" 
+                    onclick="location.href='KontrolaPonovi/{{ x.id }}'">Ponovi</button></td>
+            
+            {% elif x.Status == "PONOVI ČIŠČENJE" %}
+                <td><button type="submit" 
+                    onclick="location.href='KontrolaReset/{{ x.id }}'">Reset</button></td>
+            {% else %} <!--če je Status prazen ""-->
+            <td><button  type="submit" 
+                onclick="location.href='/checklist/{{ x.id }}_pospravljanje'">Check</button></td>
+            {% endif %}    
+                <!--<td><button style="width: 200px;" type="submit" 
+                    onclick="location.href='KontrolaConfirm/{{ x.id }}'">Potrdi</button></td> -->
+        {% else %}
+        
+
+            {% if x.Status == "OK" %}
+                <td><button style="color: tomato; font-weight: bold;" type="submit" 
+                    onclick="location.href='KontrolaConfirm/{{ x.id }}'">Kontrola</button></td>
+            {% elif x.Status == "KO" %}
+                <td><button type="submit" 
+                    onclick="location.href='KontrolaPonovi/{{ x.id }}'">Ponovi</button></td>
+            
+            {% elif x.Status == "PONOVI ČIŠČENJE" %}
+                <td><button  type="submit" 
+                    onclick="location.href='KontrolaReset/{{ x.id }}'">Reset</button></td>
+            {% else %} <!--če je Status prazen ""-->
+                <td><button  type="submit" 
+                    onclick="location.href='KontrolaConfirm/{{ x.id }}'">Potrdi</button></td> 
+
+        {% endif %}   
+            
+    {% endif %}
+            
+            
+        {% else %} <!-- Prijavljen kot delavec __Če imaš odhod, dodaj CHECK s povezavo na CHECKLISTO-->
+            {% if x.Akcija == "odhod" %}
+                {% if x.Status == "OK" %}
+                    <td><button  type="submit" 
+                        onclick="location.href='reset/{{ x.id }}'" ><img src='{% static "slike/niOK.png" %}'></button></td>
+                
+                {% elif x.Status == "KO" %}
+                    <td><img src="{% static 'slike/vseOK.png' %}" alt=""></td>
+                {% else %}
+                    <td><button  type="submit" 
+                        onclick="location.href='/checklist/{{ x.id }}_pospravljanje'">Check</button></td>
+                {% endif %}
+            {% else %}   <!-- Akcija ni ODHOD, ampak MENJAVA ali POSPRAVI-->     
+
+                {% if x.Status == "OK" %}
+                <td><button  type="submit" 
+                    onclick="location.href='reset/{{ x.id }}'" ><img src='{% static "slike/niOK.png" %}'></button></td>
+                {% else %}
+                
+                    {% if x.Status == "KO" %}
+                        <td><img src="{% static 'slike/vseOK.png' %}" alt="ok"></td>
+                    {% elif x.Status == "NE ČISTI!" %}
+                        <td><img src="{% static 'slike/niOK.png' %}" alt="ni ok"></td>
+                        
+                        
+                    {% else %}
+                        <td><button  type="submit" 
+                            onclick="location.href='confirm/{{ x.id }}'" >Potrdi</button></td>
+                    {% endif %}
+                {% endif %}
+                            
+            {% endif %}
+            
+        {% endif %}
+        
+        </tr>
+        {% endfor %} 
+        </table>
+
+        <p>
+            <a href="/">Domov</a>
+        </p>
+
+</div>   
+{% else %}
+    <h1>Ne bo šlo. Moraš se logirati!</h1>
+    <a href="{% url 'login' %}">Logiraj se tu!</a>
+
+
+{% endif %}
+
+{% endblock %}

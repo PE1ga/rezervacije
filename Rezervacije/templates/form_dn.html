@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+   
+{% endblock %}
+
+
+{% block content %}
+
+
+
+  <style>
+    
+    .containerDN {
+    z-index: 99;
+    display: grid;
+    grid-template-columns: 30% 25% 20% 24%;
+    grid-template-rows: 45% 45% 10%;
+    grid-template-areas: 
+    "povzetek odhodi prihodi stayover"
+    "povzetek odhodi prihodi stayover"
+    "povzetek alarm alarm alarm";
+    
+    
+    
+    border: solid red 3px;
+    grid-gap: 2px; 
+    width: 98vw ;
+    height: 80vh;
+    margin: 0;
+    padding: 0;
+}
+
+.nazivi {
+    font-weight: bolder;
+    color: brown;
+    width: auto;
+}
+.stolpec2 {
+    max-width: 10px;
+}
+.stolpec4 {
+    max-width: 10px;
+}
+
+ @media  (max-width: 1200px) {
+  .containerDN {
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    /* max-width: 600px; */
+    max-width: 90vw;
+    height: auto;
+  } 
+  .table{max-width: 300px;}
+  .box1 {
+    width: 100%;
+  }
+.nazivi {
+    font-weight: bolder;
+    color: brown;
+    width: 120px;
+}
+
+.stolpec2 {
+    min-width: 110px;
+}
+.stolpec4 {
+    min-width: 160px;
+}
+}
+
+
+
+
+body {
+  width: 100vw;
+    background-color: lightblue;
+  
+}
+
+
+.povzetek, .odhodi, .prihodi, .stayover, .alarm{
+border: solid green 3px;
+}
+
+.povzetek {
+    grid-area: povzetek;
+}
+.prihodi {
+    grid-area: prihodi;
+}
+.odhodi {
+    grid-area: odhodi;
+}
+.stayover {
+    grid-area: stayover;
+    overflow: scroll;
+} 
+.alarm {
+    grid-area: alarm;
+}
+
+
+.box  {
+    display: flex;
+    flex-direction: row;
+    /* justify-content:space-around; */
+    align-items: center;
+    align-content: center;
+    /* max-width: 600px; */
+    height: auto;
+  }
+form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+    gap: 20px;
+} 
+
+</style>
+
+
+<div class="box">
+    <form action="" id="my-form" method="post"  >
+        {% csrf_token %}
+        {{forma.moj_datum}}
+        <button class="btn btn-success" type="submit" name="btn_datum_dn">Izberi</button>
+        <p class="text-bg-warning" style="padding: 0; margin-bottom: 0; margin-right: 10px; font-size: 2rem;"> {{ob_datum}} </p>
+    </form>
+    
+    <form action="" method="post" >
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit" name="btn_datum_danes">Danes</button>
+        <button class="btn btn-primary" type="submit" name="btn_datum_jutri">Jutri</button>
+    </form>
+        <!-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          // Get the form element
+          var form = document.getElementById('my-form');
+      
+          // Submit the form automatically
+          form.submit();
+        });
+      </script> -->
+    </div>
+
+ <div class="containerDN">
+    
+    
+    <div class="povzetek" style="overflow: scroll;">
+        Računi
+ 
+        <table class="table table-bordered" style="line-height: 1rem;">
+            <tr>
+                <td><p class="nazivi">   Št. sobe:</p></td><td class="stolpec2">{{podatki_za_racun.stsobe}}</td>
+                <td><p class="nazivi">Ime: </p></td><td class="stolpec4">{{podatki_za_racun.imestranke}}</td>
+            </tr>
+            <tr>
+                <td><p class="nazivi">Od:</p></td><td> {{podatki_za_racun.od}}</td>
+                <td><p class="nazivi">Do:</p></td><td>{{podatki_za_racun.do}}</td>
+            </tr>
+            <tr>
+                <form action="" method="post">
+                    {% csrf_token %}
+                <td><p class="nazivi">Odraslih: </p></td><td><input class="form-control" type="text" name="st_odr_input" value="{{podatki_za_racun.SO}}"></td>
+                <td><p class="nazivi">Otrok:</p></td><td> <input class="form-control" type="text" name="st_otr_input" value="{{podatki_za_racun.SOTR}}"></td>
+            </tr>
+            <tr>
+                <td><p class="nazivi">St. nočitev:</p></td><td>{{podatki_za_racun.st_nocitev}}</td>
+                
+                <td><p class="nazivi">€/nočitev:</p></td><td> {{podatki_za_racun.cena_na_nocitev}} 
+                    <button class="btn btn-warning" type="submit" name="gumb_preracunaj" value="{{podatki_za_racun.stsobe}}">preračunaj</button> </td>
+                </form>
+            
+            </tr>
+            <tr>
+                <td><p class="nazivi">Agencija:</p></td><td> {{podatki_za_racun.agencija}}</td>
+                <td><p class="nazivi">Rna:</p></td><td> {{podatki_za_racun.RNA}}</td>
+            </tr>
+            <tr>
+                <td><p class="nazivi">CENA:</p></td><td> {{podatki_za_racun.CENA}}</td>
+                <td><p class="nazivi">Ttax:</p></td><td> {{podatki_za_racun.TTAX}}</td>
+            </tr>
+            <tr>
+                <td><p class="nazivi">Že plačano:</p></td><td> {{podatki_za_racun.ze_placano}}</td>
+                <td><p class="nazivi">Zahteve:</p></td><td> {{podatki_za_racun.zahteve}}</td>
+            </tr>
+
+        </table>
+        
+        <!-- Aktiviraj izdelavo računa <a><button style="background-color: rgb(28, 4, 248)" type="submit"
+        onclick="location.href='/pospravljanje/'">POSPRAVLJANJE</button></a>-->
+       
+        <button type="submit" name="gumb_tiskaj_racun" class="btn btn-primary" onclick="location.href='form_dn/form_tiskanje_racuna/'">Tiskaj račun</button>
+       
+        <table class="table table-bordered">
+            {% for list in bar_narocila %}
+            <tr>
+                    <td> {{list.artikel__opis}} </td>
+                    <td> {{list.kolicina_skupaj}} </td>
+                </tr> 
+            {% endfor %}
+
+        </table>
+
+
+    </div>
+    <div class="odhodi">
+        Odhodi
+        <table class="table table-bordered">
+            {% for odhod in odhodi %}
+            <tr>
+                <form action="" method="post">
+                {% csrf_token %} 
+                <td><button class="btn btn-secondary" type="submit" name="gumb_st_sobe" value="{{odhod.stsobe}}">{{odhod.stsobe}}</button></td>
+                </form>
+                <td>{{odhod.imestranke}}</td>
+                <td>{{odhod.agencija}}</td>
+                
+            </tr>
+            
+            {% endfor %}
+
+        </table>
+        
+    </div>
+    <div class="prihodi">
+        Prihodi
+        <button type="submit" name="gumb_tiskaj_racun" class="btn btn-primary" onclick="location.href='form_dn/form_tiskanje_vingcard/'">Tiskaj vingcard</button>
+        <table class="table table-bordered">
+            {% for prihod in prihodi %}
+            <tr>
+                <td><button class ="btn btn-warning" style="width: 40px;" onclick="location.href='/updateIzGrafa/{{prihod.id}}'">{{prihod.stsobe}}</button></td>
+                <td>{{prihod.imestranke}}</td>
+                <td>{{prihod.agencija}}</td>
+                
+            </tr>
+            
+            {% endfor %}
+
+        </table>
+    </div>
+    <div class="stayover">
+        Stayover
+        <table class="table table-bordered">
+            {% for stay in stayover %}
+            <tr>
+                <td><button class ="btn btn-warning" style="width: 40px;" onclick="location.href='/updateIzGrafa/{{stay.id}}'">{{stay.stsobe}}</button></td>
+                <td>{{stay.imestranke}}</td>
+                <td>{{stay.agencija}}</td>
+                
+            </tr>
+            
+            {% endfor %}
+
+        </table>
+    </div>
+    <div class="alarm">
+        Alarm
+    </div>
+
+
+
+ </div>
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+{% endblock %}
