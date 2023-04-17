@@ -9,6 +9,7 @@ app_name = "rezervacije"
 urlpatterns = [
 path(route="form_home/", view = views.form_home, name ="form_home"),
 path(route="form_Avtovnos/", view= views.form_Avtovnos, name="form_Avtovnos"),
+path(route="form_Avtovnos_file/", view= views.form_Avtovnos_file, name="form_Avtovnos_file"),
 path(route="form_vnos_rocni/", view= views.form_vnos_rocni, name="form_vnos_rocni"),
 path(route="form_vnos_izbor_sob/", view= views.form_vnos_izbor_sob, name="form_vnos_izbor_sob"),
 path(route="form_vnos_izbor_sob/form_izberiSobo", view= views.form_izberi_sobo, name="form_izberi_sobo"),

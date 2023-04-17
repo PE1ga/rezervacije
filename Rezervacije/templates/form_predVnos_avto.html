@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- % load bootstrap5 %} -->
+
+{% block title %}
+    Izbor sobe za novo rezervacijo  AVTO
+{% endblock %}
+
+
+{% block content %}
+
+<form role="formIzborSob" action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+<input type="file" name="file" required="false">
+<button type="submit" class="btn btn-danger">Potrdi</button>
+
+
+{% endblock %}

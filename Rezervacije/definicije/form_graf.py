@@ -1,6 +1,8 @@
+import locale
 import pandas as pd
 import datetime as dt
 
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 def IzdelavaGrafa(df_data, DatumObravnave,Vir): #, DatumPrimerjave):
     L_Sobe=["xxx","Dan",10,11,12,37,20,21,30,31,32,36,46,50,34,43,35,38,39,45,51,40,33,41,42,44,52,99,"Profit","Zajtrki","Menjave","StSOB","Prihodi"]
@@ -55,7 +57,7 @@ def IzdelavaGrafa(df_data, DatumObravnave,Vir): #, DatumPrimerjave):
     #Izdelaj Range of dates
     
     T_DatumiODDO=pd.date_range(start=Dat_prvi,end=Dat_zadnji).to_series()
-    L_DatumiODDO=(T_DatumiODDO.dt.day_name(locale="English")).tolist() #!!!!! ime dneva v tednu 
+    L_DatumiODDO = (T_DatumiODDO.dt.day_name(locale=locale.getlocale())).tolist() #!!!!! ime dneva v tednu 
     #print(L_DatumiODDO)
     L_SloDnevi=[]
     #for index,dan in enumerate(L_DatumiODDO):

@@ -29,10 +29,11 @@
 
 <div class="container-fluid">
     <div style="width: 400px;">
-        <p style="margin-bottom: 20px; font-size: 2rem; font-weight: bold; color: blue;">{{ime}}</p>
-        <form role="formIzborSob" action="" method="post">
-            {% csrf_token %}
+        <!-- <p style="margin-bottom: 20px; font-size: 2rem; font-weight: bold; color: blue;">ime}}</p> -->
         
+        <form role="formIzborSob" action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+           
             {% for field in forma %}
             <div class="form-group">
                 {{ field.label_tag }}

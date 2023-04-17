@@ -64,6 +64,24 @@ def form_home(request):
     context = {"gost": gosti, "form": search_form}
     return HttpResponse(template.render(context, request))
 
+def form_Avtovnos_file(request):
+    template = loader.get_template("form_predVnos_avto.html")
+    context={}
+    
+    if request.method== "POST" and request.FILES:
+        file = request.FILES["file"]
+        vsebina = file.read()
+        vsebina = vsebina.decode("utf-8")
+        
+        
+        print(vsebina)
+
+        
+        return HttpResponse(template.render(context, request))
+
+    else: # GET
+        return HttpResponse(template.render(context, request))
+
 
 def form_Avtovnos(request):
     submitted = False  # Dokler ni gumb, form ni submt (Codemy.com)
@@ -127,34 +145,7 @@ def form_Avtovnos(request):
     # "form_vnos_rocni.html"
     return render(request, "form_predVnos.html", context)
 
-    """
     
-    cena, ime, agencija, stOseb, datumOD, datumDO, RNA, email, zahteve = Autofill_def()
-    submitted = False # Dokler ni gumb, form ni submt (Codemy.com)
-    if request.method == "POST":
-        formular = VnosRezForm(request.POST)
-        #formular = VnosRezForm(data={"imestranke":"Peter","agencija":"Nasi"})
-        if formular.is_valid():
-            formular.save()
-            formular=VnosRezForm()
-            
-            return HttpResponseRedirect("/form_Avtovnos?submitted=True")
-        else:
-            print("Formular ni v celoti izpolnjen. Ni valid")
-            
-    else:  # GET __Form še ni bil (pravilno) izpolnjen
-        formular = VnosRezForm(data={"CENA":cena, "imestranke": ime, "agencija":agencija, "SO":stOseb, "od":datumOD,
-    "do": datumDO, "RNA":RNA, "email": email, "zahteve": zahteve})
-        if "submitted" in request.GET:  # Ali je bil form že submitan?
-            submitted = True
-
-
-    
-    context ={"forma": formular, "submitted":submitted, }
-    #"ImeStranke":"Jože Novak", "Agencija":agencija, "StOseb":stOseb, "DatumOD":datumOD,
-    #"DatumDO": datumDO}
-    
-    return render(request, "form_Avtovnos.html", context)"""
 
 
 def form_vnos_rocni(request):
