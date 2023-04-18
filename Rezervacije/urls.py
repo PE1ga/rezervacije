@@ -7,17 +7,19 @@ from django.conf.urls.static import static
 app_name = "rezervacije"
 
 urlpatterns = [
-path(route="form_home/", view = views.form_home, name ="form_home"),
-path(route="form_Avtovnos/", view= views.form_Avtovnos, name="form_Avtovnos"),
-path(route="form_Avtovnos_file/", view= views.form_Avtovnos_file, name="form_Avtovnos_file"),
-path(route="form_vnos_rocni/", view= views.form_vnos_rocni, name="form_vnos_rocni"),
+path(route="form_dashboard", view= views.dashboard, name="form_dashboard"),
+
+path(route="form_rezervacije/", view = views.form_rezervacije, name ="form_rezervacije"),
+path(route="form_avtovnos_file/", view= views.form_avtovnos_file, name="form_avtovnos_file"),
+path(route="form_avtovnos/", view= views.avtovnos, name="form_avtovnos"),
 path(route="form_vnos_izbor_sob/", view= views.form_vnos_izbor_sob, name="form_vnos_izbor_sob"),
+path(route="form_vnos_rocni/", view= views.form_vnos_rocni, name="form_vnos_rocni"),
 path(route="form_vnos_izbor_sob/form_izberiSobo", view= views.form_izberi_sobo, name="form_izberi_sobo"),
     
     #path(route="form_Avtovnos/", view= views.get_name, name="form_Avtovnos"),
     
-path(route="form_home/form_update/<int:id>", view= views.updateIzSeznama, name="form_update"),
-path(route="form_home/form_delete/<int:id>", view= views.delete_gost, name="form_delete"),
+path(route="form_rezervacije/form_update/<int:id>", view= views.updateIzSeznama, name="form_update"),
+path(route="form_rezervacije/form_delete/<int:id>", view= views.delete_gost, name="form_delete"),
 path(route="form_graf/", view= views.form_graf, name="form_graf"),
 #path(route="form_graf/update/<str:komande>", view= views.updateIzGrafa, name="update_from_graf"),
 path(route= "updateIzGrafa/<str:komande>", view= views.updateIzGrafa2, name="update_from_graf2"),
@@ -42,7 +44,6 @@ path(route="form_ponudba_obd_poslji", view= views.ponudba_obdelava_poslji, name=
 path(route="form_vnos_iz_ponudbe/<int:id>", view= views.ponudba_vnos_iz_ponudbe, name="form_vnos_iz_ponudbe"),
 
 
-path(route="form_dashboard", view= views.dashboard, name="form_dashboard"),
 
 path(route="form_bar", view= views.bar, name="form_bar"),
 

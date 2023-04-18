@@ -4,7 +4,7 @@
 <!--% load bootstrap5 %}-->
 
 {% block title %}
-    ROČNI vnos nove rezervacije  
+    
 {% endblock %}
 
 
@@ -18,23 +18,18 @@
 </style>
 -->
 
-<p class="container-fluid">Ali je formular submitted? {{ submitted }}</p>
-            
+<!-- <p class="container-fluid">Ali je formular submitted?  submitted }}</p>
+             -->
 {% if submitted == True %}
-<p class="container-fluid">Form je uspešno shranjen!</p>
+<p >Form je uspešno shranjen!</p>
 
 {% else %}
 
-
-
-
-
-
-
-<p style="margin-left: 10px; color: red;"> Napaka v polju: 
+<!-- <p style="margin-left: 10px; color: red;"> Napaka v polju: 
     {% for error in forma.errors %}
     {{ error }}, 
-    {% endfor %}</p>
+    {% endfor %}</p> -->
+    <p class="text-danger">{{Msg_Manjka_Avans}}</p>
 
 
 
@@ -86,7 +81,7 @@
                     {{ field.label_tag }}
                     {{ field }}
                     {% if field.errors %}
-                    <div class="alert alert-danger">{{ field.errors }}</div>
+                    <div class="">{{ field.errors }}</div>
                     {% endif %}
               
                 {% endif %}
@@ -123,39 +118,36 @@
 
             
             
-            
-            
-            
-            
-            
-            
-            // če je avans, naj bo fild avanseur required
-            document.querySelector('#id_RNA').addEventListener('change', function() {
-                if (this.value === 'Avans') {
-                    document.querySelector('#id_AvansEUR').required = true;
-                } else {
-                    document.querySelector('#id_AvansEUR').required = false;
-                }
-            });
+    //     // če je avans, naj bo fild avanseur required
+    //     document.querySelector('#id_RNA').addEventListener('change', function() {
+    // if (this.value === 'Avans') {
+    //     document.querySelector('#id_AvansEUR').required = true;
+    // } else {
+    //     document.querySelector('#id_AvansEUR').required = false;
+    // }
+    
+    // // Submit the form automatically
+    // document.querySelector('#myForm').submit();
+    // });
 
-            // če je  agencija ... naj bo Ttax JE,....
-            function update_ttax_field() {
-            var id_agencije = document.getElementById("id_agencija").value;
-            var id_StanjeTTAX = document.getElementById("id_StanjeTTAX");
+    
 
-            if (id_agencije === "Siteminder" || id_agencije === "Nasi" || id_agencije === "Cesta" ) 
-            {
-                id_StanjeTTAX.value = "Ttax JE VKLJ";
-            } else {
-                id_StanjeTTAX.value = "Ttax NI VKLJ";
-            }
-            }
+//         // če je  agencija ... naj bo Ttax JE,....
+//         function update_ttax_field() {
+//     var id_agencije = document.getElementById("id_agencija").value;
+//     var id_StanjeTTAX = document.getElementById("id_StanjeTTAX");
 
-            document.getElementById("id_agencija").addEventListener("change", update_ttax_field);
-                
-        
-        
-        
+//     if (id_agencije === "Siteminder" || id_agencije === "Nasi" || id_agencije === "Cesta") {
+//         id_StanjeTTAX.value = "Ttax JE VKLJ";
+//     } else {
+//         id_StanjeTTAX.value = "Ttax NI VKLJ";
+//     }
+    
+//     // Automatically submit the form
+//     document.getElementById("myForm").submit();
+// }
+
+// document.getElementById("id_agencija").addEventListener("change", update_ttax_field);
         
         </script>
         

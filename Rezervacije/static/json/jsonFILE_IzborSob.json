@@ -1,21 +1,9 @@
-[
-    [
-        31,
-        32,
-        36,
-        50,
-        46
+{
+    "list_prostih_sob": [
+        12
     ],
-    "22.04.2023",
-    "23.04.2023",
-    "c",
-    "Bogdanovic Durdica",
-    "",
-    "",
-    "83.70",
-    "Booking.com",
-    "",
-    "",
-    "Collect payment from guests at your property. For cancellation and no-show fees, please visit extranet You have a booker that would like free parking. (based on availability), booker_is_genius",
-    "dbogda.648956@guest.booking.com"
-]
+    "od": "19.4.2023",
+    "do": "23.4.2023",
+    "tip": "g",
+    "stsobe": "12"
+}

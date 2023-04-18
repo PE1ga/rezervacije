@@ -20,10 +20,11 @@ def PretvodiDatum(datumText):
                 
 
 
-def Autofill_def():
-        besedilo= open("C:/Users/Hotel/Downloads/book.txt","r",encoding='utf8')
-        vsebina = besedilo.read()
-
+def Autofill_def(tekst):
+        #besedilo= open("C:/Users/Hotel/Downloads/book.txt","r",encoding='utf8')
+        #vsebina = besedilo.read()
+        vsebina = tekst
+        
         Mesci={"Jan":"01","Feb":"02", "Mar":"03","Apr":"04", "May":"05", "Jun":"06", "Jul":"07", 
                 "Aug":"08", "Sep":"09", "Oct":"10", "Nov":"11", "Dec":"12"}
 
@@ -70,9 +71,9 @@ def Autofill_def():
                 AliNonRef = vsebina.split("Room:")[1]  # najprej izoliraj sobo, da bo rezultat bolj natančen- Family Room with Balcony and Mountain View / Non-Refundable
             
             AliNonRef = AliNonRef.splitlines()[0]
-            RNA=""
+            rna=""
             if "Non-Refundable" in AliNonRef:
-                RNA = "NONREFOK"
+                rna = "NONREFOK"
             
            
             
@@ -80,12 +81,12 @@ def Autofill_def():
             cena = ListFildov[0] 
             ime = ListFildov[3].lower().title()
             agencija = "Siteminder"
-            StOseb = 2
-            DatumOD = PretvodiDatum(ListFildov[1])
-            DatumDO = PretvodiDatum(ListFildov[2])
-            RNA=RNA
-            Email = ListFildov[4]
-            Zahteve = ListFildov[5]
+            stoseb = 2
+            od = PretvodiDatum(ListFildov[1])
+            do = PretvodiDatum(ListFildov[2])
+            rna=rna
+            rmail = ListFildov[4]
+            zahteve = ListFildov[5]
             #print(DatumOD, DatumDO)
 
             #return cena, ime, agencija, StOseb, DatumOD, DatumDO, RNA
@@ -133,16 +134,16 @@ def Autofill_def():
                 self.Multiroom = True  
                 ListFildov[0] = ""   """
 
-            RNA=""
+            rna=""
             # Ugotovi, ali imaš Virtual credit card- če da, potem vnesi ExpColl v obrazec
             # Dodatne zahteve so v listu pod index = 5
             if ListFildov[5].find("virtual credit card") != -1 or ListFildov[5].find("Expedia Collect Booking") != -1: #!!!!! If find() doesn't find a match, it returns -1, otherwise it returns the left-most index of the substring in the larger string.
-                RNA=("ExpColl")
+                rna=("ExpColl")
                 #self.RNA.setEnabled(False)
            
             # Ali gre pri expediji za Hotel Collect booking
             if ListFildov[5].find("Hotel Collect Booking") != -1:
-                RNA=("refOK")
+                rna=("refOK")
                 #self.RNA.setEnabled(False)
 
 
@@ -152,19 +153,19 @@ def Autofill_def():
             #print(AliNonRefBookingCom)
             
             if "Non-refundable" in AliNonRefBookingCom:
-                RNA="NONref"
+                rna="NONref"
                 #self.RNA.setEnabled(False)
 
             # VRNI V view.py
             cena = ListFildov[0] 
             ime = ListFildov[3].lower().title()
             agencija = "Booking.com"
-            StOseb = ""
-            DatumOD = PretvodiDatum(ListFildov[1])
-            DatumDO = PretvodiDatum(ListFildov[2])
-            Email = ListFildov[4]
-            Zahteve = ListFildov[5]
-            RNA=RNA
+            stoseb = ""
+            od = PretvodiDatum(ListFildov[1])
+            do = PretvodiDatum(ListFildov[2])
+            rmail = ListFildov[4]
+            zahteve = ListFildov[5]
+            rna=rna
             #return cena, ime, agencija, StOseb, DatumOD, DatumDO, RNA
 
 
@@ -239,28 +240,33 @@ def Autofill_def():
        # PRENOS V JSON
 
         JS_file = os.path.join(settings.BASE_DIR, 'Rezervacije//static//json//jsonFILE_IzborSob.json')
-        with open(JS_file, "r", encoding="utf-8") as f:
-            jsonData = json.load(f)
+        # izprazni json
+        with open(JS_file, "w", encoding="utf-8") as f:
+            json.dump({0:0}, f, ensure_ascii=False, indent=4)
+        
+        #with open(JS_file, "r", encoding="utf-8") as f:
+          #  jsonData = json.load(f)
+        jsonData= {}
+        jsonData["avtovnos"]= True
+        jsonData["cena"] = cena
+        jsonData["ime"] = ime
+        jsonData["agencija"] = agencija
+        jsonData["stoseb"] = stoseb
+        jsonData["od"] = od
+        jsonData["do"] = do
+        jsonData["rna"] = rna
+        jsonData["email"] = rmail
+        jsonData["zahteve"] = zahteve
 
-            jsonData[7] = cena
-            jsonData[4] = ime
-            jsonData[8] = agencija
-            jsonData[5] = StOseb
-            jsonData[1] = DatumOD
-            jsonData[2] = DatumDO
-            jsonData[10] = RNA
-            jsonData[12] = Email
-            jsonData[11] = Zahteve
 
-
-            #print(jsonData)
+        print(jsonData)
            
         with open(JS_file, "w", encoding="utf-8") as f:
             json.dump(jsonData, f, ensure_ascii=False, indent=4)
 
 
         #return cena, ime, agencija, StOseb, DatumOD, DatumDO, RNA, Email, Zahteve
-        return DatumOD, DatumDO, ime
+        return od, do, ime
 
 
 

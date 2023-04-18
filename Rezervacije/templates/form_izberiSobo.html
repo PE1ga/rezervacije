@@ -10,7 +10,7 @@
 
 {% block content %}
 
-
+<link rel="stylesheet" href="{% static 'css/style.css' %}" />
 
 <div class="container-fluid">
     <form method="post">
@@ -26,9 +26,113 @@
 </div>
 
 
+<div>
+
+<table>   
+    {% for p in rezervacije %}
+  
+    {% if p.S0 == "xxx" %}
+    <thead class="header-row">
+        <tr class="first">    
+        {% for k, v in p.items %}
+        {% if k == "S16" %}
+        <th style="background-color: red ; border-left: 6px solid red;"> {{ v }} </th>
+        {% else %}
+        <th style="background-color: orange ;"> {{ v }}</th>
+        {% endif %}
+        {% endfor %}
+    </tr>
+    {% endif %}
+    
+    {% if p.S0 == "Dan" %}
+    <tr class="second"> 
+        {% for k, v in p.items %}
+            {% if k == "S16" %}
+            <th style="background-color: red ; border-left: 6px solid red;"> {{ v }} </th>
+            {% else %}
+            <th style="background-color: orange ;"> {{ v }}</th>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    </thead>
+</tr>
+
+
+<!-- TABELA Z VSEMI REZERVACIJAMI -->
+<tr> 
+    {% if p.S0|add:"0" in listSob %}    <!--    in listSob %} >  0-->
+    
+    {% for k, v in p.items %}
+        {% if k == "S0" %}    
+            <td style="background-color: lightblue;"> {{ v }}
+        
+        {% elif ":" in v or k == "S16" %}
+            {% if k == "S16" %}
+                {% if ">" in v and ":" in v %} <!--S16 rezervacije na ta dan z 1 dnevom  O>  -->
+                    {% if IDstr in v %} <!--če je ID obravanega gosta v tej celici, jo obarvaj drugače, da v grafu takoj vidim kdo je to  -->
+                        <td style="background-color: blue; border-left: 6px solid red;" 
+                            onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O></a></td>
+                    {% else %}
+                        <td style="background-color: lightgreen; border-left: 6px solid red;" 
+                            onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O></a></td>
+                    {% endif %}
+
+                {% elif ":" in v %} 
+                    {% if IDstr in v %} <!--če je id obravanega gosta v tej celici, jo obarvaj drugače, da v grafu takoj vidim kdo je to  -->
+                        <td style="background-color: blue; border-left: 6px solid red;" 
+                            onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O</a></td>
+                    {% else %}
+                        <td style="background-color: lightgreen; border-left: 6px solid red;" 
+                            onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O</a></td>
+                    {% endif %}
+                
+                {% endif %}
+            {% if ":" not in v %}
+                <td style="background-color: white;border-left: 6px solid red;"> {{ v }} </td>
+            {% endif %}
+            
+            
+        {% else %} <!--VSI OSTALI STOLPCI RAZEN S16-->
+                <td style="background-color: lightgreen;" onmouseover="this.title='{{ v }}'" 
+                onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O</a></td>
+            {% endif %}
+        {% else %}
+            <td style="background-color: white ;"> {{ v }} </td>
+        {% endif %}
+  
+        {% endfor %}
+    {% endif %}
+</tr>
+    
+    <tr>
+    {% if p.S0 == "Zaj"  or p.S0 == "StS" or p.S0 == "Prh" or p.S0 == "Men" %}
+        
+            {% for k, v in p.items %}        
+            
+                {% if k == "S0" %}
+                <td style="background-color: lightgreen;"> {{ v }} </td> 
+                {% elif k == "S16" %}
+                <td style="background-color: white ; font-style: italic;color: brown;border-left: 6px solid red;" > {{ v }} </td>
+                {% else %}
+                <td style="background-color: white ; font-style: italic;color: brown;" > {{ v }} </td>
+                {% endif %}
+            
+            {% endfor %}
+        
+    {% endif %}
+
+    </tr>
 
 
 
+
+{% endfor %}
+
+
+
+</table>
+
+</div>
 
 
 
