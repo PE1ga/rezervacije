@@ -1,11 +1,11 @@
 {
     "jezik": "SLO",
-    "vrstaInAli": "ALI",
-    "od": "3.4.2023",
-    "do": "6.4.2023",
-    "ime": "Peter",
+    "vrstaInAli": "IN",
+    "od": "18.4.2023",
+    "do": "21.4.2023",
+    "ime": "tim",
     "email": "peter.gasperin@siol.net",
-    "rna": "Nonref",
+    "rna": "Avans",
     "avans": 150,
     "odpoved": 2,
     "tipSobe": [
@@ -13,7 +13,8 @@
             "2",
             "",
             "x",
-            "222"
+            "200"
         ]
-    ]
+    ],
+    "zahteve": "Veseli nas, da ste nam ponovno poslali povpraševanje.<br>"
 }

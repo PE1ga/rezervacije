@@ -1,3 +1,8 @@
+import environ
+environ.Env.read_env()
+env = environ.Env()
+
+
 from typing import Any
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
@@ -909,7 +914,7 @@ def ponudba_predogled(request):
         settings.BASE_DIR, 'Rezervacije//static//json//ponudbaVhod.json')
     dictVhodovPonudba = odpriJson(js_file=js_file)  # Sosed: Razno.py
     htmlTekst= ponudba_izdelava_Html(dictPonudba=dictVhodovPonudba)
-    context= {"htmlTekst": htmlTekst, 'api_key': 'ks18lj2k2vyzd0lh6rf7j45pvl62hj3b45xibxvq5b985n81'}
+    context= {"htmlTekst": htmlTekst, 'api_key': env("API_texteditor")} # poglej v .env za api key
     template = loader.get_template("form_ponudba_predogled.html")
     return HttpResponse(template.render(context, request))
 
