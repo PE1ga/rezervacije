@@ -126,13 +126,24 @@ border: solid green 3px;
 
     </div>
 
-    <div class="avansi">
+    <div class="avansi" style="overflow: scroll;">
         Avansi
+        <table class="table">
+            
+            {% for item in avansi %}
+            <tr>
+                <td>{{item.id}}</td>
+                <td>{{item.imestranke}}</td>
+    
+            </tr>    
+            {% endfor %}
+            </table>
+    
     </div>
 
 
 
-    <div class="listagostov">
+    <div class="listagostov" style="overflow: scroll;">
         Lista Gostov
         <table class="table">
             
@@ -182,8 +193,19 @@ border: solid green 3px;
         Skupaj EUR
     </div>
 
-    <div class="eurnaagencijo">
+    <div class="eurnaagencijo" style="overflow: scroll;">
         EUR na agencijo
+        
+        <table class="table">
+            
+            {% for index, row in agencije_profit.iterrows %}
+            <tr>
+                <td>{{row.agencija}}</td>
+                <td>{{row.Cena}}</td>
+    
+            </tr>    
+            {% endfor %}
+            </table>
     </div>
 
     <div class="odpovedi">

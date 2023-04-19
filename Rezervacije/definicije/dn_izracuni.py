@@ -232,7 +232,7 @@ class Tabela_za_racun:
             elif x["DDV"]== 22:
                 ddv_22 = ddv_22 + float(x["cena"]) * x["kolicina"]
 
-        print(ddv_0, ddv_22, ddv_95)
+        #print(ddv_0, ddv_22, ddv_95)
         
         tabela_ddv = [["DDV 0%", ddv_0, ddv_0* 0, ddv_0+ddv_0*0],
                       ["DDV 9,5%", round(ddv_95,2), round(ddv_95* 0.095 ,2), round(ddv_95+ ddv_95 * 0.095 ,2)],
@@ -252,8 +252,12 @@ class Tabela_za_racun:
                 odstej_eur = float(self.gost.CENA)
             else:
                 odstej_eur = float(self.gost.CENA) - self.ttax
-
-        za_placilo =  skupaj_eur+ skupaj_ddv- odstej_eur
+        
+        if odstej_eur == "":
+            odstej_eur = 0
+        
+        
+        za_placilo =  skupaj_eur + skupaj_ddv- odstej_eur
 
        
             

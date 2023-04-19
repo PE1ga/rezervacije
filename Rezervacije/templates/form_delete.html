@@ -19,7 +19,7 @@
 
         <form action="{% url 'rezervacije:form_delete' item.id %}" method="post"  >                                   <!--"form_home/{{ IdGosta }}/update">    -->
         {% csrf_token %}
-            <a class="btn btn-warning" href="{% url 'rezervacije:form_home' %}">Prekliči</a>
+            <a class="btn btn-warning" href="{% url 'rezervacije:form_rezervacije' %}">Prekliči</a>
         
             <input class="btn btn-danger" type="submit" value="Potrdi">
         </form>

@@ -17,10 +17,10 @@ class Dashboard:
         self.t_izbrani_p_rezerv["do"]=pd.to_datetime(self.t_izbrani_p_rezerv["do"],format="%d.%m.%Y").dt.normalize()
 
         # oO > 1.1.2021
-        t_podatki_leto=self.t_izbrani_p_rezerv[self.t_izbrani_p_rezerv["do"]>=pd.to_datetime("1.1." + self.leto,format="%d.%m.%Y")] 
+        self.t_podatki_leto=self.t_izbrani_p_rezerv[self.t_izbrani_p_rezerv["do"]>=pd.to_datetime("1.1." + self.leto,format="%d.%m.%Y")] 
         # DO < 31.12.2021
-        t_podatki_leto=t_podatki_leto[t_podatki_leto["do"]<=pd.to_datetime("31.12." + self.leto,format="%d.%m.%Y")] 
-        t_podatki_leto["StNocitevSK"]=(t_podatki_leto["SO"]*(t_podatki_leto["do"]-t_podatki_leto["od"])).dt.days
+        self.t_podatki_leto=self.t_podatki_leto[self.t_podatki_leto["do"]<=pd.to_datetime("31.12." + self.leto,format="%d.%m.%Y")] 
+        self.t_podatki_leto["StNocitevSK"]=(self.t_podatki_leto["SO"]*(self.t_podatki_leto["do"]-self.t_podatki_leto["od"])).dt.days
         
         # ODPOVEDANO
         self.t_izbrani_p_odpoved = self.df_data_odpovedano
@@ -35,8 +35,8 @@ class Dashboard:
 
         # PRIHODEK PO MESCIH 2021
         #T_PodDRZAVAH=(T_PodDrzavah.groupby(['DR',"ImeMeseca"],as_index=False).agg({'SO': 'sum', 'StNocitevSK': 'sum','CENA': 'sum'}))
-        t_rezultati_po_mescih = t_podatki_leto.groupby([t_podatki_leto['do'].dt.year.rename('y'), 
-                                                    t_podatki_leto['do'].dt.month.rename('m')],as_index=True).agg({'CENA':'sum', 'StNocitevSK': 'sum'})      
+        t_rezultati_po_mescih = self.t_podatki_leto.groupby([self.t_podatki_leto['do'].dt.year.rename('y'), 
+                                                    self.t_podatki_leto['do'].dt.month.rename('m')],as_index=True).agg({'CENA':'sum', 'StNocitevSK': 'sum'})      
         t_rezultati_po_mescih= t_rezultati_po_mescih.reset_index().rename(columns={"CENA":"cena", "StNocitevSK":"nocitev"})
         
         t_rezultati_po_mescih = t_rezultati_po_mescih.astype(int) # zato, da ni decimalk v rezultatu
@@ -64,6 +64,20 @@ class Dashboard:
     def zadnje_odpovedi_danes(self):
         zadnje_odpovedi = self.t_izbrani_p_odpoved[self.t_izbrani_p_odpoved["do"]>= pd.to_datetime(("1.1." + self.leto), format="%d.%m.%Y")].tail(5)
         return zadnje_odpovedi
+    
+    def profit_po_agencijah(self):
+        profit_po_agenciji = self.t_podatki_leto.groupby("agencija")["CENA"].sum().to_frame(name="Cena").reset_index()
+        profit_po_agenciji["Cena"] = profit_po_agenciji["Cena"].astype(float)
+        profit_po_agenciji["Cena"]= profit_po_agenciji["Cena"].round(2) 
+        profit_po_agenciji = profit_po_agenciji.sort_values(by="Cena", ascending= False)
+        
+        print(profit_po_agenciji)
+        return profit_po_agenciji
+
+
+        #T_profitAG2021=T_Podatki2021.groupby("agencija").sum()["CENA"].to_frame(name="Cena").reset_index() #!!!!!!
+        #T_profitAG2021["Cena"]=T_profitAG2021["Cena"].round(2)
+        #T_profitAG2021 = T_profitAG2021.sort_values(by="Cena", ascending=False)
 
 if __name__=="__main__":
     Dashboard.rezultati_po_mescih("data", "2022")

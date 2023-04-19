@@ -1235,12 +1235,10 @@ def dashboard(request):
     df_podatki= Dashboard(df_data_rezervirano,df_data_odpovedano, letos)
     # NOČITVE
     df_nocitve = df_podatki.nocitve_in_eur_po_mescih()
-    
-    # ID PONUDB
-    id_ponudb = Ponudba.objects.filter(status = "2_Potrjeno").values("id")
-    # Izdelaj list samo 1 stolpca v QS: !!!!!
-    id_ponudb = list(id_ponudb.values_list("id", flat=True))
-    
+
+    # PROFIT PO AGENCIJAH
+    df_profit_agencije = df_podatki.profit_po_agencijah()
+    print(df_profit_agencije)
     
     # LISTA GOSTOV
     lista_gostov = df_podatki.lista_gostov_danes()
@@ -1252,11 +1250,22 @@ def dashboard(request):
     zadnje_odpovedi = df_podatki.zadnje_odpovedi_danes()
     # print(zadnje_rezervacije)
 
+    # ID PONUDB
+    id_ponudb = Ponudba.objects.filter(status = "2_Potrjeno").values("id")
+    # Izdelaj list samo 1 stolpca v QS: !!!!!
+    id_ponudb = list(id_ponudb.values_list("id", flat=True))
+    
+    # CCD AVANSI
+    avansi = VnosGostov.objects.filter(Q(status_rez = "rezervirano") & Q(RNA="Avans")).values("id", "imestranke") 
+    print(avansi)
 
     context={"df_nocitve":df_nocitve, "id_ponudb":id_ponudb, 
              "lista_gostov": lista_gostov, 
              "zadnje_rezervacije": zadnje_rezervacije,
-             "zadnje_odpovedi": zadnje_odpovedi}
+             "zadnje_odpovedi": zadnje_odpovedi,
+             "agencije_profit": df_profit_agencije,
+             "avansi": avansi,
+             }
     return HttpResponse(template.render(context, request))
 
 
