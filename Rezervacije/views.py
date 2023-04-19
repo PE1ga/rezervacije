@@ -39,6 +39,7 @@ from .definicije.ponudbaObdelava import *
 from .definicije.dn_izracuni import *
 
 from .definicije.dashboard import *
+from .definicije.siteminder import *
 
 """def home_view(request):
     context ={}
@@ -1615,6 +1616,24 @@ def tiskanje_vingcard(request):
     return HttpResponse(template.render(context, request))
     
 
+
+def siteminder(request):
+    template = loader.get_template("form_siteminder.html")
+    queryset = VnosGostov.objects.filter(status_rez="rezervirano")
+    zadnji_vnos = queryset.latest("id")
+    od_datum = zadnji_vnos.od
+    data = list(queryset.values())
+    df_podatki = pd.DataFrame.from_records(data=data)
+
+    df_podatki_obdelani = Siteminder(podatki=df_podatki, od_datum=od_datum)
+    podatki_sm = df_podatki_obdelani.obdelava_podatki_sm()
+    #podatki_sm = podatki_sm.to_dict()
+    # print(podatki_sm)
+    context={"sm":podatki_sm}
+
+
+
+    return HttpResponse(template.render(context, request))
 
 
 """

@@ -9,7 +9,6 @@ class Dashboard:
         self.danes = pd.to_datetime("today")
         
 
-    def nocitve_in_eur_po_mescih(self):
         # REZERVIRANO
         self.t_izbrani_p_rezerv = self.df_data_rezervirano    
         self.t_izbrani_p_rezerv["datumvnosa"]=pd.to_datetime(self.t_izbrani_p_rezerv["datumvnosa"],format="%d.%m.%Y").dt.normalize()
@@ -33,6 +32,7 @@ class Dashboard:
 
 
 
+    def nocitve_in_eur_po_mescih(self):
         # PRIHODEK PO MESCIH 2021
         #T_PodDRZAVAH=(T_PodDrzavah.groupby(['DR',"ImeMeseca"],as_index=False).agg({'SO': 'sum', 'StNocitevSK': 'sum','CENA': 'sum'}))
         t_rezultati_po_mescih = self.t_podatki_leto.groupby([self.t_podatki_leto['do'].dt.year.rename('y'), 

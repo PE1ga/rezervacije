@@ -43,13 +43,14 @@ path(route="form_ponudba_obd_poslji", view= views.ponudba_obdelava_poslji, name=
 
 path(route="form_vnos_iz_ponudbe/<int:id>", view= views.ponudba_vnos_iz_ponudbe, name="form_vnos_iz_ponudbe"),
 
-
-
 path(route="form_bar", view= views.bar, name="form_bar"),
 
 path(route="form_dn", view= views.dn_podatki, name="form_dn"),
 path(route="form_dn/form_tiskanje_racuna/", view= views.tiskanje_racuna, name="form_tiskanje_racuna"),
 path(route="form_dn/form_tiskanje_vingcard/", view= views.tiskanje_vingcard, name="form_tiskanje_vingcard"),
+
+path(route="form_siteminder/", view= views.siteminder, name="form_siteminder"),
+
 
 
 

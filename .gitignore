@@ -1,0 +1,44 @@
+.env
+# Compiled binaries and build artifacts
+*.exe
+*.dll
+*.o
+*.so
+*.class
+*.jar
+node_modules/
+target/
+dist/
+build/
+
+# Log files and backup files
+*.log
+*.bak
+*.swp
+*.swo
+*.tmp
+
+# Personal user files
+.DS_Store
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Generated files
+*.pyc
+*.pyo
+*.class
+*.jar
+
+# Configuration files
+settings.py
+local_settings.py
+database.yml
+secrets.yml
+config/*.yml
+
+# Third-party libraries
+node_modules/
+vendor/
+bower_components/

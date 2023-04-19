@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Formular Siteminder
+{% endblock %}
+
+
+{% block content %}
+<style>
+    td {
+        text-align: center;
+        font-weight: bold;
+    }
+    th:first-child, td:first-child {
+        position: sticky;
+        left: 0;
+        background-color: white;
+    }
+    .container{
+        float: left;
+        width: 40vw;
+    }
+
+    @media (max-width: 1200px) {
+    
+  .container {
+    display: flex;
+    flex-direction: column;
+    width: 80vw;
+    /* overflow-x: scroll; */
+  }
+}
+
+
+
+
+
+</style>
+
+
+<div class="container"> 
+<table class="table table-bordered" >
+    <thead>
+        <tr>
+            <th>Tip</th>
+            {% for col in sm.columns %}
+                <th>{{ col }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for index, row in sm.iterrows %}
+            <tr>
+                <th>{{ index }}</th>
+                {% for value in row %}
+                    {% if value == 0 %}
+                    <td style="background-color: red;">{{ value }}</td>
+                    {% else %}
+                    <td>{{ value }}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+
+
+
+{% endblock %}

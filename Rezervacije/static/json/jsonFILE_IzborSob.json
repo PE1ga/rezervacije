@@ -1,9 +1,19 @@
 {
+    "avtovnos": true,
+    "cena": "269.10",
+    "ime": "Van Gaans Conny",
+    "agencija": "Booking.com",
+    "stoseb": "",
+    "od": "25.05.2023",
+    "do": "27.05.2023",
+    "rna": "ExpColl",
+    "email": "cgaans.534117@guest.booking.com",
+    "zahteve": "You have received a virtual credit card for this reservation.You may charge it as of 2023-05-25. Approximate time of arrival: between 16:00 and 17:00, booker_is_genius",
     "list_prostih_sob": [
+        10,
+        11,
         12
     ],
-    "od": "19.4.2023",
-    "do": "23.4.2023",
     "tip": "g",
-    "stsobe": "12"
+    "stsobe": "10"
 }
