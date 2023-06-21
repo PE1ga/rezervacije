@@ -1,9 +1,11 @@
-{% extends 'baseApl.html' %}
-{% load static %}
-{% block title %}Index{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-{% if user.is_authenticated %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=0.7"> 
+    <title>Hotel Gašperin Bohinj</title>
 
 
 <style>
@@ -16,8 +18,7 @@
     a:visited {color: brown;}
     
     button {
-        border: none;
-        border-radius: 20px;
+        border: 5px;
         outline: auto;
         border-color: black;
         background-color: rgb(130, 127, 127);
@@ -27,7 +28,7 @@
         text-decoration: none;
         display: inline-block;
         font-size: 35px;
-        margin: 3px 3px;
+        margin: 8px 8px;
         cursor: pointer;
         
         }
@@ -35,11 +36,15 @@
 </style>
 
 
+</head>
+
+<body>
 
 
 <h1>{{ ObDatum.DatumObravnavani }} - Hotel Gašperin</h1>
 
-
+{% if user.is_authenticated %}
+    
     <p>
         <button style="width:400px; background-color: rgb(232, 253, 5); 
                     color: rgb(243, 7, 23);" 
@@ -54,12 +59,11 @@
         <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='pospravljanje/'"  >POSPRAVLJANJE</button>
     
         <br>
-        <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='pospravljanje_prihodi/'" >PRIHODI</button>
-        <br>
-    
+        
         <!--<a href="pospravljanje/">Pospravljanje</a>-->
-        {% if request.user.groups.all.0.name == "boss" %}
-        <!-- % if user.username == "Peter" or user.username == "Kellie" %} -->
+        {% if user.username == "Peter" or user.username == "Kellie" %}
+            <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='pospravljanje_prihodi/'" >PRIHODI</button>
+            <br>
         
             <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='zajtrk/'" >ZAJTRK</button>
             <br>
@@ -73,7 +77,7 @@
             <br>
             <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='recepcija/'" >RECEPCIJA</button>
             <br>
-            <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='form_dashboard'" >Dashboard</button>
+            <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/form_dashboard'" >Dashboard</button>
        
             <br>
         
@@ -81,12 +85,12 @@
     
 {% else %}
 <br>
-    <button style="background-color: rgb(232, 253, 5); color: rgb(243, 7, 23);" type="submit" onclick="location.href='{% url 'login' %}'">LOGIN</button>    
-<br>
+        <button style="background-color: rgb(232, 253, 5); color: rgb(243, 7, 23);" type="submit" onclick="location.href='{% url 'login' %}'">LOGIN</button>    
+        <br>
     {% if messages %}
         {% for message in messages %}
         {{ message }}
-        {% endfor %}
+    {% endfor %}
     {% endif %}
     
 
@@ -94,4 +98,8 @@
 {% endif %}
 
 
-{% endblock %}
+<!--
+
+-->
+</html>
+</body>

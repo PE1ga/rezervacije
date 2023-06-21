@@ -281,4 +281,4 @@ def ponudba_obdelava_Html(dict):
     elif status =="3_Hvala":
         htmlText=htmlText = header["pozdrav"][0] + hvala[rna][jezik] + sobe_opis_skupni
     #print(htmlText)    
-    return htmlText, sklic, rna
+    return htmlText, sklic, rna, rokPlacila

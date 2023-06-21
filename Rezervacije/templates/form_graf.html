@@ -340,12 +340,22 @@ function addSevenDaysToInput() {
                 {% if ">" in v and ":" in v %}
                     {% if danes_dat in v %}    
                         <td style="background-color: darkgreen; border-left: 6px solid red;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a style="color:white;" href="/updateIzGrafa/{{ v }}">O></a></td>
+                    {% elif "Zaklenjena" in v %}
+                        <td style="background-color: black; color:white; border-left: 6px solid red;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a style="color:white;" href="/updateIzGrafa/{{ v }}">O></a></td>
+                        
+
                     {% else %}
                         <td style="background-color: lightpink; border-left: 6px solid red;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O></a></td>
                     {% endif %}
+
+
+
                 {% elif ":" in v %} 
                     {% if danes_dat in v %}
                     <td style="background-color: darkgreen; color:white; border-left: 6px solid red;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a style="color:white;" href="/updateIzGrafa/{{ v }}">O</a></td>
+                    {% elif "Zaklenjena" in v %}
+                    <td style="background-color: black; color:white; border-left: 6px solid red;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a style="color:white;" href="/updateIzGrafa/{{ v }}">O</a></td>
+                    
                     {% else %}
                     <td style="background-color: lightpink; border-left: 6px solid red;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O</a></td>
                     
@@ -375,6 +385,10 @@ function addSevenDaysToInput() {
             {% if ">" in v and ":" in v %}
                 {% if danes_dat in v %}
                     <td style="background-color: darkgreen" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a style="color: white;" href="/updateIzGrafa/{{ v }}">O></a></td>
+                {% elif "Zaklenjena" in v %}
+                    <td style="background-color: black; color:white; " onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a style="color:white;" href="/updateIzGrafa/{{ v }}">O></a></td>
+                    
+                
                 {% else %}
                     <td style="background-color: lightpink;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O></a></td>
                 {% endif %}
@@ -382,6 +396,11 @@ function addSevenDaysToInput() {
             {% elif ":" in v %} <!--S16 rezervacije na ta dan z 1 dnevom  O>  -->
                 {% if danes_dat in v %}       
                     <td style="background-color: darkgreen;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a style="color: white;" href="/updateIzGrafa/{{ v }}">O</a></td>    
+
+                {% elif "Zaklenjena" in v %}
+                    <td style="background-color: black; color:white; " onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a style="color:white;" href="/updateIzGrafa/{{ v }}">O></a></td>
+                 
+
                 {% else %}
                     <td style="background-color: lightpink;" onmouseover="this.title='{{ v }}'" onmouseout="this.title=''"><a href="/updateIzGrafa/{{ v }}">O</a></td>
                 {% endif %}

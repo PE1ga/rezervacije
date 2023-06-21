@@ -10,11 +10,13 @@ urlpatterns = [
 path(route="form_dashboard", view= views.dashboard, name="form_dashboard"),
 
 path(route="form_rezervacije/", view = views.form_rezervacije, name ="form_rezervacije"),
+# Vnos nove rezervacije
 path(route="form_avtovnos_file/", view= views.form_avtovnos_file, name="form_avtovnos_file"),
 path(route="form_avtovnos/", view= views.avtovnos, name="form_avtovnos"),
-path(route="form_vnos_izbor_sob/", view= views.form_vnos_izbor_sob, name="form_vnos_izbor_sob"),
+path(route="form_predvnos_rez/", view= views.predvnos_rezerv, name="form_predvnos_rez"),
 path(route="form_vnos_rocni/", view= views.form_vnos_rocni, name="form_vnos_rocni"),
-path(route="form_vnos_izbor_sob/form_izberiSobo", view= views.form_izberi_sobo, name="form_izberi_sobo"),
+path(route="form_predvnos_rez/form_izberiSobo", view= views.form_izberi_sobo, name="form_izberi_sobo"),
+path(route="form_vnos_update_availability", view= views.update_availability, name="form_vnos_update_availability"),
     
     #path(route="form_Avtovnos/", view= views.get_name, name="form_Avtovnos"),
     
@@ -48,6 +50,11 @@ path(route="form_bar", view= views.bar, name="form_bar"),
 path(route="form_dn", view= views.dn_podatki, name="form_dn"),
 path(route="form_dn/form_tiskanje_racuna/", view= views.tiskanje_racuna, name="form_tiskanje_racuna"),
 path(route="form_dn/form_tiskanje_vingcard/", view= views.tiskanje_vingcard, name="form_tiskanje_vingcard"),
+path(route="form_dn/form_tiskanje_porocilo/", view= views.tiskanje_porocilo, name="form_tiskanje_porocilo"),
+
+path(route="form_dn/form_tiskanje_multiracun/", view= views.tiskanje_multiracun, name="form_tiskanje_multiracun"),
+
+path(route="form_dn/form_grafikoni/", view= views.grafikon, name="form_grafikoni"),
 
 path(route="form_siteminder/", view= views.siteminder, name="form_siteminder"),
 

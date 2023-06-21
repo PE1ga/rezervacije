@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=0.7"> -->
+    <title>Prazne sobe</title>
+
+
+<style>
+    table {border-collapse: collapse; }
+    table, tr, td, th {border: 2px solid black; text-align:center; font-size:50px; padding: 5px;}
+    h1 {font-size: 50px;}
+    p, h2 {font-size: 40px;}
+    a {color: solid rgb(39, 3, 239); font-size:50px}
+    a:hover {color: rgb(243, 4, 68);}
+    a:visited {color: brown;}
+    
+    button {
+        border: 5px;
+        outline: auto;
+        border-color: black;
+        background-color: rgb(130, 127, 127);
+        color: rgb(243, 243, 7);
+        padding: 20px 45px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 35px;
+        margin: 8px 8px;
+        cursor: pointer;
+        
+        }
+ 
+</style>
+
+
+</head>
+
+<body>
+{% if user.is_authenticated %}
+<p>Prijavljen si kot: {{ user }} </p>
+
+<h1> {{ ObDatum.DatumObravnavani }} - PROSTE SOBE</h1> 
+                         
+        <p>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/'" name='mybtn1'>DOMOV</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/graf/'" name='mybtn1'>GRAF</button></a>
+            <!--<a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/pospravljanje/pospravljanje_prihodi/'" name='mybtn1'>PRIHODI</button></a>
+            {% if user.username == "Peter" or user.username == "Kellie" %}
+                <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/zajtrk/'" name='mybtn1'>ZAJTRK</button></a>
+            {% endif %}  -->
+            
+        </p>
+
+        <table>
+            <th>Soba</th>
+            <th>Prazna DO:</th>
+            <th>Še DNI:</th>
+            
+
+        {% for x in Sobe %}
+        <tr style="height: 80px">
+                
+            {% if x.Soba >= 10 and x.Soba < 20 %}
+                <td><strong><a style="color: rgb(100, 16, 115);">{{ x.Soba }}</a> </strong></td>
+            {% elif x.Soba >= 20 and x.Soba < 30 %}
+                <td><strong><a style="color: green;" >{{ x.Soba }}</a></strong> </td>
+            {% elif x.Soba >= 30 and x.Soba < 40 %}
+                <td><strong><a style="color: rgb(22, 15, 231);">{{ x.Soba }}</a></strong> </td>
+            {% elif x.Soba >= 40 and x.Soba < 50 %}
+                <td><strong><a style="color: rgb(191, 9, 9);">{{ x.Soba }}</a></strong> </td>
+            {% elif x.Soba >= 50 and x.Soba < 60 %}
+                <td><strong><a style="color: rgb(18, 17, 17);">{{ x.Soba }}</a></strong> </td>
+            {% endif %}
+        
+                
+            
+            
+            
+            <!-- Prazna še do datuma -->
+            
+            <td> {{ x.NaslPrh }} </td>
+
+            <!-- Prazna še DNI -->
+            
+            <td> {{ x.DniDoPrih }} </td>
+
+          
+        </tr>
+        {% endfor %} 
+        </table>
+
+        <p>
+            <a href="/">Domov</a>
+        </p>
+
+    
+{% else %}
+<h1>Ne bo šlo. Moraš se logirati!</h1>
+<a href="{% url 'login' %}">Logiraj se tu!</a>
+
+
+{% endif %}
+
+
+</html>
+</body>

@@ -1,0 +1,15 @@
+{% load static %}
+
+<div style="width: 700px; display: flex; flex-direction: column; align-items: center;">
+<p style="font-size: 100px; font-weight: bold; color: brown;" >
+    Soba <span style="color: red;display: inline-block; text-align: center; border:blue 10px dashed ; font-size: 150px;">{{soba.Soba}} </span> ven?</p>
+
+<button type="submit" style="margin-bottom: 100px;"
+    onclick="location.href='/zajtrk/gosti_sli_ven/{{soba.id}}'" ><img width="100px" src="{% static 'slike/vseOK.png' %}" alt="ok"></button>
+
+<button type="submit"
+    onclick="location.href='/zajtrk'"><img width="100px" src="{% static 'slike/niOK.png' %}" alt="ok"></button>
+
+
+
+</div>

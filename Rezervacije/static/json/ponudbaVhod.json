@@ -1,9 +1,9 @@
 {
-    "jezik": "SLO",
+    "jezik": "GB",
     "vrstaInAli": "IN",
-    "od": "18.4.2023",
-    "do": "21.4.2023",
-    "ime": "tim",
+    "od": "26.5.2023",
+    "do": "27.5.2023",
+    "ime": "tom jerry",
     "email": "peter.gasperin@siol.net",
     "rna": "Avans",
     "avans": 150,
@@ -12,9 +12,9 @@
         [
             "2",
             "",
-            "x",
-            "200"
+            "g",
+            "144"
         ]
     ],
-    "zahteve": "Veseli nas, da ste nam ponovno poslali povpraševanje.<br>"
+    "zahteve": ""
 }

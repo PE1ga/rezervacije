@@ -29,7 +29,50 @@
                 background-color: white;
             }
                     
-                    </style>
+
+            .container {
+    position: relative;
+    width: 450px;
+    height: 500px;
+    display: grid;
+    /* 3 x 2 */
+    /*grid-template-rows: 100px 100px 100px;*/
+    /*grid-template-columns: 100px 100px;*/
+    
+    /*Krajša varrianta, če imaš eneke velikosti stolpcev oz vrstic*/
+    /*grid-template-rows: repeat(3, 100px);*/
+    /*grid-template-columns: repeat(2, 100px);*/
+    
+    /*Še krajša vaianta */
+    grid-template: repeat(3, 200px) / repeat(2, 200px) ;
+    
+    gap: 20px;
+    /*border: 3px solid lightgray;*/
+    
+    justify-items: stretch;  /* poravnava boxa v svojem GRIDU*/
+    align-items: stretch; /* poravnava boxa v svojem GRIDU*/
+    
+    justify-content: center;  /* to je poravnava GRIDA v CONTAINER*/
+    align-content: top; /* to je poravnava GRIDA v CONTAINER*/
+    margin-top: 0%;
+    /*height: 100vh;*/
+    
+        }
+    
+    .box {
+        width: 260px;
+        height: 200px;
+        
+        /*background-color: gold;*/
+    }
+    img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+
+</style>
         
         
         <p>
@@ -41,10 +84,10 @@
                     onclick="location.href='/zajtrk/'">ZAJTRK</button></a>
                     
         </p>
-        <p>
+        <!-- <p>
             <a><button style="background-color: rgb(51, 0, 255);" type="submit" 
                 onclick="location.href='gosti_sli_ven_prihodi/{{ SobaDetajl.id }}'">ŠLI VEN</button></a>
-            </p>
+            </p> -->
             
         <h1> PODATKI O REZERVACIJI</h1> 
         <p><strong>Soba:</strong> {{ SobaDetajl.Soba }}</p>
@@ -67,23 +110,32 @@
             {% csrf_token %}
             
             <input type="text" id="demo" name="sporocilo" size="15"> </p>
-            
-            <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Tuš je pokvarjen')">
-                <img style="width:300px" src="{% static 'slike/tus.png' %}"  alt="Tuš pokvarjen"> </button>
-            <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Tv ne dela')">
-                <img style="width:300px" src="{% static 'slike/tv.png' %}"  alt="Tv pokvarjen"> </button>
-            <br>
-            <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Ni sušilca')">
-                <img style="width:300px" src="{% static 'slike/fen.png' %}"  alt="Fen pokvarjen"> </button>
-            
-            <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Soba smrdi')">
-                <img style="width:300px" src="{% static 'slike/smrad.jpg' %}"  alt="Soba smrdi"> </button>
-            <br>
-            <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Manjka kozarec')">
-                <img style="width:300px" src="{% static 'slike/kozarec.jpg' %}"  alt="Manjka kozarec"> </button>
-            <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Pregorela žarnica')">
-                <img style="width:300px" src="{% static 'slike/zarnica.png' %}"  alt="Pregorela žarnica"> </button>
-                
+        <div class="container">
+            <div class="box">
+                <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Tuš je pokvarjen')">
+                <img src="{% static 'slike/tus.png' %}"  alt="Tuš pokvarjen"> </button>
+            </div>
+            <div class="box">
+                <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Tv ne dela')">
+                <img src="{% static 'slike/tv.png' %}"  alt="Tv pokvarjen"> </button>
+            </div>
+            <div class="box">
+                <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Ni sušilca')">
+                <img src="{% static 'slike/fen.png' %}"  alt="Fen pokvarjen"> </button>
+            </div>
+            <div class="box">
+                <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Soba smrdi')">
+                <img src="{% static 'slike/smrad.jpg' %}"  alt="Soba smrdi"> </button>
+            </div>
+            <div class="box">
+                <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Manjka kozarec')">
+                <img src="{% static 'slike/kozarec.jpg' %}"  alt="Manjka kozarec"> </button>
+            </div>
+            <div class="box">
+                <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Pregorela žarnica')">
+                <img src="{% static 'slike/zarnica.png' %}"  alt="Pregorela žarnica"> </button>
+            </div>
+        </div>    
                 
            
             

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Update availability    
+{% endblock %}
+
+
+{% block content %}
+<form action="" method="post">
+{% csrf_token %}
+<button name="btn_uredi_sm" class="btn btn bg-primary-subtle">Uredi SM?</button>
+
+<button name="btn_brez_sm" class="btn btn bg-primary-subtle">Brez SM?</button>
+    <!-- Če je agencija SM ali bcom, pokaži text area, drugače pa ne -->
+    {% if pokazi_textarea_infotext %}
+    <br><br><br>
+    <input style="border: solid black 1px; font-size: 2rem; width:800px" value="{{email}}" name="email_www">
+    <br><br>
+    <textarea name="info_po_rezervaciji" id="info_po_rezervaciji" cols="120" rows="20">
+        {{info_tekst}}
+    </textarea>
+    <br><br>
+    <button name="btn_poslji_info" class="btn btn bg-success-subtle">Pošlji info</button>
+    </form>
+    {% endif %}
+
+    <!-- Če je bil email poslan, odstrani textarea in daj spodnje sporočilo -->
+    {% if submitted %}
+    <h1>Email je z informacijami je bil poslan gostu.</h1>
+    {% endif %}
+
+{% if zazeni_siteminder %}
+<script>
+    window.open("{{zazeni_siteminder}}", "_blank");
+    window.close();
+</script>
+
+{% endif %}
+
+{% endblock %}

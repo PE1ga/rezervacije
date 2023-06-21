@@ -1,5 +1,6 @@
 {% load static %}
 {% if user.is_authenticated %}
+    <meta http-equiv="refresh" content="30">    
     <!--<p>Prijavljen si kot: {{ user }} </p> -->
     <style>
         table {border-collapse: collapse; }
@@ -57,14 +58,16 @@
         
         
         {% if user.username == "Peter" or user.username == "Kellie" %} <!-- if user-->
-        <p>
+        <div style="display: flex; orientation: row;">
             <a><button style="background-color: rgb(28, 4, 248);" type="submit" 
-                onclick="location.href='/'">DOMOV</button></a>
-                    
-        </p>
+                onclick="location.href='/'">DOM</button></a>
+            <form action="" method="post">
+                {% csrf_token %}
+                <a><button style="background-color: green;" type="submit" name="reset_zadnji">RES</button></a>
+            </form>        
+        </div>
             
-        <h1>RECEPCIJA</h1> 
-        
+        <h1 style="color: red; font-weight: bold;">CHECK IN še:  {{st_se_cin}}</h1>
         <table>
             
             
@@ -73,8 +76,9 @@
             <tr>
                 <td style="text-align: center; font-size: 50px; font-weight: bold; background-color: lightgreen;">{{ x.Soba }}</td>
                 <td style="font-size: 50px; width: 500px; background-color: lightgreen;"><a href="recepcija_detajli/{{ x.id }}">{{ x.Ime }}</a></td>
-                <td style="font-size: 30px; background-color: lightgreen">{{ x.Drzava }}__{{ x.Tip }}</td>
+                <td style="font-size: 50px; background-color: lightgreen">{{ x.Drzava }}_{{ x.Tip }}{{x.St_Oseb}}</td>
                 <td style="font-size: 30px; background-color: lightgreen">{{ x.Agencija }}</td>
+                
             </tr>
             <tr>
                 {% if "None" not in x.Zahteve %}
@@ -84,12 +88,17 @@
                 {% endif %}
                 
                 
-                {% else %}
+            {% else %}
                 <tr>
                     <td style="text-align: center; font-size: 40px; font-weight: bold;">{{ x.Soba }}</td>
                     <td style="font-size: 50px; width: 500px;"><a href="recepcija_detajli/{{ x.id }}">{{ x.Ime }}</a></td>
-                    <td style="font-size: 30px;">{{ x.Drzava }}__{{ x.Tip }}</td>
+                    <td style="font-size: 30px;">{{ x.Drzava }}_{{ x.Tip }}{{x.St_Oseb}}</td>
                     <td style="font-size: 30px;">{{ x.Agencija }}</td>
+                    {% if x.Status == "KO" %} 
+                        <td style="background-color: green; width: 50px; text-align: center; font-size: 40px; color: white; font-weight: bold;" >{{x.st_noci}}</td>
+                    {% else %}
+                        <td style="background-color: red; width: 50px; text-align: center; font-size: 40px; font-weight: bold" >{{x.st_noci}}</td>
+                    {% endif %}
                 </tr>
                 <tr>
                     {% if "None" not in x.Zahteve %}

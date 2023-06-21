@@ -1,0 +1,20 @@
+{
+    "id": 13105,
+    "stsobe": 43,
+    "imestranke": "Salle Michel",
+    "od": "24.05.2023",
+    "do": "26.05.2023",
+    "SO": 2,
+    "SOTR": 0,
+    "st_nocitev": 4,
+    "st_noci": 2,
+    "cena_na_nocitev": 50.5479,
+    "agencija": "Booking.com",
+    "RNA": "ExpColl",
+    "CENA": "221.40",
+    "TTAX": 8,
+    "StanjeTTAX": "Ttax NI VKLJ",
+    "DR": "BE",
+    "zahteve": "",
+    "ze_placano": "221.40"
+}

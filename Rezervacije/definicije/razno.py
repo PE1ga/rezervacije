@@ -35,3 +35,21 @@ def odpriJson(js_file):
 def shraniJson(js_file, jsonData):
     with open(js_file, "w", encoding="utf-8") as f:
         json.dump(jsonData, f, ensure_ascii=False, indent=4)
+
+def ime_dneva_v_tednu(st_dneva):
+    if st_dneva == 0:
+        ime_dneva_datuma = "Ponedeljek" 
+    elif st_dneva == 1:
+        ime_dneva_datuma = "Torek"
+    elif st_dneva == 2:
+        ime_dneva_datuma = "Sreda"
+    elif st_dneva == 3:
+        ime_dneva_datuma = "Četrtek"
+    elif st_dneva == 4:
+        ime_dneva_datuma = "Petek"
+    elif st_dneva == 5:
+        ime_dneva_datuma = "Sobota"
+    elif st_dneva == 6:
+        ime_dneva_datuma = "Nedelja"
+    
+    return ime_dneva_datuma

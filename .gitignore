@@ -1,4 +1,6 @@
 .env
+
+
 # Compiled binaries and build artifacts
 *.exe
 *.dll

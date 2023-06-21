@@ -28,14 +28,16 @@ class VnosGostov(models.Model):
     StanjeTTAX = models.CharField(max_length=100) #, null=True, blank=True)
     OdpRok = models.IntegerField(null=True, blank=True)
     IDponudbe = models.CharField(max_length=20, null=True, blank=True)
-    RokPlacilaAvansa =models.CharField(max_length=100,null=True, blank=True) #models.DateField(null=True, blank=True)
+    RokPlacilaAvansa =models.DateTimeField(null=True, blank=True)   #models.CharField(max_length=100,null=True, blank=True) #models.DateField(null=True, blank=True)
     Zaklenjena = models.CharField(max_length=100, null=True, blank=True)
     OdpovedDne= models.CharField(max_length=100,null=True, blank=True)     #models.DateField(null=True, blank=True)
     SOTR= models.IntegerField(null=True, blank=True, default=0)
     SOMAL= models.IntegerField(null=True, blank=True, default=0)
     status_rez = models.CharField(max_length=100)
+    status_placila = models.CharField(max_length=100,null=True, blank=True,)
     
     datumVnosa_dt = models.DateTimeField(null=True)
+    datum_odpovedi_dt = models.DateTimeField(null=True)
     od_dt= models.DateTimeField(null=True)
     do_dt= models.DateTimeField(null=True)
 
@@ -68,6 +70,9 @@ class VnosGostov(models.Model):
 
     """def __str__(self):
         return self.imestranke"""
+
+
+
 class Ponudba(models.Model):
     datumVnosa= models.CharField(max_length=30, null=True, blank=True) 
     status = models.CharField(max_length=30, null=True, blank=True) 
@@ -90,7 +95,7 @@ class Ponudba(models.Model):
     zahteve= models.CharField(max_length=255, null=True, blank=True)
     stNocitev= models.CharField(max_length=30, null=True, blank=True)
     dodatnoLezisce= models.CharField(max_length=30, null=True, blank=True)
-    rokPlacilaAvansa= models.CharField(max_length=30, null=True, blank=True)
+    rokPlacilaAvansa= models.DateTimeField(null=True)  #models.CharField(max_length=30, null=True, blank=True)
     skiXXdn= models.CharField(max_length=30, null=True, blank=True)
     skiOsebe= models.CharField(max_length=30, null=True, blank=True)
     skiCenaSkiInNast= models.CharField(max_length=30, null=True, blank=True)

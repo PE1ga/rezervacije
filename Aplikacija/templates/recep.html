@@ -1,0 +1,399 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="3600" /> 
+    <title>Hotel Gašperin RECTV</title>
+</head>
+<body>
+    
+<style>
+    .container {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 22% 65% 13%;
+  grid-gap: 10px; 
+  
+  width: 100vw ;
+  height: 95vh;
+  margin: 0;
+  padding: 0;
+}
+
+.box1 {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+.box2 {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+/* .box3 {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+} */
+.box4 {
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
+}
+.box5 {
+  grid-column: 1 / 3;
+  grid-row: 3 / 4;
+}
+body {
+  background-color: black;
+  margin: 0;
+  padding: 0;
+}
+
+
+
+
+.slider {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  object-fit: fill;
+  margin: 0;
+}
+
+.slide {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0;
+  opacity: 0;
+  transition: opacity 1.2s;
+}
+
+#slide1 {
+  opacity: 1;
+}
+</style>
+ 
+
+
+
+
+
+<!--VREME widget  -->
+
+<script>
+    (function(d, s, id) {
+        if (d.getElementById(id)) {
+            if (window.__TOMORROW__) {
+                window.__TOMORROW__.renderWidget();
+            }
+            return;
+        }
+        const fjs = d.getElementsByTagName(s)[0];
+        const js = d.createElement(s);
+        js.id = id;
+        js.src = "https://www.tomorrow.io/v1/widget/sdk/sdk.bundle.min.js";
+
+        fjs.parentNode.insertBefore(js, fjs);
+    })(document, 'script', 'tomorrow-sdk');
+</script>
+
+
+
+
+<div class="container"> <!--2 x 2  -->
+
+<div class="box1">
+  <iframe width='238' height='198' style='padding:0!important;margin:0!important;border:none!important;background:none!important;background:transparent!important' marginheight='0' marginwidth='0' frameborder='0' scrolling='no' comment='/*defined*/' src='https://dayspedia.com/if/digit/?v=1&iframe=eyJ3LTEyIjpmYWxzZSwidy0xMSI6dHJ1ZSwidy0xMyI6dHJ1ZSwidy0xNCI6dHJ1ZSwidy0xNSI6dHJ1ZSwidy0xMTAiOnRydWUsInctd2lkdGgtMCI6dHJ1ZSwidy13aWR0aC0xIjpmYWxzZSwidy13aWR0aC0yIjpmYWxzZSwidy0xNiI6IjE2cHggMTZweCAyNHB4Iiwidy0xOSI6IjQ4Iiwidy0xNyI6IjE2Iiwidy0yMSI6dHJ1ZSwiYmdpbWFnZSI6LTEsImJnaW1hZ2VTZXQiOmZhbHNlLCJ3LTIxYzAiOiIjMDMwMzAzIiwidy0wIjp0cnVlLCJ3LTMiOnRydWUsInctM2MwIjoiI2Y4ZjM1OSIsInctM2IwIjoiNCIsInctNiI6IiNmOGYzNTkiLCJ3LTIwIjp0cnVlLCJ3LTQiOiIjY2FkM2Q4Iiwidy0xOCI6ZmFsc2UsInctd2lkdGgtMmMtMCI6IjMwMCIsInctMTE1IjpmYWxzZX0=&lang=en&cityid=8375'>
+
+  </iframe><!--Dayspedia.com widget ENDS-->
+</div>
+
+
+<div class="box2">
+
+        <div class="tomorrow"
+           data-location-id="2022076"
+           data-language="EN"
+           data-unit-system="METRIC"
+           data-skin="dark"
+           data-widget-type="upcoming"
+           style="padding-bottom:22px;position:relative;"
+        >
+          <a
+            href="https://www.tomorrow.io/weather-api/"
+            rel="nofollow noopener noreferrer"
+            target="_blank"
+            style="position: absolute; bottom: 0; transform: translateX(-50%); left: 50%;"
+          >
+            <img
+              alt="Powered by the Tomorrow.io Weather API"
+              src="https://weather-website-client.tomorrow.io/img/powered-by.svg"
+              width="250"
+              height="18"
+            />
+          </a>
+        </div>
+
+</div>
+
+<style>
+
+/* Iframe Aktualni Dogodki v Bohinju */
+  .box3 {
+    
+    position: relative;
+    overflow: hidden;
+    
+  }
+  .ifrBox3 {
+    position: absolute;
+    top: -70px;
+    left: -110px;
+    overflow: hidden;
+    
+    
+
+  }
+ 
+  #iframeWWWB {
+      transform: scale(0.70);
+      transform-origin: top left;
+    }
+
+</style>
+    <!-- <div class="box3">
+      
+      
+      <iframe class="ifrBox3"
+        id="iframeWWWB" src="https://www.bohinj.si/en/latest-news/" 
+        frameborder="0" width="1600" height="1500"></iframe>
+    </div> -->
+    
+    
+    
+    
+    <style>
+    .box4 {
+      position: relative;
+      overflow: hidden;
+      /*height: 870px;*/
+      
+    }
+    .ifrBox4 {
+      position: absolute;
+      top: -250px;
+      right: -500px;
+    }    
+    
+  </style>
+    <div class="box4" style="overflow: hidden;">
+      
+      <div class="slider">
+        
+        <div style="display: flex; flex-direction: row; justify-content: space-around;" class="slide" id="slide1" alt="image1">
+            <div style="color: white; font-size: 2rem; width: 900px;" >
+              <br>SAVICA WATERFALL <br><br>
+                The Savica waterfall is unique among waterfalls in the world, as the water flow splits into two streams in the hidden underground. The famous A-shaped waterfall is 78 m high at an altitude of 836 m at normal water level.
+                It is fed by water flowing from the Triglav Lakes Valley and from under Pršivec, which reaches the waterfall through a horizontal cave tunnel. The original karst cave hides numerous siphons and underground lakes in its depths and is accessible only with guides and the right equipment.
+                
+            </div>
+          <div>
+          <img src="{% static 'recepcijaTV/slap_savica.jpg' %}" width="800px" height="600px" >
+          </div>
+        </div>
+
+        <!-- NASLEDNJI SLIDE -->
+        <div style="display: flex; flex-direction: row; justify-content: space-around;" class="slide" id="slide2" alt="image2">
+          <div style="color: white; font-size: 2rem; width: 900px;" >
+            <br>MOSTNICA GORGE AND VOJE VALLEY <br><br>
+            Mostnica Gorge and the Voje Valley are among the most beautiful and most visited natural attractions in Bohinj. On the way through the Gorge, 
+            you can admire the crystal-clear water and the boldly reshaped rocks, and enjoy the rich flora, fauna and cultural landscape that has been 
+            nurtured by the local people over the centuries. In autumn, the path leads you among the cows and their tinkling bells to the waterfall where 
+            the Voje Valley ends.
+          </div>
+        <div>
+        <img src="{% static 'recepcijaTV/mostnica.jpg' %}" width="800px" height="600px" >
+        </div>
+      </div>
+      
+      <!-- NASLEDNJI SLIDE -->
+      <div style="display: flex; flex-direction: row; justify-content: space-around;" class="slide" id="slide3" alt="image3">
+        <div style="color: white; font-size: 2rem; width: 900px;" >
+          <br>VALLEY OF THE TRIGLAV LAKES <br><br>
+          From the Bohinj valley, the Triglav Lakes Valley can be reached from Stara Fužina, past the Blato mountain pasture and via mountain pastures 
+          Planina pri Jezeru, Dedno polje and Ovčarija. From Ovčarija you can reach the Hut by the Triglav Lakes (1685 m) either via čez Prode or čez 
+          Štapce path – in both cases it takes about 5 hours. Accessing the Valley via Komna takes nearly 5 hours as well. 
+          The third possible way leads by the Savica waterfall. After a demanding steep and winding path through Komarča, it takes about 2 hours to 
+          get to the Black Lake (Črno jezero, 1294 m), and about 3 hours to the Hut by the Triglav Lakes. It takes another good two hours of walking 
+          to get from Hut by the Triglav Lakes to the Zasavska koča na Prehodavcih hut (2071m).
+        </div>
+      <div>
+        <img src="{% static 'recepcijaTV/triglavska_jezera.jpg' %}" width="800px" height="600px" > 
+      </div>
+    </div>
+
+      <!-- NASLEDNJI SLIDE -->
+      <div style="display: flex; flex-direction: row; justify-content: space-around;" class="slide" id="slide4" alt="image4">
+        <div style="color: white; font-size: 2rem; width: 900px;" >
+          <br>VODNIK VIEWPOINT <br><br>
+          The viewpoint is situated at an altitude of 1017 metres, which means that it is often above the fog that lingers in the valley in the 
+          morning hours. The view from the top is a real textbook of Bohinj geography. The Lower and Upper Bohinj Valley are beautifully visible, 
+          surrounded by the wreath of the Julian Alps. If you look towards Lake Bohinj, you can also clearly see the glacial U-shaped valley and imagine 
+          the path that the Bohinj Glacier paved during the last ice age. The climb from Koprivnik takes only 30 minutes and the difference in altitude is 
+          negligible. You can also reach the summit from the lower village of Jereka, a good hour’s walk and 387 metres of altitude gain.
+          At the top, there is a box with a stamp and a registration book.
+        </div>
+        <div>
+          <img src="{% static 'recepcijaTV/vodnikov_razglednik.jpg' %}" width="800px" height="600px" > 
+        </div>
+      </div>
+
+      <!-- NASLEDNJI SLIDE -->
+      <div style="display: flex; flex-direction: row; justify-content: space-around;" class="slide" id="slide5" alt="image5">
+        <div style="color: white; font-size: 2rem; width: 900px;" >
+          <br>WITH CABLE CAR TO VOGEL VIEWPOINT (1532 M) <br><br>
+          What can you explore and experience here?
+          <br>Vogel Information Trail
+          <br>Panoramic ride on the Orlove Glave quad chair
+          <br>Hike to Zadnji Vogel alpine meadow
+          <br>Archaeological sites and the Iron Route on Vogel
+          <br>Touring anthills
+          <br>The Lopata primeval forest
+          <br>The Vogel Mountain Bike park
+          <br>Paragliding flight
+          <br>Hiking trails and starting points
+          <br>The colourful world of animals and plants
+        </div>
+        <div>
+          <img src="{% static 'recepcijaTV/vogel.jpg' %}" width="800px" height="600px" > 
+        </div>
+      </div>
+
+      <!-- NASLEDNJI SLIDE -->
+      <div style="display: flex; flex-direction: row; justify-content: space-around;" class="slide" id="slide6" alt="image6">
+        <div style="color: white; font-size: 2rem; width: 900px;" >
+          <br>VIEWPOINT PEČ <br><br>
+          The Peč viewpoint is located 50 metres below the top of the Peč hill, which divides Bohinj into the Upper and Lower Bohinj Valley. 
+          In all seasons, it offers a beautiful and easily accessible view of the Bohinj valley with the Komna plateau, Lake Bohinj, Ribčev 
+          Laz and the surrounding peaks. To reach the viewpoint from the Lev concrete bridge in Stara Fužina, it takes about 20 minutes of 
+          leisurely walking along a well-maintained and well-marked forest trail, with an altitude difference of almost 200 metres. On the way, 
+          you can also enjoy views of the Stara Fužina and Triglav.
+        </div>
+        <div>
+          <img src="{% static 'recepcijaTV/pec.jpg' %}" width="800px" height="600px" > 
+        </div>
+      </div>
+
+       <!-- NASLEDNJI SLIDE -->
+       <div style="display: flex; flex-direction: row; justify-content: space-around;" class="slide" id="slide7" alt="image7">
+        <div style="color: white; font-size: 2rem; width: 900px;" >
+          <br>RUDNICA <br><br>
+          The Rudnica forest peak rises right in the heart of Bohinj. The hill is accessible from almost all the villages of the Lower 
+          and Upper Bohinj Valley, and therefore offers numerous views of almost every corner of Bohinj.From the top, you can admire a 
+          magnificent view of the Upper Bohinj Valley, its mountains and Senožeta, and on the way there, you can admire numerous views 
+          of Lake Bohinj, the two Bohinj Valleys and the mighty peaks rising above them. Rudnica is accessible from four scenic directions: 
+          Lake Bohinj, Stara Fužina, Brod and Srednja vas. At the top of Rudnica there is a box with a stamp and a registration book.
+        </div>
+        <div>
+          <img src="{% static 'recepcijaTV/rudnica.jpg' %}" width="800px" height="600px" > 
+        </div>
+      </div>
+
+      <!-- NASLEDNJI SLIDE -->
+      <div style="display: flex; flex-direction: row; justify-content: space-around;" class="slide" id="slide8" alt="image8">
+        <div style="color: white; font-size: 2rem; width: 900px;" >
+          <br>VOGAR <br><br>
+          At 1054 metres, Vogar is the easternmost peak of the ridge above the northern shore of Lake Bohinj. 
+          The climb up to Vogar from Stara Fužina takes about an hour, during which you will cover an altitude difference of almost 500 metres. 
+          You can enjoy views of Bohinj from two points on Vogar. The first one is located in a clearing, where there is also a take-off point for paragliders. 
+          It can be reached in less than an hour’s walk along a steep footpath from Stara Fužina. The second lookout point is reached after about 20 
+          minutes of further walking, a well-worn path leads you past Kosijev dom westwards to the precipitous edge, from where you will enjoy a view of 
+          the Bohinj-Tolmin mountains, especially the part from Vogel to Komna, as well as Lake Bohinj and Ukanc.
+        </div>
+        <div>
+          <img src="{% static 'recepcijaTV/vogar.jpg' %}" width="800px" height="600px" > 
+        </div>
+      </div>
+
+
+
+
+
+        
+        <!-- <img src="{% static 'recepcijaTV/mostnica.jpg' %}" width="600px" height="600px">
+
+           <img src="{% static 'recepcijaTV/triglavska_jezera.jpg' %}" class="slide" id="slide3" alt="image3">
+        <img src="{% static 'recepcijaTV/vodnikov_razglednik.jpg' %}" class="slide" id="slide4" alt="image4">
+        <img src="{% static 'recepcijaTV/vogel.jpg' %}" class="slide" id="slide5" alt="image5">
+        <img src="{% static 'recepcijaTV/oplenova_hisa.jpg' %}" class="slide" id="slide6" alt="image6">
+        <img src="{% static 'recepcijaTV/pec.jpg' %}" class="slide" id="slide7" alt="image7">
+        <img src="{% static 'recepcijaTV/rudnica.jpg' %}" class="slide" id="slide8" alt="image8">
+        <img src="{% static 'recepcijaTV/vogar.jpg' %}" class="slide" id="slide9" alt="image9">
+        <img src="{% static 'recepcijaTV/sv_janez.jpg' %}" class="slide" id="slide10" alt="image10">
+        <img src="{% static 'recepcijaTV/godec.jpg' %}" class="slide" id="slide11" alt="image11"> -->
+        
+      
+        
+      </div>
+      <!--AUTO SLIDESHOW widget  -->
+      <script>
+        var slideIndex = 1;
+        showSlide(slideIndex);
+        setInterval(nextSlide,5000); // change slide every 20 seconds
+      
+        function prevSlide() {
+        showSlide(slideIndex -= 1);
+        }
+      
+        function nextSlide() {
+        showSlide(slideIndex += 1);
+        }
+      
+        function showSlide(n) {
+        var i;
+        var slides = document.getElementsByClassName("slide");
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.opacity = "0";
+        }
+        slides[slideIndex-1].style.opacity = "1";
+        }
+      </script>
+      
+      
+      
+      <!-- ?autoplay=1&mute=1 -->   
+      <!--
+      <iframe class="ifrBox4"
+            width="1000" 
+            height="800" 
+            src="https://www.youtube.com/embed/EYI4qpsCAOI?autoplay=1&mute=1" 
+            title="YouTube video player" frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+        </iframe>
+-->  
+
+    </div>
+
+    <div class="box5" style= "font-size: 50px; color: beige; text-shadow: 5px 5px 10px #ff0000;">
+     <p style="align-items: center;text-align: center;"> Secure your reservation at Hotel Gašperin with a direct booking discount:
+      <img width="80" height="80" src="{% static 'recepcijaTV/qr_koda.png' %}"></p>
+    </div>
+
+  </div> <!--container-->
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+

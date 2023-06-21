@@ -11,9 +11,9 @@
 {% block content %}
 
 <!--<script src="{% static 'script/main.js' %}"></script>-->
-<div class="container float-left">
+<div class="container" style="float:left;">
 
-<div class="container mx-auto float-left " style="max-width:800px; padding-bottom: 20px;" >
+<div class="container mx-auto  " style="max-width:800px; padding-bottom: 20px; float: left;" >
     <button class="btn btn-danger" onclick="addDateAndSubmit()">Danes</button>
     <button class="btn btn-danger" onclick="JutriAndSubmit()">Jutri</button>
     <button class="btn btn-danger" onclick="Plus1DanInSubmit()">+1 D</button>
@@ -25,6 +25,12 @@
     <button class="btn btn-danger" onclick="Plus7DanInSubmit()">+7 D</button>
 
 </div> 
+<div>
+    <form action="" method="post">
+        {% csrf_token %}  
+        <button class="btn-outline-success" name="btn_zadnja" >ZADNJA REZERVACIJA </button>
+    </form>
+</div>
 
 
 <div class="container-fluid">
@@ -48,6 +54,8 @@
             
               </div>
       <button type="submit" class="btn btn-primary">Submit</button>
+      <br><br>
+      <p style="font-size: large; color: red; font-weight: bold;"> {{errmsg}} </p>
     </form>
   </div>
 

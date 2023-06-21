@@ -1,6 +1,6 @@
 
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light position-fixed top-0 start-0" style="z-index: 99;">
+<!-- <nav class="navbar navbar-expand-lg navbar-light bg-light position-fixed top-0 start-0" style="z-index: 99;">
   <a class="navbar-brand" href="#">Hotel Gašperin</a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -8,21 +8,60 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav">
       
-        <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_dashboard' %}';">DashBoard</button></li> 
+      <li class="nav-item"><button class="btn btn-primary me-2" type="button"onclick="window.location.href='{% url 'index' %}';">app</button></li>   
+      <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_dashboard' %}';">DashBoard</button></li> 
         <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_rezervacije' %}';">Rezerv.</button></li>
         <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_avtovnos_file' %}';">AvtoVnos</button></li>
         <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_graf' %}';">Graf</button></li>
-        <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_vnos_izbor_sob' %}';">Vnos</button></li>
+        <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_predvnos_rez' %}';">Vnos</button></li>
         <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_virtual' %}';">Virtual</button></li>
         <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_ponudba_faza_1' %}';">Ponudba</button></li>
         <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_ponudba_seznam' %}';">Sezn.Pon.</button></li>
         <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_bar' %}';">Bar</button></li>
         <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_dn' %}';">Dn</button></li>
-        <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_siteminder' %}';">SM</button></li>
-        
+        <li class="nav-item"><button class="btn btn-success me-2" type="button"onclick="window.open('{% url 'rezervacije:form_siteminder' %}', '_blank'); return false;">SM</button></li>
+        <li class="nav-item"><button class="btn btn-danger me-2" type="button"onclick="window.location.href='{% url 'rezervacije:form_vnos_update_availability' %}';">upd</button></li>
+    </ul>
+  </div>
+</nav> -->
+
+<!-- Chat GPT varianta, da po desnem kliku miške odpre novo okno v blank -->
+
+<nav class="navbar navbar-expand-sm navbar-light bg-light position-fixed top-0 start-0" style="z-index: 99;">
+  <a class="navbar-brand" href="#">HG</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav">
+      
+      <li class="nav-item"><a class="btn btn-primary me-2 navbar-button" href="{% url 'index' %}">app</a></li>   
+      <li class="nav-item"><a class="btn btn-success me-2 navbar-button" href="{% url 'rezervacije:form_dashboard' %}">DashBoard</a></li> 
+      <li class="nav-item"><a class="btn btn-success me-2 navbar-button" href="{% url 'rezervacije:form_rezervacije' %}">Rezerv.</a></li>
+      <li class="nav-item"><a class="btn btn-success me-2 navbar-button" href="{% url 'rezervacije:form_avtovnos_file' %}">AvtoVnos</a></li>
+      <li class="nav-item"><a class="btn btn-success me-2 navbar-button" href="{% url 'rezervacije:form_graf' %}">Graf</a></li>
+      <li class="nav-item"><a class="btn btn-success me-2 navbar-button" href="{% url 'rezervacije:form_predvnos_rez' %}">Vnos</a></li>
+      <li class="nav-item"><a class="btn btn-success me-2 navbar-button" href="{% url 'rezervacije:form_virtual' %}">Virtual</a></li>
+      <li class="nav-item"><a class="btn btn-success me-2 navbar-button" href="{% url 'rezervacije:form_ponudba_faza_1' %}">Ponudba</a></li>
+      <li class="nav-item"><a class="btn btn-success me-2 navbar-button" href="{% url 'rezervacije:form_ponudba_seznam' %}">Sezn.Pon.</a></li>
+      <li class="nav-item"><a class="btn btn-success me-2 navbar-button" href="{% url 'rezervacije:form_bar' %}">Bar</a></li>
+      <li class="nav-item"><a class="btn btn-success me-2 navbar-button" href="{% url 'rezervacije:form_dn' %}">Dn</a></li>
+      <li class="nav-item"><a class="btn btn-success me-2 navbar-button" href="{% url 'rezervacije:form_siteminder' %}">SM</a></li>
+      <li class="nav-item"><a class="btn btn-success me-2 navbar-button" href="{% url 'rezervacije:form_grafikoni' %}">Grafikoni</a></li>
     </ul>
   </div>
 </nav>
+<!-- desna miška odpre link v novem oknu -->
+<script>
+  var navbarButtons = document.querySelectorAll('.navbar-button');
 
+  function openInNewWindow(event) {
+    event.preventDefault();
+    var link = this.dataset.link || this.getAttribute('href');
+    window.open(link, '_blank');
+  }
 
-
+  navbarButtons.forEach(function(button) {
+    button.addEventListener('contextmenu', openInNewWindow);
+  });
+</script>

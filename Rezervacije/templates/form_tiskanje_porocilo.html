@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+   
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+    @media print {
+        /* Hide non-essential elements */
+        header, footer, nav, .sidebar, .ad, .no-print {
+          display: none !important;
+        }
+        .container {
+        width: 400px;
+        float: left;
+        position: absolute;
+        top: 0;
+        left: 0;
+        }
+        }
+      
+        /* Adjust the layout for printing */
+        /* body {
+          margin: 0;
+          padding: 0;
+          font-size: 12pt;
+          line-height: 1.5;
+        } */
+      
+
+      th, td{
+        width: 40px;
+    }
+
+.container {
+    width: 400px;
+    float: left;
+    
+}
+
+
+</style>
+<!-- div za avtomatskim prilagajanjem velikosti glede na vsebino -->
+<!-- <div class="container" style="  display: inline-block; width: auto; height: auto;
+                                border: black solid 1px;
+                               
+                                ">
+  --> 
+
+
+<button class="no-print btn btn-dark"  onclick="window.print()">Print</button>
+
+<div class="container">
+    <h1>ZAJTRKI {{ob_datum|date:"d.m.y"}}</h1>
+    
+    <table class="table table-bordered table-sm table-striped"  >
+    <thead class="bg-success">
+        <th>DR</th>
+        <th>ŠS</th>
+        <th>SO</th>
+        <th>Alerg</th>
+    </thead>
+    <tbody>    
+    {% for zajtrk in zajtrki %}
+    
+            <tr>
+                <td>{{zajtrk.DR}}</td>
+                <td>{{zajtrk.stsobe}}</td>
+                <td>{{zajtrk.SO}}</td>
+                <td>{{zajtrk.Alergije}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+    
+{% endblock %}

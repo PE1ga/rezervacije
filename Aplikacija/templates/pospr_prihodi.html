@@ -64,13 +64,13 @@
   <p>
     <a
       ><button style="background-color: rgb(28, 4, 248)" type="submit"
-        onclick="location.href='/'">DOMOV</button></a>
+        onclick="location.href='/'">DOM</button></a>
     <a><button style="background-color: rgb(28, 4, 248)" type="submit"
-        onclick="location.href='/pospravljanje/'">POSPRAVLJANJE</button></a>
+        onclick="location.href='/pospravljanje/'">POSP</button></a>
     
     {% if user.username == "Peter" or user.username == "Kellie" %}
         <a><button style="background-color: rgb(28, 4, 248)" type="submit"
-            onclick="location.href='/zajtrk/'">ZAJTRK</button></a>
+            onclick="location.href='/zajtrk/'">ZAJ</button></a>
     {% endif %}
   </p>
 
@@ -180,7 +180,7 @@
         {% else %} 
             {% if x.Status == "KO" %}
               <td><img src="{% static 'slike/vseOK.png' %}" alt="" /></td>
-            {% elif x.Status == "NE ČISTI!" %}
+            {% elif x.Status == "NE CISTI!" %}
               <td><img src="{% static 'slike/niOK.png' %}" alt="" /></td>
             {% elif x.Status == "Bila prazna" %}
                 <td><button style="width: 200px" type="submit"

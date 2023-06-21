@@ -153,6 +153,8 @@ def IzdelavaGrafa(df_data, DatumObravnave,Vir): #, DatumPrimerjave):
         AgencijA=vrstica["agencija"]
         CenaNaNoc=CenaSK/St_Noc
         ZaklenjenaSoba=vrstica["Zaklenjena"] # za rezervacije, ki hočejo to sobo
+        if ZaklenjenaSoba == None:
+            ZaklenjenaSoba = ""
         
       
         # Kakšen je index-Datum v Grafu za datum OD_D
@@ -174,7 +176,7 @@ def IzdelavaGrafa(df_data, DatumObravnave,Vir): #, DatumPrimerjave):
         # Polni tabelo s podatki c, g, x, f, .....
         
         for i in range(St_Noc):
-            if Vir=="DN":   #Če je zahteva prišla od modula Rez_DN. oz Rez_Vnos, oz Rez_Ponudba..
+            if Vir=="DN" or Vir == "raport":   #Če je zahteva prišla od modula Rez_DN. oz Rez_Vnos, oz Rez_Ponudba..
                 # Vnesi cenonanoč za vsako sobo v vsak dan v tabelo
                 T_Graf_CENE.iat[Index_St_Sobe,Index_Datum+i+1]=float(CenaNaNoc)
                 # Vnesi zajtrk za vsako sobo v vsak dan v tabelo
@@ -205,21 +207,7 @@ def IzdelavaGrafa(df_data, DatumObravnave,Vir): #, DatumPrimerjave):
                     
 
 
-                
-            # Poizvedba za število zajtrkov
-            elif Vir=="DN_zajtrki":
-                T_GrafNov.iat[Index_St_Sobe,Index_Datum+i+1]=int(St_oseb)
-
-            # Poizvedba za profit po dnevih
-            elif Vir=="DN_ProfitPoDnevih":
-                T_GrafNov.iat[Index_St_Sobe,Index_Datum+i+1]=float(CenaNaNoc)
-
-
-            # Poizvedba za število menjav
-            elif Vir=="DN_menjave":
-                if i==St_Noc-1:
-                    T_GrafNov.iat[Index_St_Sobe,Index_Datum+i+1]=1
-
+         
 
             # To poročilo gre v REZ OPTIM- posreduješ prvo celico z UNIKODO+agencijo+ZAKLENJENO___ Agencijo dodaš zato, da se v Optim uporabi opcija barvanja celic glede na agencijo
             # V Rez_Optim se uni koda izloči tako, da program prebere prvih 13 znakov iz te celice.
@@ -229,9 +217,9 @@ def IzdelavaGrafa(df_data, DatumObravnave,Vir): #, DatumPrimerjave):
             #else:     
                 if i==0:
                     if St_Noc == 1:
-                        T_GrafNov.iat[Index_St_Sobe,Index_Datum+i+1]= IndeksVrstice  + "_:" +Ime +"_"+ Tip_sobe + St_oseb + "_"+ datum_vnosa + "_" + AgencijA + " " + ">"
+                        T_GrafNov.iat[Index_St_Sobe,Index_Datum+i+1]= IndeksVrstice  + "_:" +Ime +"_"+ Tip_sobe + St_oseb + "_"+ datum_vnosa + "_" + AgencijA + "_"  + ZaklenjenaSoba + " " + ">"
                     else:
-                        T_GrafNov.iat[Index_St_Sobe,Index_Datum+i+1]= IndeksVrstice  + "_:" +Ime +"_"+ Tip_sobe + St_oseb + "_" + datum_vnosa + "_" + AgencijA 
+                        T_GrafNov.iat[Index_St_Sobe,Index_Datum+i+1]= IndeksVrstice  + "_:" +Ime +"_"+ Tip_sobe + St_oseb + "_" + datum_vnosa + "_" + AgencijA + "_" + ZaklenjenaSoba
                    
 
                 elif i==St_Noc-1:
@@ -254,13 +242,11 @@ def IzdelavaGrafa(df_data, DatumObravnave,Vir): #, DatumPrimerjave):
                 if i==0:
                     T_Graf_PRIHOD.iat[Index_St_Sobe,Index_Datum+i+1]=1
             
-            elif Vir=="R_Optimi_iskanjeRez":
-                if i==0:
-                    T_GrafNov.iat[Index_St_Sobe,Index_Datum+i+1]= IndeksVrstice
+            
 
     
     # PODATKI ZA GRAF V excel tabeli GRAF
-    if Vir=="DN" or Vir=="R_Optimi":
+    if Vir=="DN" or Vir=="R_Optimi" or Vir == "raport":
         collist=list(T_GrafNov) # IZDELA LIST IMEN STOLPCEV !!!!!!
         del collist[0]      # ODSTRANIŠ ELEMENTE IZ LISTA GLEDE NA INDEX !!!!!
         del collist[0]
@@ -271,7 +257,7 @@ def IzdelavaGrafa(df_data, DatumObravnave,Vir): #, DatumPrimerjave):
         L_Sume=[]
         for i in collist:
             suma=(T_Graf_CENE.iloc[2:][i].sum(axis = 0, skipna = True)) # SEŠTEVANJE PO STOLPCIH + ODSTANI NAN  !!!!!
-            L_Sume.append(suma)
+            L_Sume.append(int(suma))
         # dodaj list suma v T_Graf_nov
         for j in range(len(L_Sume)-1):
             T_GrafNov.iat[-5,3+j]=L_Sume[j]  # -2,-3.. , ker je na predzadnji poziciji v tabeli (predzadnja vrstica)
@@ -317,28 +303,37 @@ def IzdelavaGrafa(df_data, DatumObravnave,Vir): #, DatumPrimerjave):
         for j in range(len(L_Sume)-1):
             T_GrafNov.iat[-1,3+j]=L_Sume[j]
         
+    
+    if Vir == "DN" or Vir == "R_Optimi":
+        #print(T_GrafNov.iloc[0:29,0])
+        
+        # priprava za DJANGO df.iloc[[0] + list(range(3, 6))
+        ListVrstice = [i for i in range(32)]
+        ListStolpi = ["S" + str(i) for i in range(29)]
+        T_Graf = pd.DataFrame(index=ListVrstice ,columns=ListStolpi)
+        T_Graf.iloc[0:28,0] = T_GrafNov.iloc[0:28,0] # Prva vrstica s številkami sob, profit, zajtrk....
+        T_Graf.iloc[0:28,1:29] = T_GrafNov.iloc[0:28,36:64]       # 29 stolpcev
+        T_Graf.iloc[28:32,1:29] = T_GrafNov.iloc[29:33,36:64]
+        T_Graf=T_Graf.fillna("")
+        T_Graf.iat[28,0] = "Zaj"
+        T_Graf.iat[29,0] = "Men"
+        T_Graf.iat[30,0] = "StS"
+        T_Graf.iat[31,0] = "Prh"
+        
+
+        #print(T_Graf)
+        # PRENESI V SQLITE
+        # GRAF
+        
+        return T_Graf
+
+    elif Vir == "raport":
+        # print(T_GrafNov)
+        raport = T_GrafNov.iloc[[0] + list(range(28,33)),51].to_frame(name="Podatki").reset_index()
+        return raport
+    
 
 
-    # priprava za DJANGO
-    ListVrstice = [i for i in range(31)]
-    ListStolpi = ["S" + str(i) for i in range(29)]
-    T_Graf = pd.DataFrame(index=ListVrstice ,columns=ListStolpi)
-    T_Graf.iloc[0:27,0] = T_GrafNov.iloc[0:27,0]
-    T_Graf.iloc[0:27,1:29] = T_GrafNov.iloc[0:27,36:64]        #T_GrafNov.iloc[0:26,20:47]
-    T_Graf.iloc[27:31,1:29] = T_GrafNov.iloc[29:33,36:64]
-    T_Graf=T_Graf.fillna("")
-    T_Graf.iat[27,0] = "Zaj"
-    T_Graf.iat[28,0] = "Men"
-    T_Graf.iat[29,0] = "StS"
-    T_Graf.iat[30,0] = "Prh"
-    
-    
-    # PRENESI V SQLITE
-     # GRAF
-    
-    return T_Graf
-
-    
 
 def T_Rezervacije_OBtermin():
     pass

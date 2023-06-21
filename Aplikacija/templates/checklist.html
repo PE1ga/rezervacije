@@ -78,13 +78,7 @@
                         
         </p>
         <table> <!--WC-->
-            
-            
-            
-            
-            
             {% for y in Akcija %}
-            
                 {% if y == "ok1" %}
                     {% if Akcija.ok1 != "OK" %}
                     <tr>
@@ -122,7 +116,7 @@
                     </tr>
                     <tr>
                         <td><img src="{% static 'fotke/wc koš.jpg' %}" alt="koš za smeti">koš prazen</td>         
-                        <td>    ---   </td>
+                        <td><img src="{% static 'fotke/vrataFP.jpg' %}" alt="vrata">prstni odtisi</td>
                     </tr>
             
                     <tr><td colspan="2"; style="text-align: center; background-color: coral;"
@@ -177,7 +171,7 @@
                         {% if Akcija.ok4 != "OK" %}
                         <tr>
                             <td><img src="{% static 'fotke/Tv.jpg' %}" alt="TV deluje">TV deluje</td>         
-                            <td><img src="{% static 'fotke/Zavese.jpg' %}" alt="zavese poravnane">zavese poravnane</td>
+                            <td><img src="{% static 'fotke/spider.png' %}" alt="zavese poravnane">pajčevine / pajki</td>
                         </tr>
                         <tr>
                             <td><img src="{% static 'fotke/ogledalo.jpg' %}" alt="čista ogledala">čisto ogledalo</td>         

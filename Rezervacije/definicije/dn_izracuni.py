@@ -1,7 +1,9 @@
 
 from django.db.models import Q, F
 from datetime import timedelta
+from Rezervacije.models import VnosGostov, Bar_narocila
 
+from django.db.models import Q, Count, Sum
 
 
 class Dn_izracuni:
@@ -11,7 +13,7 @@ class Dn_izracuni:
         #print(podatki)
     
     def prihodi(self):
-        self.prihodi_data = self.podatki.filter(od_dt=self.ob_datum)
+        self.prihodi_data = self.podatki.filter(od_dt=self.ob_datum).order_by("stsobe")
 
         # dodaj stevilo noci (rabiš za vingcard)
         for prihod in self.prihodi_data:
@@ -39,7 +41,7 @@ class Dn_izracuni:
             ttax = st_noci * (st_odrasli* 2 + st_otroci* 1)
 
             if rna == "AVANSOK":
-                se_placati = str(round(float(cena) - float(avans)),2)
+                se_placati = str(round(float(cena) - float(avans),2))
             elif rna == "NONREFOK" or rna == "ExpColl" or rna == "Virtual":
                 if status_ttax == "Ttax NI VKLJ":
                     se_placati = ttax
@@ -64,16 +66,22 @@ class Dn_izracuni:
         #print(self.prihodi)
 
     def odhodi(self):
-        self.odhodi_data = self.podatki.filter(do_dt= self.ob_datum)
+        self.odhodi_data = self.podatki.filter(do_dt= self.ob_datum).order_by("stsobe")
         
         return self.odhodi_data
     
     def stayover(self):
-        self.stayover_data= self.podatki.filter(Q(od_dt__lte=self.ob_datum) & Q(do_dt__gt=self.ob_datum))
+        self.stayover_data= self.podatki.filter(Q(od_dt__lte=self.ob_datum) & Q(do_dt__gt=self.ob_datum)).order_by("stsobe")
         return self.stayover_data
         #for object in self.stayover:
         #    print(object.id, object.od, object.do_dt, object.imestranke)
     
+
+    def zajtrki_def(self):
+        """ Združi odhode in stayover """
+        self.zajtrki = (self.podatki.filter(do_dt= self.ob_datum) | self.podatki.filter(Q(od_dt__lte=self.ob_datum) & Q(do_dt__gt=self.ob_datum))).order_by("stsobe")
+        return self.zajtrki
+
     def menjave(self):
         self.menjave_data = self.stayover_data.annotate(datum_menjave=F("do_dt") - F("od_dt")).filter(datum_menjave__gt=timedelta(days=7)) 
         
@@ -90,14 +98,16 @@ class Dn_izracuni:
         list_dictov_racunov = []
         for odhod in self.odhodi_data:
             dict_podatki = {}
-            if odhod.SO =="" or odhod.SO == None:
+            if odhod.SO ==""or odhod.SO == None:
                 odhod.SO = 0
             if odhod.SOTR =="" or odhod.SOTR == None:
                 odhod.SOTR = 0
+
+            st_odr = odhod.SO- odhod.SOTR
             st_noci = (odhod.do_dt - odhod.od_dt).days
-            st_oseb_skupaj = int(odhod.SO) + int(odhod.SOTR)
+            st_oseb_skupaj = odhod.SO
             st_nocitev = st_noci * st_oseb_skupaj
-            ttax = (int(odhod.SO) *2 + int(odhod.SOTR)*1) * st_noci
+            ttax = (st_odr *2 + int(odhod.SOTR)*1) * st_noci
             if odhod.StanjeTTAX =="Ttax NI VKLJ":
                 cena_na_nocitev= round((float(odhod.CENA))/st_nocitev/1.095, 4)
             else:
@@ -107,7 +117,7 @@ class Dn_izracuni:
             dict_podatki["imestranke"] = odhod.imestranke
             dict_podatki["od"]= odhod.od
             dict_podatki["do"]= odhod.do
-            dict_podatki["SO"]= odhod.SO
+            dict_podatki["SO"]= st_odr #odhod.SO
             dict_podatki["SOTR"] = odhod.SOTR
             dict_podatki["st_nocitev"] = st_nocitev
             dict_podatki["st_noci"] = st_noci
@@ -122,6 +132,8 @@ class Dn_izracuni:
             if odhod.RNA == "AVANSOK":
                 dict_podatki["ze_placano"] = odhod.AvansEUR
             elif odhod.RNA == "NONREFOK":
+                dict_podatki["ze_placano"] = odhod.CENA
+            elif odhod.RNA == "ExpColl":
                 dict_podatki["ze_placano"] = odhod.CENA
             else:
                 dict_podatki["ze_placano"] = ""
@@ -153,6 +165,7 @@ class Dn_izracuni:
 
 class Tabela_za_racun:        
     def __init__(self, gost, bar_narocila, ttax, rna):
+        print(gost)
         self.gost = gost
         self.bar_narocila = bar_narocila
         self.ttax= ttax
@@ -201,6 +214,7 @@ class Tabela_za_racun:
             tabela_nocitev_bar.append(dict_taxa_OTR)
         #print(bar_narocila)
         
+        # BAR NAROČILA
         if len(self.bar_narocila)!=0:
             for bar_narocilo in self.bar_narocila:
                 dict_bar_narocilo = {
@@ -209,8 +223,8 @@ class Tabela_za_racun:
                     "kolicina": bar_narocilo["kolicina_skupaj"], 
                     "enota": bar_narocilo["artikel__enota"], 
                     "DDV": bar_narocilo["artikel__ddv"],  
-                    "bruto_cena": float(bar_narocilo["artikel__cena"]) * (1+ int(bar_narocilo["artikel__ddv"])/100), 
-                    "bruto_znesek": float(bar_narocilo["artikel__cena"]) * (1+ int(bar_narocilo["artikel__ddv"])/100) * bar_narocilo["kolicina_skupaj"], 
+                    "bruto_cena": round(float(bar_narocilo["artikel__cena"]) * (1+ int(bar_narocilo["artikel__ddv"])/100),2), 
+                    "bruto_znesek": round(float(bar_narocilo["artikel__cena"]) * (1+ int(bar_narocilo["artikel__ddv"])/100) * bar_narocilo["kolicina_skupaj"],2), 
                 }
                 
                 tabela_nocitev_bar.append(dict_bar_narocilo)
@@ -268,6 +282,188 @@ class Tabela_za_racun:
 
         return tabela_nocitev_bar, tabela_ddv, tabela_skupaj
    
+class Tebela_multiracun():
+    def __init__(self, ob_datum_dt):
+        self.ob_datum=ob_datum_dt
+        
+        # Natisni samo račune, ki niso SLO in tiste, ki še niso bili plačani tekom bivanja
+        self.vsi_gosti = VnosGostov.objects.filter(do_dt = self.ob_datum, status_rez="rezervirano", status_placila = None).exclude(DR="SI")
+        
+    
+    def priprava_podatkov(self):
+        """iter skozi vse goste. dobiti moraš: gost, bar naročila, ttax in rna"""
+        
+        list_dictov_multiracun=[]
+        
+        for gost in self.vsi_gosti:
+            
+            # Iz loopa odstrani Slovence in že predhodno plačane rezervacije
+            if gost.status_placila == None:
+                gost.status_placila = ""
+            
+            if gost.DR != "SI" and "placano" not in gost.status_placila:
+                list_dictov_posameznega_gosta=[]
+                #gost
+                
+                            
+                # bar naročila
+                bar_narocila = (Bar_narocila.objects.select_related("gost").filter(gost= gost.id).
+                            values('artikel_id', 'artikel__opis', 'artikel__cena', 'artikel__ddv', 'artikel__enota')
+                            .annotate(kolicina_skupaj=Sum('kolicina')))
+                
+                # ttax
+                if gost.SO == "" or gost.SO == None:
+                    st_oseb = 0
+                else:
+                    st_oseb = int(gost.SO) 
+                
+                if gost.SOTR == "" or gost.SOTR == None:
+                    st_otr = 0
+                else:
+                    st_otr = int(gost.SOTR) 
+                #st_otr = int(gost.SOTR) if gost.SOTR !="" else 0
+                st_odr = st_oseb - st_otr
+                st_noci = (gost.do_dt - gost.od_dt).days
+                ttax_ = (st_odr*2 + st_otr*1) * st_noci
+                        
+                # RNA
+                rna = gost.RNA
+                
+                # IZRAČUNI ZA POSAMEZNEGA GOSTA
+                    #Cena na nočitev
+                st_oseb_skupaj = gost.SO
+                st_nocitev = st_noci * st_oseb_skupaj
+                ttax = (st_odr *2 + st_otr*1) * st_noci
+                if gost.StanjeTTAX =="Ttax NI VKLJ":
+                    cena_na_nocitev= round((float(gost.CENA))/st_nocitev/1.095, 4)
+                else:
+                    cena_na_nocitev= round((float(gost.CENA)-ttax)/st_nocitev/1.095, 4)
+                
+                
+                
+                
+
+                # TABELA NOČITEV IN TTAX (prvi del glavne tabele)
+                tabela_nocitev_ttax_bar = []
+                # vnesi podatke o gostu
+                dict_gost = {"opis": "Nocitev (accommodation)",
+                        "cena": cena_na_nocitev,
+                        "kolicina": st_nocitev,
+                        "enota": "KOM",
+                        "DDV" : 9.5,
+                        "bruto_cena": round(float(cena_na_nocitev) * 1.095, 2),
+                        "bruto_znesek": round(float(cena_na_nocitev) * 1.095 * st_nocitev ,2)
+
+                        }
+                tabela_nocitev_ttax_bar.append(dict_gost)
+                
+                
+                #       Ttax
+
+                if st_odr != "":
+                    dict_taxa_ODR = {"opis": "Turist. in promocijska taksa",
+                        "cena": 2,
+                        "kolicina": st_odr * st_noci,
+                        "enota": "KOM",
+                        "DDV" : 0,
+                        "bruto_cena": 2,
+                        "bruto_znesek": 2 * st_odr * st_noci
+
+                        } 
+                    tabela_nocitev_ttax_bar.append(dict_taxa_ODR)
+            
+                if st_otr != 0:
+                    dict_taxa_OTR = {
+                        "opis": "Turist. in promocijska taksa - otroci",
+                        "cena": 1,
+                        "kolicina": st_otr * st_noci,
+                        "enota": "KOM",
+                        "DDV" : 0,
+                        "bruto_cena": 1,
+                        "bruto_znesek": round(1 * st_otr * st_noci , 2 )
+
+                        } 
+                    tabela_nocitev_ttax_bar.append(dict_taxa_OTR)
+                
+                # BAR NAROČILA
+                if len(bar_narocila)!=0:
+                    for bar_narocilo in bar_narocila:
+                        dict_bar_narocilo = {
+                            "opis": bar_narocilo["artikel__opis"], 
+                            "cena": bar_narocilo["artikel__cena"], 
+                            "kolicina": bar_narocilo["kolicina_skupaj"], 
+                            "enota": bar_narocilo["artikel__enota"], 
+                            "DDV": bar_narocilo["artikel__ddv"],  
+                            "bruto_cena": round(float(bar_narocilo["artikel__cena"]) * (1+ int(bar_narocilo["artikel__ddv"])/100),2), 
+                            "bruto_znesek": round(float(bar_narocilo["artikel__cena"]) * (1+ int(bar_narocilo["artikel__ddv"])/100) * bar_narocilo["kolicina_skupaj"],2), 
+                        }
+                        
+                        tabela_nocitev_ttax_bar.append(dict_bar_narocilo)
+                        
+                # IZRAČUN DDV
+                ddv_0= 0
+                ddv_95= 0
+                ddv_22= 0
+                for x in tabela_nocitev_ttax_bar:
+                    if x["DDV"]==0:
+                        ddv_0 = ddv_0 + float(x["cena"]) * x["kolicina"]
+                    elif x["DDV"]== 9.5:
+                        ddv_95 = ddv_95 + float(x["cena"]) * x["kolicina"]
+                    elif x["DDV"]== 22:
+                        ddv_22 = ddv_22 + float(x["cena"]) * x["kolicina"]
+
+                #print(ddv_0, ddv_22, ddv_95)
+                
+                tabela_ddv = [["DDV 0%", ddv_0, ddv_0* 0, ddv_0+ddv_0*0],
+                            ["DDV 9,5%", round(ddv_95,2), round(ddv_95* 0.095 ,2), round(ddv_95+ ddv_95 * 0.095 ,2)],
+                            ["DDV 22%", round(ddv_22, 2), round(ddv_22* 0.22, 2), round(ddv_22+ ddv_22 * 0.22 ,2)]
+                            ]
+                
+
+                # IZRAČUN SKUPAJ
+                skupaj_eur = ddv_0 + ddv_95 + ddv_22
+                skupaj_ddv = ddv_0* 0 + ddv_95* 0.095 + ddv_22* 0.22
+                
+                odstej_eur= ""
+                if rna == "AVANSOK":
+                    odstej_eur = self.gost.AvansEUR
+                if rna == "NONREFOK" or rna == "ExpColl" or rna == "Virtual":
+                    if gost.StanjeTTAX == "Ttax NI VKLJ":
+                        odstej_eur = float(gost.CENA)
+                    else:
+                        odstej_eur = float(gost.CENA) - ttax
+                
+                if odstej_eur == "":
+                    odstej_eur = 0
+                
+                
+                za_placilo =  skupaj_eur + skupaj_ddv- odstej_eur
+
+            
+                    
+                
+                tabela_skupaj = [round(skupaj_eur, 2), round(skupaj_ddv, 2), round(odstej_eur, 2), round(za_placilo,2)]
+
+
+
+
+
+
+
+                list_dictov_posameznega_gosta.append(gost)
+                list_dictov_posameznega_gosta.append(tabela_nocitev_ttax_bar)
+                list_dictov_posameznega_gosta.append(tabela_ddv)
+                list_dictov_posameznega_gosta.append(tabela_skupaj)
+                list_dictov_multiracun.append(list_dictov_posameznega_gosta.copy())
+            
+            else:
+                continue
+        
+        return list_dictov_multiracun
+
+        
+    
+        
 
 
 

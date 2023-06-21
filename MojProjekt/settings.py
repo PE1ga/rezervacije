@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'members.apps.MembersConfig',
     #'bootstrap5',
     'bootstrap_datepicker_plus',
-    
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -140,8 +140,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST= "smtp.gmail.com"
-EMAIL_HOST_USER= "hotel.gasperin.bohinj@gmail.com"    #"peter.gasperin57@gmail.com"
-EMAIL_HOST_PASSWORD= env("EMAIL_HOST_PASSWORD")   #"hmhszxzvtdmtmoof"
-RECIPIENT_ADDRESS= "peter.gasperin@siol.net"
+EMAIL_HOST= env("EMAIL_HOST")
+EMAIL_HOST_USER= env("EMAIL_HOST_USER")   
+EMAIL_HOST_PASSWORD= env("EMAIL_HOST_PASSWORD")
+RECIPIENT_ADDRESS= env("RECIPIENT_ADDRESS")
 

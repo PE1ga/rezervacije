@@ -1,7 +1,4 @@
-
 {% extends 'base.html' %}
-
-<!--% load bootstrap5 %}-->
 
 {% block title %}
     
@@ -9,17 +6,7 @@
 
 
 {% block content %}
-<!--
-<style>
-    .container {
-  max-width: 50%;
-  align-items: baseline;
-}
-</style>
--->
 
-<!-- <p class="container-fluid">Ali je formular submitted?  submitted }}</p>
-             -->
 {% if submitted == True %}
 <p >Form je uspešno shranjen!</p>
 
@@ -39,8 +26,13 @@
     li {
         color: red;
     }
-
+    label{
+      font-weight: bold;
+      color: green;
+    }
+  
 </style>
+
 
 <div class="container row" style="border: solid 5px black;">
     
@@ -65,6 +57,14 @@
                     {% if field.errors %}
                     <div class="alert alert-danger">{{ field.errors }}</div>
                     {% endif %}
+
+                  <!-- Dodatne zahteve select field -->
+                    <select id="option-select" class="form-control" >
+                      {% for k, v in dict_zahteve.items %}
+                      <option value="{{k}}">{{v}}</option>
+                      {% endfor %}
+                      
+                    </select>
     
                 {% elif field.name == "status_rez" %}
                     {{field.label_tag}}
@@ -73,7 +73,10 @@
                     <!-- {% if field.errors %}
                     <div class="alert alert-danger">{{ field.errors }}</div>
                     {% endif %} -->
-
+                
+                {% elif field.name == "RokPlacilaAvansa" %}
+                    {{ field.label_tag }}
+                    <input type="text" class="form-control" value = "{{forma.RokPlacilaAvansa.value|date:'d.m.Y'}}" >
 
 
     
@@ -91,12 +94,12 @@
               {% endif %}
             {% endfor %}
           </table>
-        </form>
-
-
-        <div class="container float-left">
+          
+          
+          <div class="container float-left">
             
-        <input class="btn btn-outline-primary" type="submit" value="Submit">
+            <input class="btn btn-outline-primary" type="submit" value="Submit" required>
+          </form>
         </div>
         
         <script>
@@ -105,16 +108,48 @@
                 document.getElementById("id_zahteve").innerHTML = "";
             } 
             
+        </script>
+
+        <script>
+          // DODAJ DODATNE ZAHTEVE 
+          const select = document.getElementById("option-select");
+          const textarea = document.getElementById("id_zahteve");
+          const clearButton = document.getElementById("clear-button");
+
+          // Add event listener to the select element
+          select.addEventListener("change", (event) => {
+            // Get the selected option value
+            const selectedOption = event.target.value;
+
+            // Append the selected option value to the textarea
+            textarea.value = `${textarea.value}${selectedOption} ,`;
+          });
+
+          // Add event listener to the clear button
+          clearButton.addEventListener("click", () => {
+            // Clear the textarea
+            textarea.value = "";
+          });
         
+
+
+
+
+
+
+
+
+
+
         // Submit the form when any input or select field is changed
-        var inputFields = document.getElementsByTagName('input');
-        var selectFields = document.getElementsByTagName('select');
-        var allFields = Array.prototype.slice.call(inputFields).concat(Array.prototype.slice.call(selectFields));
-        for (var i = 0; i < allFields.length; i++) {
-            allFields[i].addEventListener('change', function() {
-                document.getElementById('myForm').submit();
-            });
-        }
+        // var inputFields = document.getElementsByTagName('input');
+        // var selectFields = document.getElementsByTagName('select');
+        // var allFields = Array.prototype.slice.call(inputFields).concat(Array.prototype.slice.call(selectFields));
+        // for (var i = 0; i < allFields.length; i++) {
+        //     allFields[i].addEventListener('change', function() {
+        //         document.getElementById('myForm').submit();
+        //     });
+        // }
 
             
             

@@ -177,7 +177,7 @@
             {% if x.Status == "OK" %}
                 <td style="background-color:lightgreen;">{{ x.Status }} </td>
             
-            {% elif x.Status == "NE ČISTI!" %}
+            {% elif x.Status == "NE CISTI!" %}
                 <td style="background-color: orange;">{{ x.Status }} </td>
             
             {% elif x.Status == "ŠLI VEN" %}
@@ -262,7 +262,7 @@
                 
                     {% if x.Status == "KO" %}
                         <td><img src="{% static 'slike/vseOK.png' %}" alt="ok"></td>
-                    {% elif x.Status == "NE ČISTI!" %}
+                    {% elif x.Status == "NE CISTI!" %}
                         <td><img src="{% static 'slike/niOK.png' %}" alt="ni ok"></td>
                         
                         

@@ -1,0 +1,97 @@
+{% extends 'baseApl.html' %}
+{% load static %}
+{% block title %}Index{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+
+<style>
+    table {border-collapse: collapse; }
+    table, tr, td, th {border: 2px solid rgb(236, 221, 7); text-align:center; font-size:50px}
+    h1 {font-size: 30px;}
+    p, h2 {font-size: 30px;}
+    a {color: solid rgb(39, 3, 239); font-size:30px}
+    a:hover {color: rgb(243, 4, 68);}
+    a:visited {color: brown;}
+    
+    button {
+        border: none;
+        border-radius: 20px;
+        outline: auto;
+        border-color: black;
+        background-color: rgb(130, 127, 127);
+        color: rgb(243, 243, 7);
+        padding: 20px 45px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 35px;
+        margin: 3px 3px;
+        cursor: pointer;
+        
+        }
+ 
+</style>
+
+
+
+
+<h1>{{ ObDatum.DatumObravnavani }} - Hotel Gašperin</h1>
+
+
+    <p>
+        <button style="width:400px; background-color: rgb(232, 253, 5); 
+                    color: rgb(243, 7, 23);" 
+                    type="submit" 
+                    onclick="location.href='{% url 'logout' %}'" 
+                    >LOGOUT</button> 
+    <br>
+    
+                    Prijavljen si kot: {{ user }}
+        
+                    <br>
+        <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='pospravljanje/'"  >POSPRAVLJANJE</button>
+    
+        <br>
+        <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='pospravljanje_prihodi/'" >PRIHODI</button>
+        <br>
+    
+        <!--<a href="pospravljanje/">Pospravljanje</a>-->
+        {% if request.user.groups.all.0.name == "boss" %}
+        <!-- % if user.username == "Peter" or user.username == "Kellie" %} -->
+        
+            <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='zajtrk/'" >ZAJTRK</button>
+            <br>
+        
+            <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='graf/'" >GRAF</button>
+            <br>    
+        
+            <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='prazneSobe/'" >PRAZNE</button>
+            <br>
+            <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/graf/graf_footer/'" >FOOTER</button>
+            <br>
+            <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='recepcija/'" >RECEPCIJA</button>
+            <br>
+            <button style="width:400px; background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='form_dashboard'" >Dashboard</button>
+       
+            <br>
+        
+        {% endif %}
+    
+{% else %}
+<br>
+    <button style="background-color: rgb(232, 253, 5); color: rgb(243, 7, 23);" type="submit" onclick="location.href='{% url 'login' %}'">LOGIN</button>    
+<br>
+    {% if messages %}
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+    {% endif %}
+    
+
+</p>
+{% endif %}
+
+
+{% endblock %}

@@ -1,5 +1,4 @@
 {% if user.is_authenticated %}
-    <h3>Prijavljen si kot: {{ user }} </h3>
     {% if user.username == "Peter" or user.username == "Kellie" %}
         <style>
             table {border-collapse: collapse; }
@@ -10,7 +9,7 @@
             a {color: solid rgb(39, 3, 239); font-size:40px}
             a:hover {color: rgb(243, 4, 68);}
             a:visited {color: brown;}
-/* ff */
+
             button {
                 border: 2px;
                 background-color: rgb(130, 127, 127);
@@ -31,14 +30,14 @@
 
 
 
-        <h1> GRAFI</h1> 
+        <!--<h1> GRAFI</h1> -->
         <p>
-            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/'" >DOMOV</button></a>
-            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/pospravljanje/'" >POSPRAVLJANJE</button></a>
-            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/zajtrk/'" >ZAJTRK</button></a>
-            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/prazneSobe/'" >PRAZNE</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/'" >DM</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/pospravljanje/'" >POSP</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/zajtrk/'" >ZAJ</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/prazneSobe/'" >PRZ</button></a>
             
-            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='graf_footer/'" >FOOTER</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='graf_footer/'" >FTR</button></a>
         </p>
 
         <table>
@@ -63,6 +62,11 @@
                 <td style="background-color: orange ;"> {{ x.S6 }} </td>
                 <td style="background-color: orange ;"> {{ x.S7 }} </td>
                 <td style="background-color: orange ;"> {{ x.S8 }} </td>
+                <td style="background-color: orange ;"> {{ x.S9 }} </td>
+                <td style="background-color: orange ;"> {{ x.S10 }} </td>
+                <td style="background-color: orange ;"> {{ x.S11 }} </td>
+                <td style="background-color: orange ;"> {{ x.S12 }} </td>
+                <td style="background-color: orange ;"> {{ x.S13 }} </td>
                 
             
             {% elif x.S0 == "Zaj"  or x.S0 == "StS" or x.S0 == "Prh" %}
@@ -75,6 +79,11 @@
                 <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S6 }} </td>
                 <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S7 }} </td>
                 <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S8 }} </td>
+                <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S9 }} </td>
+                <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S10 }} </td>
+                <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S11 }} </td>
+                <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S12 }} </td>
+                <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S13 }} </td>
             
             {% elif x.S0 == "Men" %}    
                 <td style="background-color: lightgreen;"> {{ x.S0 }} </td>  
@@ -86,6 +95,11 @@
                 <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S6 }} </td>
                 <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S7 }} </td>
                 <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S8 }} </td>
+                <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S9 }} </td>
+                <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S10 }} </td>
+                <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S11 }} </td>
+                <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S12 }} </td>
+                <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S13 }} </td>
             
             {% else %}
                 <!-- {% if x.S0|add:"0" > 0 %}-->   <!-- !!!!!  -->
@@ -98,6 +112,11 @@
                 <td style="background-color: white ;"> {{ x.S6 }} </td>
                 <td style="background-color: white ;"> {{ x.S7 }} </td>
                 <td style="background-color: white ;"> {{ x.S8 }} </td>
+                <td style="background-color: white ;"> {{ x.S9 }} </td>
+                <td style="background-color: white ;"> {{ x.S10 }} </td>
+                <td style="background-color: white ;"> {{ x.S11 }} </td>
+                <td style="background-color: white ;"> {{ x.S12 }} </td>
+                <td style="background-color: white ;"> {{ x.S13 }} </td>
                 
                 
                 <!-- {% endif %}   -->

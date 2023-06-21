@@ -64,8 +64,8 @@
         {% if k == "S0" %}    
             <td style="background-color: lightblue;"> {{ v }}
         
-        {% elif ":" in v or k == "S16" %}
-            {% if k == "S16" %}
+        {% elif ":" in v or k == "S16" or k == stolpec_Sxx_do %}
+            {% if k == "S16" or k == stolpec_Sxx_do %}
                 {% if ">" in v and ":" in v %} <!--S16 rezervacije na ta dan z 1 dnevom  O>  -->
                     {% if IDstr in v %} <!--če je ID obravanega gosta v tej celici, jo obarvaj drugače, da v grafu takoj vidim kdo je to  -->
                         <td style="background-color: blue; border-left: 6px solid red;" 
@@ -102,14 +102,14 @@
     {% endif %}
 </tr>
     
-    <tr>
+    <!-- <tr>
     {% if p.S0 == "Zaj"  or p.S0 == "StS" or p.S0 == "Prh" or p.S0 == "Men" %}
         
             {% for k, v in p.items %}        
             
                 {% if k == "S0" %}
                 <td style="background-color: lightgreen;"> {{ v }} </td> 
-                {% elif k == "S16" %}
+                {% elif k == "S16" or k == stolpec_Sxx_do %}
                 <td style="background-color: white ; font-style: italic;color: brown;border-left: 6px solid red;" > {{ v }} </td>
                 {% else %}
                 <td style="background-color: white ; font-style: italic;color: brown;" > {{ v }} </td>
@@ -119,7 +119,7 @@
         
     {% endif %}
 
-    </tr>
+    </tr> -->
 
 
 

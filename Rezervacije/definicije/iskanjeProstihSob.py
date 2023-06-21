@@ -16,7 +16,7 @@ def PripravaPodatkov():
     T_izbraniP = pd.read_sql_query("SELECT * FROM Rezervacije_vnosgostov", con)
     
     
-    #con = sqlite3.connect('C:/Users/Hotel/Piton/PROJEKTI/UCENJE/PYQT5/Test_Designer/DataBaza.db')
+    #con = sqlite3.connect('C:/Rezervacije_QT/DataBaza.db')
     T_Data_Sobe=pd.read_sql_query("SELECT * FROM Rezervacije_sifrantsob", con)
    
     
@@ -58,9 +58,10 @@ def proste_sobe(T_izbraniP, T_Data_Sobe, TipSobe, Datum_OD, Datum_DO):
         L_Razp_Sobe=(T_Data_Sobe[T_Data_Sobe["TipSobe"]==TipSobe])
     
     L_Razp_Sobe=L_Razp_Sobe["SifraSobe"].tolist()
+    L_Razp_Sobe.append(99)
     
     #Iz glavne tabele izloči sobe, ki so v listu sob iskanega tipa 
-    T_Filtritane_sobePRPR=T_izbraniP[T_izbraniP["stsobe"].isin(L_Razp_Sobe)]
+    T_Filtritane_sobePRPR= T_izbraniP[T_izbraniP["stsobe"].isin(L_Razp_Sobe)]
     #print(T_Filtritane_sobePRPR.loc[:,["stsobe","od","do"]])
 
     #_________________________________________________________
@@ -70,16 +71,15 @@ def proste_sobe(T_izbraniP, T_Data_Sobe, TipSobe, Datum_OD, Datum_DO):
     #Izloči rezervacije, ki imajo datum prihoda večji od "Datum rezer.DO"
     T_Filtritane_sobePRPR.drop(T_Filtritane_sobePRPR[T_Filtritane_sobePRPR["od"]>=Datum_DO].index, inplace=True)
     #print(T_Filtritane_sobePRPR.loc[:,["od","do","stsobe"]])
-        
+    #print(T_Filtritane_sobePRPR.loc[:,["stsobe","od","do"]])
     L_sobe_razpolozljive=T_Filtritane_sobePRPR["stsobe"].tolist()
-    #print(L_sobe_razpolozljive)
-    #print(L_Razp_Sobe)
+    
 
     L_available=[]
     for i in L_Razp_Sobe:
         if i not in L_sobe_razpolozljive:
             L_available.append(i)
-    
+    #print(L_available)
     
     #print("Razp. sobe")
     if len(L_available)==0:

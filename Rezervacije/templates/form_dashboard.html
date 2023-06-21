@@ -94,16 +94,23 @@ border: solid green 3px;
     grid-area: listagostov;
 }
 
+.nizka_vrstica {
+    height: 30px;
+    margin: 0;
+    padding: 0;
+}
 
-
-
+td {
+    font-weight: bold;
+}
 
 </style>
 
 <div class="containerDash" style="z-index: 99;">
+    
     <div class="nocitve" style="overflow: scroll;">
         Nočitve
-        <table class="table table-sm">
+        <table class="table-sm table-bordered" style="width: 100%;">
             <thead>
                 <tr>
                     <th>Y</th>
@@ -113,6 +120,7 @@ border: solid green 3px;
                 </tr>
             </thead>
             <tbody>
+                <!-- Vnos podatkov iz pandas df v tabelo -->
                 {% for index, row in df_nocitve.iterrows %}
                     <tr>
                         <td>{{ row.y }}</td>
@@ -128,12 +136,14 @@ border: solid green 3px;
 
     <div class="avansi" style="overflow: scroll;">
         Avansi
-        <table class="table">
+        <table class="table-sm table-bordered" >
             
             {% for item in avansi %}
             <tr>
-                <td>{{item.id}}</td>
+                <td><button class ="btn btn-warning btn-sm" style="width: 40px;" onclick="location.href='/updateIzGrafa/{{item.id}}'">{{item.stsobe}}</button></td>
                 <td>{{item.imestranke}}</td>
+                <td>{{item.RokPlacilaAvansa|date:"d.m."}}</td>
+                
     
             </tr>    
             {% endfor %}
@@ -145,12 +155,16 @@ border: solid green 3px;
 
     <div class="listagostov" style="overflow: scroll;">
         Lista Gostov
-        <table class="table">
+        <table class="table-sm table-bordered">
             
         {% for index, row in lista_gostov.iterrows %}
         <tr>
-            <td><button class ="btn btn-warning" style="width: 40px;" onclick="location.href='/updateIzGrafa/{{row.id}}'">{{row.stsobe}}</button></td>
+            <td><button class ="btn btn-warning btn-sm" style="width: 40px;" onclick="location.href='/updateIzGrafa/{{row.id}}'">{{row.stsobe}}</button></td>
             <td>{{row.imestranke}}</td>
+            <td>{{row.do_dt|date:"d.m."}}</td>
+            <td>{{row.se_dni}}</td>
+            <td>{{row.agencija}}</td>
+            <td>{{row.DR}}</td>
 
         </tr>    
         {% endfor %}
@@ -161,14 +175,16 @@ border: solid green 3px;
 
     <div class="zadnjerez" style="overflow: scroll;">
         Zadnje Rezervacije
-        <table class="table">
+        <table class="table-sm table-bordered">
             
             {% for index, row in zadnje_rezervacije.iterrows %}
             <tr>
-                <td><button class ="btn btn-warning" style="width: 40px;" onclick="location.href='/updateIzGrafa/{{row.id}}'">{{row.stsobe}}</button></td>
-                
-                
+                <td><button class ="btn btn-warning btn-sm" style="width: 40px;" onclick="location.href='/updateIzGrafa/{{row.id}}'">{{row.stsobe}}</button></td>
                 <td>{{row.imestranke}}</td>
+                <td>{{row.datumVnosa_dt|date:"d.m"}}</td>
+                <td>{{row.agencija}}</td>
+                <td>{{row.DR}}</td>
+
     
             </tr>    
             {% endfor %}
@@ -180,8 +196,8 @@ border: solid green 3px;
         Id Ponudb<br>
         
         {% for x in id_ponudb %}
-        
-        <a href="{% url 'rezervacije:form_vnos_iz_ponudbe' x %}">{{x}}</a><br>
+        <!-- !!!!!  x.0 >> prva poticija v listu ali v tupple -->
+        <a href="{% url 'rezervacije:form_vnos_iz_ponudbe' x.0 %}">{{x.1}}</a><br>
         {% endfor %}
     </div>
 
@@ -189,14 +205,40 @@ border: solid green 3px;
         CCD
     </div>
 
-    <div class="skupajeur">
-        Skupaj EUR
+    <div class="skupajeur" style="overflow: scroll;">
+        <div style="display: flex; orientation: row; justify-content: space-between;">
+        <p> Skupaj EUR: <span style="color: red; font-weight: bold;"> {{ime_dneva_v_tednu}}</span></p>
+        <form action="" method="post">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-dark" type="submit" name="btn_dan_nazaj">-</button>
+            <button class="btn btn-sm btn-dark" type="submit" name="btn_danes">Danes</button>
+            <button class="btn btn-sm btn-dark" type="submit" name="btn_jutri">Jutri</button>
+            <button class="btn btn-sm btn-dark" type="submit" name="btn_dan_naprej">+</button>
+        </form>
+        </div>
+        <table class="table-sm table-bordered">
+            <!-- raport ima 2 stolpca: index in Podatki -->
+            {% for index, row in raport.iterrows %}
+            <tr style="height: 21px;">
+                {% if row.index == "xxx"  %}
+                <td>Datum</td>
+                {% else %}
+                <td>{{row.index}}</td>
+                {% endif %}
+                <td>{{row.Podatki}}</td>
+    
+            </tr>    
+            {% endfor %}
+        </table>
+
+
+
     </div>
 
     <div class="eurnaagencijo" style="overflow: scroll;">
         EUR na agencijo
         
-        <table class="table">
+        <table class="table-sm table-bordered">
             
             {% for index, row in agencije_profit.iterrows %}
             <tr>
@@ -210,20 +252,33 @@ border: solid green 3px;
 
     <div class="odpovedi">
         Odpovedi
-        <table class="table">
+        <table class="table-sm table-bordered">
             
             {% for index, row in zadnje_odpovedi.iterrows %}
             <tr>
                 <td>{{row.stsobe}}</td>
                 <td>{{row.imestranke}}</td>
+                <td>{{row.agencija}}</td>
+                <td>{{row.DR}}</td>
     
             </tr>    
             {% endfor %}
             </table>
     </div>
 
-    <div class="prostesobe">
+    <div class="prostesobe" style="overflow: scroll;">
         Proste sobe
+        <table class="table-sm table-bordered">
+            
+            {% for index, row in proste_sobe.iterrows %}
+            <tr>
+                <td>{{row.stsobe}}</td>
+                <td>{{row.DniDoNaslPrih}}</td>
+                <td>{{row.od}}</td>
+    
+            </tr>    
+            {% endfor %}
+            </table>
     </div>
 
 

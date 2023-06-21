@@ -9,6 +9,7 @@
     <!--{{ user }}    -->
     {% if user.username == "Peter" or user.username == "Kellie" %}
         <style>
+            
             table {border-collapse: collapse; padding: 5px;}
             tr, td, th {border: 2px solid rgb(1, 1, 1); text-align:center; 
                 font-size:50px;padding: 5px;}
@@ -26,7 +27,7 @@
                 border: 2px;
                 background-color: rgb(130, 127, 127);
                 color: rgb(243, 243, 7);
-                padding: 20px 45px;
+                padding: 20px 30px;
                 text-align: center;
                 text-decoration: none;
                 display: inline-block;
@@ -35,7 +36,10 @@
                 cursor: pointer;
                 
                 }
-        
+                /* the .container > * selector targets all direct child elements of the container and sets their width property 
+                to 100%, ensuring they also take up the full width of the container. */
+                /* .container > * {
+                    width: 100%;} */
         </style>
 
         <!-- OHRANJA POZICIJO NA STRANI PO REFRESHU -->
@@ -59,15 +63,18 @@
         });
         </script>
 
-
-
-        <h1> {{ ObDatum.DatumObravnavani }} - ZAJTRK</h1> 
-        <h2> Še zajtrkov: {{ StZajtrk }}</h2>
+        <div class="container">
+<!-- drži pozicijo na vrhu -->
+        <h1 style=" position: sticky; top: 0; background-color: #f1f1f1;"> {{ ObDatum.DatumObravnavani }} - ZAJTRK - {{ StZajtrk }} sob <span style="color: red;">({{se_oseb}} oseb)</span></h1> 
+        
                          
         <p>
-            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/'" name='mybtn1'>DOMOV</button></a>
-            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/pospravljanje/'" name='mybtn1'>POSPRAVLJANJE</button></a>
-            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/pospravljanje_prihodi/'" name='mybtn1'>PRIHODI</button></a>
+            <a><button style="background-color:  rgb(28, 4, 248);" type="submit" onclick="location.href='/'" name='mybtn1'>DOM</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/pospravljanje/'" name='mybtn1'>POS</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/pospravljanje_prihodi/'" name='mybtn1'>PRH</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/graf/'" name='mybtn1'>GRF</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/prazneSobe/'" name='mybtn1'>PRZ</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/recepcija/'" name='mybtn1'>REC</button></a>
         </p>
 
         <table>
@@ -76,7 +83,7 @@
             <th>Osb</th>
             <th>Alergija</th>
             <th>Status</th>
-            <th style="width: 180px;">Potrdi</th>
+            <th style="width: 180px;">Zajtrk</th>
             <!-- <th>Res</th> -->
             <th style="width: 180px;">Ven</th>
 
@@ -84,9 +91,14 @@
             <tr style="height: 80px">
                 
                 <!-- Država-->
-                {% if x.Akcija == "odhod" %}
-                <td style="background-color: coral;">{{ x.Drzava }}</td>
+            {% if x.Akcija == "odhod" %}
+                {% if x.Status == "OK" or x.Status == "KO" or x.Status == "ŠLI VEN" %}
+                <td style="background-color: black; color: white;">{{ x.Drzava }}</td>
                 {% else %}
+                <td style="background-color: coral;">{{ x.Drzava }}</td>
+                {% endif %}    
+                
+            {% else %}
                 <td>{{ x.Drzava }}</td>
                 {% endif %}
                 
@@ -109,8 +121,18 @@
             
             
             <!-- Število oseb -->
+            {{x.od}}
+            
+            {% if x.Od == ob_datum_ddmm %}
+            
+            <td style="border: 10px solid red;font-size: 3rem; font-weight: bold; line-height: 30%;" > {{ x.Oseb }} <br>
+                 </td>
+            {% else %}
             <td> {{ x.Oseb }} </td>
-
+            
+            {% endif %}
+            
+            
             <!-- Alergija -->
             <td style="font-size:35 ;" >  {{ x.Alergije }} </td>
 
@@ -119,21 +141,33 @@
             
             <!-- status - če je ok, obarvaj celico z zeleno -->
             {% if x.StatusZajtrk == "OK" %}
-                <td style="background-color: rgb(11, 242, 38);">{{ x.StatusZajtrk }} </td>
+                {% if x.Soba == st_sobe_zadnji_zajtrk %}
+                    <td style="background-color: green;">{{x.cas_zajtrka|time:"H:i" }} </td>
+                {% else %}
+                    <td style="background-color: rgb(11, 242, 38);">{{x.cas_zajtrka|time:"H:i" }} </td>
+                 {% endif %}
             {% elif x.StatusZajtrk == "1/2" %}
                 <td style="background-color: rgb(193, 105, 28);">{{ x.StatusZajtrk }} </td>
             {% else %}
                 <td>{{ x.StatusZajtrk }} </td>
             {% endif %}
             
+            
+
+
+
+            
             <!-- linki OK in reset - aktivirajo viewse za spremmebo statusa v OK, oz izbriše OK iz statusa -->
             <!-- Če je statusZajtrk OK, potem spremeni spodnji link v POL . to je za sobe, kjer je prišla samo polovica sobe na zajtrk -->
+            
             {% if x.StatusZajtrk == "OK" %}
                 <td><button type="submit" onclick="location.href='confirmZajtrkPOL/{{ x.id }}'">1/2</button></td>
             {% elif x.StatusZajtrk == "1/2" %}
             <td><button type="submit" onclick="location.href='resetZajtrk/{{ x.id }}'"><img src="{% static 'slike/niOK.png' %}" alt="iks"></button></td>    
             {% elif x.StatusZajtrk == "" %}
-            <td><button type="submit" onclick="location.href='confirmZajtrk/{{ x.id }}'"> <img height="40px" src="{% static 'slike/vseOK.png' %}" alt="kljukica"></button></td> 
+            
+            <td><button type="submit" onclick="location.href='vprasaj_zajtrk_ok_1_2/{{ x.id }}'"> <img height="40px" src="{% static 'slike/vseOK.png' %}" alt="kljukica"></button></td> 
+            <!-- <td><button type="submit" onclick="location.href='confirmZajtrk/{{ x.id }}'"> <img height="40px" src="{% static 'slike/vseOK.png' %}" alt="kljukica"></button></td>  -->
             {% endif %}
             
             <!-- <td><button type="submit" onclick="location.href='resetZajtrk/{{ x.id }}'"><img src="{% static 'slike/niOK.png' %}" alt="iks"></button></td> -->
@@ -141,17 +175,43 @@
             <!--<td> <a href="confirm/{{ x.id }}">OK</a>  </td> 
             <td> <a href="reset/{{ x.id }}">Reset</a></td> -->
         
-        <!--GUMB ŠLI VEN -->
-        {% if x.Status == "ŠLI VEN" %}
-        <td>OK</td>
         
-        {% elif x.Status == "OK" or x.Status == "KO" %}
-        <td style="background-color: greenyellow;">OK</td>
+        
 
-        {% else %}
-            <td><a><button style="height: 80px; font-weight: bold; color: black; font-size: 35px; background-color: tomato;" type="submit" 
-                onclick="location.href='gosti_sli_ven/{{ x.id }}'">VEN</button></a>
+
+
+        
+        
+        
+            <!--GUMB ŠLI VEN -->
+        {% if x.Status == "ŠLI VEN" %}
+        <td>
+        <a><button style="width: 160px; height: 80px; font-weight: bold; color: black; font-size: 35px; 
+            background-color: blueviolet; color: white;" type="submit"  
+            onclick="location.href='gosti_sli_ven_reset/{{ x.id }}'">Ven</button></a>
+        </td>
+            <!--<td>OK</td>-->
+        
+        
+        {% elif x.Status == "NE CISTI!" %}
+            <td style="background-color: orange;">N.Č.</td>    
+
+        {% elif x.Status == "OK" or x.Status == "KO" %}
+            {% if x.Soba == st_sobe_zadnje_ocisc %}
+                <td style="background-color: darkgreen; line-height: 0%;"> <p style="font-size: 1.5rem; color: white; font-weight:bold;">OK</p>
+                     <p style="color: yellow; font-weight:bold; font-size: 2.5rem;">{{x.cas_ciscenja|time:"H:i"}} </p></td>
+            {% else %}
+            <td style="background-color: greenyellow; line-height: 0%;"> <p style="font-size: 1.5rem; color: black; font-weight:bold;">OK</p>
+                <p style="color: black; font-weight:bold; font-size: 2.5rem;">{{x.cas_ciscenja|time:"H:i"}} </p></td>
+            {% endif %}
+
+        {% else %}    
+            <td><a><button style="width: 160px; height: 80px; font-weight: bold; color: black; font-size: 35px; background-color: tomato;" type="submit" 
+                onclick="location.href='vpras_pred_potrd_sli_ven/{{ x.id }}'">Notri</button></a>
             </td>
+            <!-- <td><a><button style="width: 160px; height: 80px; font-weight: bold; color: black; font-size: 35px; background-color: tomato;" type="submit" 
+                onclick="location.href='gosti_sli_ven/{{ x.id }}'">Notri</button></a>
+            </td> -->
         
         {% endif %}
         
@@ -167,7 +227,7 @@
     <h1>Dostop zavrnjen. Nimaš ustreznih pravic za ogled te strani!</h1>
 
     {% endif %}
-
+</div>
     
 {% else %}
 <h1>Ne bo šlo. Moraš se logirati!</h1>

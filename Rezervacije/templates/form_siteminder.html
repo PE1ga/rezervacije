@@ -40,8 +40,26 @@
 
 
 <div class="container"> 
-<table class="table table-bordered" >
-    <thead>
+<div class="gumbi" style="display: flex; orientation: row; justify-content: space-between; margin-bottom: 10px;">
+
+<form action="" method="post">
+{% csrf_token %}
+<button name="minus14" class="btn btn-primary">- 14 </button>
+<button name="minus7" class="btn btn-primary">- 7</button>
+<button name="od_danes" class="btn btn-primary">Od danes </button>
+<button name="plus7" class="btn btn-primary">+ 7</button>
+<button name="plus14" class="btn btn-primary">+ 14</button>
+<button name="od_zadnje_rez" class="btn btn-success">Od zadnje rez </button>
+<button name="od_zadnje_odp" class="btn btn-danger">Od zadnje odp </button>
+<input type="text" hidden  name="datum_template" value="{{od_datum}}" >
+
+</form>
+</div>
+
+
+<div class="tabela">
+    <table class="table table-bordered" >
+    <thead class="table-secondary">
         <tr>
             <th>Tip</th>
             {% for col in sm.columns %}
@@ -52,7 +70,7 @@
     <tbody>
         {% for index, row in sm.iterrows %}
             <tr>
-                <th>{{ index }}</th>
+                <th style="background-color: lightgray; text-align: center;" >{{ index }}</th>
                 {% for value in row %}
                     {% if value == 0 %}
                     <td style="background-color: red;">{{ value }}</td>
@@ -66,7 +84,7 @@
 </table>
 </div>
 
-
+</div>
 
 
 {% endblock %}

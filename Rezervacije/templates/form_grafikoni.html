@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+   
+{% endblock %}
+
+
+{% block content %}
+
+Grafikon
+<div id="chart_div" style="width: auto; border: solid black 2px;">
+    <img src="data:image/png;base64,{{ plot_image }}" alt="Bar Chart" style="width: 100%; 
+    height: auto;  display: block; ">
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    
+{% endblock %}

@@ -1,0 +1,129 @@
+{% if user.is_authenticated %}
+    <h3>Prijavljen si kot: {{ user }} </h3>
+    {% if user.username == "Peter" or user.username == "Kellie" %}
+        <style>
+            table {border-collapse: collapse; }
+            table, tr, td, th {border: 2px solid black; text-align:center; font-size:50px; padding: 5px;}
+            p {font-size:50px;}
+            h1 {font-size: 50;}
+            h2 {font-size: 40;}
+            a {color: solid rgb(39, 3, 239); font-size:40px}
+            a:hover {color: rgb(243, 4, 68);}
+            a:visited {color: brown;}
+/* ff */
+            button {
+                border: 2px;
+                background-color: rgb(130, 127, 127);
+                color: rgb(243, 243, 7);
+                padding: 20px 45px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 35px;
+                margin: 8px 8px;
+                cursor: pointer;
+                
+                }
+        
+        </style>
+
+        
+
+
+
+        <h1> GRAFI</h1> 
+        <p>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/'" >DOMOV</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/pospravljanje/'" >POSPRAVLJANJE</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/zajtrk/'" >ZAJTRK</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/prazneSobe/'" >PRAZNE</button></a>
+            
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='graf_footer/'" >FOOTER</button></a>
+        </p>
+
+        <table>
+            <!--<th>{{ Sobe.S0 }}</th>
+            <th>Akcija</th>
+            <th>Za oseb</th>
+            <th>Status</th>
+            <th>Potrditev</th>
+            -->
+
+        {% for x in Sobe %}
+        <tr>
+            
+            {% if x.S0 == "xxx" or x.S0 == "Dan" %}
+                
+                <td style="background-color: orange ;"> {{ x.S0 }} </td>
+                <td style="background-color: orange ;"> {{ x.S1 }} </td>
+                <td style="background-color: red ;"> {{ x.S2 }} </td>
+                <td style="background-color: orange ;"> {{ x.S3 }} </td>
+                <td style="background-color: orange ;"> {{ x.S4 }} </td>
+                <td style="background-color: orange ;"> {{ x.S5 }} </td>
+                <td style="background-color: orange ;"> {{ x.S6 }} </td>
+                <td style="background-color: orange ;"> {{ x.S7 }} </td>
+                <td style="background-color: orange ;"> {{ x.S8 }} </td>
+                
+            
+            {% elif x.S0 == "Zaj"  or x.S0 == "StS" or x.S0 == "Prh" %}
+                <td style="background-color: lightgreen;"> {{ x.S0 }} </td>  
+                <td style="background-color: lightgray; font-size:30 ; border-right: 6px solid red;"><i> {{ x.S1 }} </i></td>
+                <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);"> {{ x.S2 }} </td>
+                <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S3 }} </td>
+                <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S4 }} </td>
+                <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S5 }} </td>
+                <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S6 }} </td>
+                <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S7 }} </td>
+                <td style="background-color: white; font-style: italic; color:rgb(28, 4, 248);" > {{ x.S8 }} </td>
+            
+            {% elif x.S0 == "Men" %}    
+                <td style="background-color: lightgreen;"> {{ x.S0 }} </td>  
+                <td style="background-color: lightgray; font-size:30 ; border-right: 6px solid red;"><i> {{ x.S1 }} </i></td>
+                <td style="background-color: white ; font-style: italic; color:brown;"> {{ x.S2 }} </td>
+                <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S3 }} </td>
+                <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S4 }} </td>
+                <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S5 }} </td>
+                <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S6 }} </td>
+                <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S7 }} </td>
+                <td style="background-color: white ; font-style: italic;color: brown;" > {{ x.S8 }} </td>
+            
+            {% else %}
+                <!-- {% if x.S0|add:"0" > 0 %}-->   <!-- !!!!!  -->
+                <td style="background-color: lightblue;"> {{ x.S0 }} </td>  
+                <td style="background-color: lightgray; font-size:30 ; border-right: 6px solid red;"><i> {{ x.S1 }} </i></td>
+                <td style="background-color: white ; "> {{ x.S2 }} </td>
+                <td style="background-color: white ;"> {{ x.S3 }} </td>
+                <td style="background-color: white ;"> {{ x.S4 }} </td>
+                <td style="background-color: white ;"> {{ x.S5 }} </td>
+                <td style="background-color: white ;"> {{ x.S6 }} </td>
+                <td style="background-color: white ;"> {{ x.S7 }} </td>
+                <td style="background-color: white ;"> {{ x.S8 }} </td>
+                
+                
+                <!-- {% endif %}   -->
+            {% endif %} 
+            
+           
+
+        </tr>
+        {% endfor %} 
+        </table>
+        
+
+        
+
+        <p>
+            <a href="/">Domov</a>
+        </p>
+
+    {% else %}
+    <h1>Dostop zavrnjen. Nimaš ustreznih pravic za ogled te strani!</h1>
+
+    {% endif %}
+
+{% else %}
+<h1>Ne bo šlo. Moraš se logirati!</h1>
+<a href="{% url 'login' %}">Logiraj se tu!</a>
+
+
+{% endif %}

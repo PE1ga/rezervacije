@@ -23,7 +23,7 @@
         margin-top: 5px;
     }
     .container1{
-    border: solid 5px blue;
+    /* border: solid 5px blue; */
     display: flex; 
    
     float: left;
@@ -96,13 +96,28 @@
           <td>
             {% if field.name == "zahteve" %}
                 {{ field.label_tag }}
-                <button  onclick="clearZahteve()" class="btn btn-sm btn-danger" type="button" name="brisi_zahteve">Briši</button>
+                <!-- <button  onclick="clearZahteve()" class="btn btn-sm btn-danger" type="button" name="brisi_zahteve">Briši</button> -->
+                <button  class="btn btn-sm btn-danger" type="submit" name="btn_brisi_zahteve">Briši</button>
                 {{ field }}
                 {% if field.errors %}
                 <div class="alert alert-danger">{{ field.errors }}</div>
                 {% endif %}
+            
+            {% elif field.name == "RNA" %}
+                {{ field.label_tag }}
+                <button  class="btn btn-sm btn-danger" type="submit" name="btn_update_rna">UpdateRna</button>
+                {{ field }}
+                {% if field.errors %}
+                <div class="alert alert-danger">{{ field.errors }}</div>
+                {% endif %}
+            
+            {% elif field.name == "RokPlacilaAvansa" %}
+                {{ field.label_tag }}
+                <input type="text" class="form-control" value = "{{forma.RokPlacilaAvansa.value|date:'d.m.Y'}}" >
+                
 
 
+            
 
             {% else %}
                 {{ field.label_tag }}
@@ -160,7 +175,7 @@
     
     
     <!--  TABELA ******************************** -->
-   
+  
     
     <table>   
         {% for p in rezervacije %}
@@ -246,7 +261,7 @@
     
     
     
-        <tr>
+        <!-- <tr>
         {% if p.S0 == "Zaj"  or p.S0 == "StS" or p.S0 == "Prh" or p.S0 == "Men" %}
             
                 {% for k, v in p.items %}        
@@ -263,12 +278,13 @@
             
         {% endif %}
     
-        </tr>
+        </tr> -->
     
     
     
     
     {% endfor %}
+    
     
     
     

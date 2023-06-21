@@ -146,10 +146,10 @@
   {% csrf_token %}
 <div style=" display: flex; flex-direction: column;">
   <select id="option-select" class="form-control" >
-    <option value="">Izberi</option>
-    <option value="Veseli nas, da ste nam ponovno poslali povpraševanje.">Veseli nas..</option>
-    <option value="Družinskih in štiriposteljnih sob v želenem terminu nimamo več, zato vam lahko ponudimo dvoposteljne sobe.">Družinskih sob ni več..</option>
-    <option value="V tem terminu imamo na voljo tudi cenejše sobe. Če želite, lahko pripravim ponudbo tudi za cenejšo sobo.">Imamo tudi cenejše...</option>
+    {% for k, v in dict_zahteve.items %}
+    <option value="{{k}}">{{v}}</option>
+    {% endfor %}
+    
   </select>
   
   

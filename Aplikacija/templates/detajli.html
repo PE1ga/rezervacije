@@ -1,20 +1,20 @@
-
 {% load static %}
 {% if user.is_authenticated %}
-    
+    <!--<p>Prijavljen si kot: {{ user }} </p> -->
     <style>
         table, tr, td, th {border: 2px solid rgb(236, 221, 7); text-align:center; font-size:50px;}
         p {font-size:30px;}
         h1 {font-size: 40;}
         h2 {font-size: 30;}
+        form, input {font-size:30px; }
         a {color: solid rgb(39, 3, 239); font-size:40px}
-        a:hover {color: rgb(243, 4, 68);}
-        a:visited {color: brown;}
-        
-        button {
-            border: 2px;
-            background-color: rgb(130, 127, 127);
-            color: rgb(243, 243, 7);
+            a:hover {color: rgb(243, 4, 68);}
+            a:visited {color: brown;}
+            
+            button {
+                border: 2px;
+                background-color: rgb(130, 127, 127);
+                color: rgb(243, 243, 7);
                 padding: 20px 45px;
                 text-align: center;
                 text-decoration: none;
@@ -23,76 +23,166 @@
                 margin: 8px 8px;
                 cursor: pointer;
                 
-                }
-        #alarmi {
-            background-color: white;
+                    }
+                    
+            #alarmi {
+                background-color: white;
             }
-                
-                </style>
+                    
+            .container_slike {
+    position: relative;
+    width: 100%;
+    height: 700px;
+    display: grid; 
+    
+    /* 3 x 2 */
+    /*grid-template-rows: 100px 100px 100px;*/
+    /*grid-template-columns: 100px 100px;*/
+    
+    /*Krajša varrianta, če imaš eneke velikosti stolpcev oz vrstic*/
+    /*grid-template-rows: repeat(3, 100px);*/
+    /*grid-template-columns: repeat(2, 100px);*/
+    
+    /*Še krajša vaianta */
+    grid-template: repeat(3, 200px) / repeat(2, 300px) ;
+    
+    gap: 20px;
+    /*border: 3px solid lightgray;*/
+    
+    justify-items: stretch;  /* poravnava boxa v svojem GRIDU*/
+    align-items: stretch; /* poravnava boxa v svojem GRIDU*/
+    
+    justify-content: start;  /* to je poravnava GRIDA v CONTAINER _ horizont*/ 
+    align-content: top; /* to je poravnava GRIDA v CONTAINER*/
+    margin-top: 0%;
+    /*height: 100vh;*/
+    
+        }
+    
+    .box {
+        width: 260px;
+        height: 200px;
+       
+    }
+    img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+    }
+
+    /* the .container > * selector targets all direct child elements of the container and sets their width property 
+    to 100%, ensuring they also take up the full width of the container. */
+    
+    .container > * {
+    width: 100%;}
 
 
+    
 
+</style>
 
-
+<div class="container">
     <p>
-        <a><button style="background-color: rgb(28, 4, 248);" type="submit" 
-            onclick="location.href='/pospravljanje/'">POSPRAVLJANJE</button></a>
-    {% if user.username == "Peter" or user.username == "Kellie" %}
-        <a><button style="background-color: rgb(28, 4, 248);" type="submit" 
-            onclick="location.href='/zajtrk/'">ZAJTRK</button></a>
+
+        <a><button style="background-color: rgb(28, 4, 248);" type="submit"
+            onclick="location.href='/pospravljanje/'">POSPR.</button></a>
+        {% if user.username == "Peter" or user.username == "Kellie" %}
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit"
+             onclick="location.href='/zajtrk/'">ZAJTRK</button></a>
     </p>
-        
     <p>
-        <a><button style="background-color: rgb(51, 0, 255);" type="submit" 
-            onclick="location.href='gosti_sli_ven/{{ SobaDetajl.id }}'">ŠLI VEN</button></a>
-        <a><button style="background-color: rgb(orange);" type="submit" 
-            onclick="location.href='gosti_nocejo_ciscenja/{{ SobaDetajl.id }}'">NE ČISTITI</button></a>
-    </p>
+            <a><button style="background-color: rgb(51, 0, 255);" type="submit"
+                onclick="location.href='gosti_sli_ven/{{ SobaDetajl.id }}'">ŠLI VEN</button></a>
+        {% endif %}
             
-            
-            
-        <h1> PODATKI O REZERVACIJI</h1> 
+        {% if user.username == "Peter" or user.username == "Kellie" or user.username == "Delavec" %}
+            <a><button style="background-color: red;" type="submit"
+                onclick="location.href='gosti_nocejo_ciscenja/{{ SobaDetajl.id }}'">NE CISTI!</button></a>
+            </p>
+            <br>
+        <div style="display: flex; orientation: row;">
+            <a><button style="background-color: yellow; color: black; width: 200px;" type="submit"
+                onclick="location.href='popravi_akcija_na_pospravi/{{ SobaDetajl.id }}'">pospravi</button></a>
+            <a><button style="background-color: orange; color: black; width: 200px;" type="submit"
+                onclick="location.href='popravi_akcija_na_odhod/{{ SobaDetajl.id }}'">odhod</button></a>
+            <a><button style="background-color: cadetblue; color: black; width: 200px;" type="submit"
+                onclick="location.href='popravi_akcija_na_menjava/{{ SobaDetajl.id }}'">menjava</button></a>
+        </div>
+            {% endif %}
+
+
+
+
+{% if user.username == "Peter" or user.username == "Kellie" %}
+<h1> PODATKI O REZERVACIJI</h1> 
         <p><strong>Soba:</strong> {{ SobaDetajl.Soba }}</p>
         <p><strong>Ime stranke:</strong>  {{ SobaDetajl.Ime }} </p>
         <p><strong> Agencija:</strong>  {{ SobaDetajl.Agencija }} </p>
         <p><strong>OD:</strong> {{ SobaDetajl.Od }} | <strong>DO</strong> {{ SobaDetajl.Do }}</p>
         <p><strong>Cena:</strong> {{ SobaDetajl.Cena }} EUR | {{ SobaDetajl.RNA }}</p>
-        <p><strong>Št. oseb:</strong> {{ SobaDetajl.Oseb }} | <strong>Tip sobe:</strong> {{ SobaDetajl.Tip }}</p>
+        <p><strong>TurTax:</strong> {{ SobaDetajl.Ttax }}</p>
+        <p><strong>Št. oseb:</strong> {{ SobaDetajl.St_Oseb }} | <strong>Tip sobe:</strong> {{ SobaDetajl.Tip }}</p>
         <p><strong>Zahteve:</strong> {{ SobaDetajl.Zahteve }}</p>
         <p><strong>Alergije:</strong> {{ SobaDetajl.Alergije }}</p>
         <p><strong>Država:</strong> {{ SobaDetajl.Drzava }}</p>
-
-
-    {% endif %}
-
-        <h2 style="border-top:solid 3px red ;" > <br> PROBLEMI V SOBI {{ SobaDetajl.Soba }}</h1>
+        
+        
+        {% endif %} <!-- if user -->
+        
+        
+        <h2 style="border-top:solid 3px red ; width: 600px;" > <br> PROBLEMI V SOBI {{ SobaDetajl.Soba }}</h2>
         <form action="poslji_mail/{{ SobaDetajl.id }}" method="post">
-        {% csrf_token %}
-
+            {% csrf_token %}
+            
+            <input type="text" id="demo" name="sporocilo" size="15"> </p>
         
-        <input type="text" id="demo" name="sporocilo" size="15"> </p>
-
-        <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Tuš je pokvarjen')">
-            <img style="width:300px" src="{% static 'slike/tus.png' %}"  alt="Tuš pokvarjen"> </button>
-        <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Tv ne dela')">
-            <img style="width:300px" src="{% static 'slike/tv.png' %}"  alt="Tv pokvarjen"> </button>
-        <br>
-        <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Ni sušilca')">
-            <img style="width:300px" src="{% static 'slike/fen.png' %}"  alt="Fen pokvarjen"> </button>
-
-        <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Soba smrdi')">
-            <img style="width:300px" src="{% static 'slike/smrad.jpg' %}"  alt="Soba smrdi"> </button>
-        <br>
-        <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Manjka kozarec')">
-            <img style="width:300px" src="{% static 'slike/kozarec.jpg' %}"  alt="Manjka kozarec"> </button>
-        <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Pregorela žarnica')">
-            <img style="width:300px" src="{% static 'slike/zarnica.png' %}"  alt="Pregorela žarnica"> </button>
+        
+        
+        <div class="container_slike">
+            <div class="box">
+                <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Tuš je pokvarjen')">
+                <img src="{% static 'slike/tus.png' %}"  alt="Tuš pokvarjen"> </button>
+            </div>
+            <div class="box">
+                <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Tv ne dela')">
+                <img src="{% static 'slike/tv.png' %}"  alt="Tv pokvarjen"> </button>
+            </div>
+            <div class="box">
+                <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Ni sušilca')">
+                <img src="{% static 'slike/fen.png' %}"  alt="Fen pokvarjen"> </button>
+            </div>
+            <div class="box">
+                <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Soba smrdi')">
+                <img src="{% static 'slike/smrad.jpg' %}"  alt="Soba smrdi"> </button>
+            </div>
+            <div class="box">
+                <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Manjka kozarec')">
+                <img src="{% static 'slike/kozarec.jpg' %}"  alt="Manjka kozarec"> </button>
+            </div>
+            <div class="box">
+                <button id="alarmi" onclick="document.getElementById('demo').setAttribute('value','Pregorela žarnica')">
+                <img src="{% static 'slike/zarnica.png' %}"  alt="Pregorela žarnica"> </button>
+            </div>
+        </div>    
                 
-
+           
+            
+           
+            
+            
+        </form>
         
+    </div>
+
+    <!--
+    { else }
+    <h1>Dostop zavrnjen. Nimaš ustreznih pravic za ogled te strani!</h1>
+
+    { endif }
+    -->
 
 
-{% else %}
+    {% else %}
 <h1>Ne bo šlo. Moraš se logirati!</h1>
 <a href="{% url 'login' %}">Logiraj se tu!</a>
 

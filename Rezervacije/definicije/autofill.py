@@ -2,6 +2,7 @@ from django.core.files import File
 import pandas as pd
 import json
 import os
+import re
 from django.conf import settings
 
 
@@ -32,6 +33,8 @@ def Autofill_def(tekst):
             or "new booking through Demand Plus" in vsebina \
             or "SiteMinder's TripAdvisor" in vsebina:
             
+            
+
             # Razčleniš besedilo na vrstice
             L_vrsticeTeksta = vsebina.splitlines()   # !!!!!
             # Ustvariš list želenih fildov
@@ -57,9 +60,15 @@ def Autofill_def(tekst):
             CenaSitem = ListFildov[0].replace(",","")
             ListFildov[0]=CenaSitem
             
+            # Na pozicijo 4 v listu, daj "", saj je ta pozicija za email, ki pa za siteminder ni več viden v poslanem mailu.
+            ListFildov[4]=""
+
             # Multiroom - če je multiroom, potem ceno vnesi ročno. V listu na poziciji 0 dodaj tekst "MR" 
             if "Room 1:" in vsebina:
+                multiroom = True
                 ListFildov[0]= ""
+            else:
+                multiroom = False
 
 
 
@@ -77,7 +86,7 @@ def Autofill_def(tekst):
             
            
             
-            # VRNI V view.py
+            # # VRNI V view.py
             cena = ListFildov[0] 
             ime = ListFildov[3].lower().title()
             agencija = "Siteminder"
@@ -87,9 +96,39 @@ def Autofill_def(tekst):
             rna=rna
             rmail = ListFildov[4]
             zahteve = ListFildov[5]
-            #print(DatumOD, DatumDO)
+            drzava = ""
+            odpovedni_rok= 7
+            
+            
+            if multiroom == False:
+            
+                SobaDetajli = vsebina.split("Room: ")[1]  # najprej izoliraj sobo, da bo rezultat bolj natančen::: Economy Double Room with Forest View - Non-refundable - Breakfast included
+                SobaDetajli = SobaDetajli.splitlines()[0]
+                SobaDetajli = SobaDetajli.split("/")[0]
+                SobaDetajli = "- " + SobaDetajli + "-" 
 
-            #return cena, ime, agencija, StOseb, DatumOD, DatumDO, RNA
+
+
+                if "- Double Room with Mountain View - Ground Floor -" in SobaDetajli:
+                    tip = "g"
+                elif "- Double Room with Balcony and Mountain view -" in SobaDetajli:
+                    tip = "c"
+                elif "- Economy Double Room with Forest View - " in SobaDetajli:
+                    tip = ("x")
+                elif "- Economy Double Attic Room" in SobaDetajli:
+                    tip = ("y")
+                elif "- Double Room with Balcony and Forest View - " in SobaDetajli:
+                    tip = ("f")
+                elif "- Small Double Balcony Room with Mountain View -" in SobaDetajli:
+                    tip = ("s")
+                elif "- Quadruple Room with Balcony and Mountain view -" in SobaDetajli:
+                    tip = ("q")
+                elif "- Family Room with Balcony and Mountain View -" in SobaDetajli:
+                    tip = ("d")
+                else:
+                    tip =""
+            else:
+                tip =""
 
 
 
@@ -117,6 +156,10 @@ def Autofill_def(tekst):
                 ListFildov.append("Expedia") 
 
             
+            SobaDetajli = vsebina.split("ROOM - ")[1]  # najprej izoliraj sobo, da bo rezultat bolj natančen::: Economy Double Room with Forest View - Non-refundable - Breakfast included
+            SobaDetajli = SobaDetajli.splitlines()[0]
+            SobaDetajli = "- " + SobaDetajli
+
             # Odstrani EUR iz cene
             Cena=ListFildov[0].replace(" EUR","")
             ListFildov[0] = Cena
@@ -125,14 +168,16 @@ def Autofill_def(tekst):
             ListFildov[3] = Stranka      
 
             
-            """# Multiroom - če gre za več sob, dodaj v listu na pozicijo 0 (cena) tekst "MR"
+            # Multiroom - če gre za več sob, dodaj v listu na pozicijo 0 (cena) tekst "MR"
             # Razčleniš besedilo na vrstice
             List_vrstic = vsebina.splitlines() 
             df = pd.DataFrame({'Text': List_vrstic})
             st_stavkov= (df[df["Text"]=="Total Price:"].count())  # pri rezervaciji samo 1 sobe se "Total Price:" pojavi 2x, pri MR pa >2
             if st_stavkov.item() > 2:  
-                self.Multiroom = True  
-                ListFildov[0] = ""   """
+                multiroom = True  
+                ListFildov[0] ="" # Cena je 0 pri multiroomu!!!
+            else: 
+                multiroom= False
 
             rna=""
             # Ugotovi, ali imaš Virtual credit card- če da, potem vnesi ExpColl v obrazec
@@ -155,6 +200,118 @@ def Autofill_def(tekst):
             if "Non-refundable" in AliNonRefBookingCom:
                 rna="NONref"
                 #self.RNA.setEnabled(False)
+            
+            # Če rez. ni virtual ali nonref, potem je za Booking.com refOK
+            if "Booking.com" in vsebina:
+                if ListFildov[5].find("virtual credit card") == -1: # -1 pomeni, da find NI dobil iskanega teksta
+                    rna= ("refOK")
+            
+            
+            if "- General -" in SobaDetajli:
+                odpovedni_rok= ("7")
+            elif "- Partially refundable - " in SobaDetajli:
+                odpovedni_rok= ("2")
+            elif "- Special conditions 2 - " in SobaDetajli:
+                odpovedni_rok= ("14")
+            elif "Non-refundable" in SobaDetajli:
+                odpovedni_rok="0"    
+            
+            
+            
+            if "Booking.com" in vsebina:
+                drzava_txt = vsebina.split("Booker Address:")[1]
+                # print(drzava)
+                if "Slovenia" in drzava_txt:
+                    drzava= ("SI")
+                elif re.findall(r'\bCZ\b', drzava_txt) == ["CZ"]:  # "CZ" in drzava:
+                    drzava= ("CZ")
+                elif "Germany" in drzava_txt:
+                    drzava= ("DE")
+                elif re.findall(r'\bHU\b', drzava_txt) == ["HU"]:
+                    drzava= ("HU")
+                elif re.findall(r'\bSK\b', drzava_txt) == ["SK"]:
+                    drzava= ("SK")
+                elif re.findall(r'\bRO\b', drzava_txt) == ["RO"]:
+                    drzava= ("RO")
+                elif re.findall(r'\bHR\b', drzava_txt) == ["HR"]:
+                    drzava= ("HR")
+                elif re.findall(r'\bFR\b', drzava_txt) == ["FR"]:
+                    drzava= ("FR")
+                elif re.findall(r'\bLT\b', drzava_txt) == ["LT"]:
+                    drzava= ("LT")
+                elif re.findall(r'\bRS\b', drzava_txt) == ["RS"]:
+                    drzava= ("RS")
+                elif re.findall(r'\bIT\b', drzava_txt) == ["IT"]:
+                    drzava= ("IT")
+                elif re.findall(r'\bPL\b', drzava_txt) == ["PL"]:
+                    drzava= ("PL")
+                elif re.findall(r'\bES\b', drzava_txt) == ["ES"]:
+                    drzava= ("ES")
+                elif re.findall(r'\bKR\b', drzava_txt) == ["KR"]:
+                    drzava= ("KR")
+
+
+                elif "Australia" in drzava_txt:
+                    drzava= ("AU")
+                elif "United Kingdom" in drzava_txt:
+                    drzava= ("GB")
+                elif "Netherlands" in drzava_txt:
+                    drzava= ("NL")
+                elif "Belgium" in drzava_txt:
+                    drzava= ("BE")
+                elif "United States" in drzava_txt:
+                    drzava= ("US")
+                elif "Austria" in drzava_txt:
+                    drzava= ("AT")
+                elif "Israel" in drzava_txt:
+                    drzava= ("IL")
+                elif "Malta" in drzava_txt:
+                    drzava= ("MT")
+                elif "Ireland" in drzava_txt:
+                    drzava= ("IE")
+                elif "Finland" in drzava_txt:
+                    drzava= ("FI")
+                elif "Switzerland" in drzava_txt:
+                    drzava= ("CH")
+                
+                else: 
+                    drzava= ""
+                
+                
+
+           
+            
+            # VRSTA SOBE B.COM
+            if "Booking.com" in vsebina:
+                if "- Double Room with Mountain View - Ground Floor -" in SobaDetajli:
+                    tip= ("g")
+                elif "- Double Room with Balcony and Mountain View -" in SobaDetajli:
+                    tip= ("c")
+                elif "- Economy Double Room with Forest View - " in SobaDetajli:
+                    tip= ("x")
+                elif "- Economy Double Room -" in SobaDetajli:
+                    tip= ("y")
+                elif "- Double Room with Balcony and Forest View - " in SobaDetajli:
+                    tip= ("f")
+                elif "- Small Double Room with Balcony and Mountain View -" in SobaDetajli:
+                    tip= ("s")
+                elif "- Quadruple Room with Balcony and Mountain View -" in SobaDetajli:
+                    tip= ("q")
+                elif "- Family Room with Balcony and Mountain View -" in SobaDetajli:
+                    tip= ("d")
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             # VRNI V view.py
             cena = ListFildov[0] 
@@ -167,6 +324,11 @@ def Autofill_def(tekst):
             zahteve = ListFildov[5]
             rna=rna
             #return cena, ime, agencija, StOseb, DatumOD, DatumDO, RNA
+
+            #tip = ""
+
+
+
 
 
     # HOTELBEDS _____________________________________
@@ -247,7 +409,7 @@ def Autofill_def(tekst):
         #with open(JS_file, "r", encoding="utf-8") as f:
           #  jsonData = json.load(f)
         jsonData= {}
-        jsonData["avtovnos"]= True
+        jsonData["vrsta"]= "avtovnos"
         jsonData["cena"] = cena
         jsonData["ime"] = ime
         jsonData["agencija"] = agencija
@@ -257,10 +419,13 @@ def Autofill_def(tekst):
         jsonData["rna"] = rna
         jsonData["email"] = rmail
         jsonData["zahteve"] = zahteve
+        jsonData["tip_avto"] = tip
+        jsonData["drzava"] = drzava
+        jsonData["odpovedni_rok"]= odpovedni_rok
+        jsonData["avans_eur"]= None
+        jsonData["rok_placila_avansa"]= None
+        jsonData["multiroom"]= multiroom
 
-
-        print(jsonData)
-           
         with open(JS_file, "w", encoding="utf-8") as f:
             json.dump(jsonData, f, ensure_ascii=False, indent=4)
 

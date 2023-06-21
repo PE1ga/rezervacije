@@ -27,9 +27,18 @@
     "izracun artikli zahteve"
     ;
     
-    
-    
 }
+
+
+.table-bordered td {
+    padding: 0;
+  }
+
+  .table-bordered button {
+    width: 100%;
+    height: 55px;
+  }
+
 
 .nazivi {
     font-weight: bolder;
@@ -43,6 +52,7 @@
     max-width: 10px;
 }
 
+
  @media  (max-width: 1200px) {
   .containerDN {
     z-index: 99;
@@ -51,7 +61,7 @@
     max-width: 700px;
     height: auto;
   } 
-  .table{max-width: 300px;}
+  .table{max-width: auto;}
   .box1 {
     width: 100%;
   }
@@ -141,8 +151,8 @@ border: solid green 3px;
             {% if forloop.counter0|divisibleby:3 %}
                 <tr>
             {% endif %}
-                <td>
-                <button class="btn btn-info" style="width: 180px; height: 70px;" name="btn_artikel" value="{{field.id}}"> {{ field.opis }}  </button>
+                <td style="margin: 0; padding: 0;">
+                <button class="btn btn-info"  name="btn_artikel" value="{{field.id}}"> {{ field.opis }}  </button>
                 </td>
             
                 {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
@@ -200,7 +210,7 @@ border: solid green 3px;
     <td>{{x.kdaj}}</td>
     <form action="" method="post">
         {% csrf_token %}
-    <td><button class="btn btn-warning" type="submit" name="btn_brisi_artikel" value="{{x.id}}">Briši</button></td>
+    <td><button class="btn btn-warning" style="height: 40px;" type="submit" name="btn_brisi_artikel" value="{{x.id}}">Briši</button></td>
     </form>
     </tr>
     {% endfor %}

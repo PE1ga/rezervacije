@@ -1,0 +1,210 @@
+{% load static %}
+<head>
+  <title>Prihodi</title>
+  <meta http-equiv="refresh" content="30" /> 
+
+{% if user.is_authenticated %}
+
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+    table, tr, td,th {
+      border: 2px solid black;
+      text-align: center;
+      font-size: 50px;
+      padding: 5px;
+    }
+    td {height: 100px; }
+    h1, p {font-size: 50;}
+    h2 {font-size: 40;}
+    a {color: solid rgb(39, 3, 239); font-size: 55px;}
+    a:hover {color: rgb(243, 4, 68);}
+    a:visited {color: brown;}
+
+    button {
+      border: 2px;
+      background-color: rgb(130, 127, 127);
+      color: rgb(243, 243, 7);
+      padding: 20px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 35px;
+      margin: 0px 8px;
+      cursor: pointer;
+    }
+  </style>
+
+  <!-- OHRANJA POZICIJO NA STRANI PO REFRESHU -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var sep = "\uE000"; // an unusual char: unicode 'Private Use, First'
+
+      window.addEventListener("pagehide", function (e) {
+        window.name += sep + window.pageXOffset + sep + window.pageYOffset;
+      });
+
+      if (window.name && window.name.indexOf(sep) > -1) {
+        var parts = window.name.split(sep);
+        if (parts.length >= 3) {
+          window.name = parts[0];
+          window.scrollTo(
+            parseFloat(parts[parts.length - 2]),
+            parseFloat(parts[parts.length - 1])
+          );
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <p>{{ ObDatum.DatumObravnavani }} - PRIHODI__ <strong><a style="color: rgb(255, 0, 30)"> Še: {{ STSOB }} sob</a></strong></p>
+  
+  <p>
+    <a
+      ><button style="background-color: rgb(28, 4, 248)" type="submit"
+        onclick="location.href='/'">DOMOV</button></a>
+    <a><button style="background-color: rgb(28, 4, 248)" type="submit"
+        onclick="location.href='/pospravljanje/'">POSPRAVLJANJE</button></a>
+    
+    {% if user.username == "Peter" or user.username == "Kellie" %}
+        <a><button style="background-color: rgb(28, 4, 248)" type="submit"
+            onclick="location.href='/zajtrk/'">ZAJTRK</button></a>
+    {% endif %}
+  </p>
+
+  <table>
+    <!-- <tabel style="width:100%"> -->
+    <th>Soba</th>
+    <th>Št.Oseb</th>
+    <th style="width: 200px;">Status</th>
+    <th>Potrditev</th>
+
+    {% for x in SobeSeznam %}
+    <tr style="height: 80px">
+      <!-- ŠTEVILKA SOBE - -obarvaj jo glede na to, v katerem nadstropju se nahaja -->
+      {% if user.username == "Peter" or user.username == "Kellie" or user.username == "Delavec" %} 
+        {% if x.Soba >= 10 and x.Soba < 20 %}
+        <td><strong><a style="color: rgb(100, 16, 115)" href="detajliPrihod/{{ x.id }}">{{ x.Soba }}</a></strong></td>
+        {% elif x.Soba >= 20 and x.Soba < 30 %}
+        <td><strong><a style="color: green" href="detajliPrihod/{{ x.id }}">{{ x.Soba }}</a></strong></td>
+        {% elif x.Soba >= 30 and x.Soba < 40 %}
+        <td><strong><a style="color: rgb(22, 15, 231)" href="detajliPrihod/{{ x.id }}">{{ x.Soba }}</a></strong></td>
+        {% elif x.Soba >= 40 and x.Soba < 50 %}
+        <td><strong><a style="color: rgb(191, 9, 9)" href="detajliPrihod/{{ x.id }}">{{ x.Soba }}</a></strong></td>
+        {% elif x.Soba >= 50 and x.Soba < 60 %}
+        <td><strong><a style="color: rgb(18, 17, 17)" href="detajliPrihod/{{ x.id }}">{{ x.Soba }}</a></strong></td>
+        {% endif %} 
+    {% else %} 
+        {% if x.Soba >= 10 and x.Soba < 20 %}
+        <td><strong><a style="color: rgb(100, 16, 115)">{{ x.Soba }}</a> </strong></td>
+        {% elif x.Soba >= 20 and x.Soba < 30 %}
+        <td><strong><a style="color: green">{{ x.Soba }}</a></strong></td>
+        {% elif x.Soba >= 30 and x.Soba < 40 %}
+        <td><strong><a style="color: rgb(22, 15, 231)">{{ x.Soba }}</a></strong></td>
+        {% elif x.Soba >= 40 and x.Soba < 50 %}
+        <td><strong><a style="color: rgb(191, 9, 9)">{{ x.Soba }}</a></strong></td>
+        {% elif x.Soba >= 50 and x.Soba < 60 %}
+        <td><strong><a style="color: rgb(18, 17, 17)">{{ x.Soba }}</a></strong></td>
+        {% endif %} 
+    {% endif %}
+
+      <!-- ŠTEVILO OSEB -->
+      
+      
+      
+    {% for y in DvoPosteljneSobe %}  
+        {% if x.Soba == y %}  
+            {% if x.St_Oseb != 2 %}    
+                <td><img src="{% static 'slike/pazi.jpg' %}" alt="pazi"> <strong> {{ x.St_Oseb }} </strong> </td>
+            {% else %}
+                <td> {{ x.St_Oseb }}</td>
+            {% endif %}
+            
+        {% endif %}
+    {% endfor %}
+    
+    {% for f in StiriPosteljneSobe %}
+        {% if x.Soba == f %}
+            {% if x.St_Oseb != 4 %}            
+                <td><img src="{% static 'slike/pazi.jpg' %}" alt="pazi"><strong> {{ x.St_Oseb }} </strong></td>
+            {% else %}
+                <td>{{ x.St_Oseb }}</td>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+
+      <!-- STATUS - če je ok, obarvaj celico z zeleno -->
+      {% if x.Status == "OK" %}
+      <td style="background-color: lightgreen">{{ x.Status }}</td>
+      {% elif x.Status == "KO" %}
+      <td><img heigt="10px" src="{% static 'slike/vseOK.png' %}" alt="OK_kljukica"/></td>
+      {% elif x.Status == "PONOVI ČIŠČENJE" %}
+      <td style="background-color: red; font-size: 35px">{{ x.Status }}</td>
+      {% elif x.Status == "Bila prazna" %}
+      <td style="background-color: orange">{{ x.Status }}</td>
+      {% elif x.Status == "ŠLI VEN" %}
+      <td style="background-color: rgb(156, 200, 214)">{{ x.Status }}</td>
+
+      {% else %}
+        <td>{{ x.Status }}</td>
+      {% endif %}
+
+      <!--POTRDITEV GUMB -->
+      
+      {% if user.username == "Peter" or user.username == "Kellie" %} 
+        {% if x.Status == "OK" %}
+            <td><button style="width: 200px; color: tomato; font-weight: bold" type="submit"
+                    onclick="location.href='KontrolaConfirmPrihodi/{{ x.id }}'">Kontrola</button></td>
+        {% elif x.Status == "KO" %}
+            <td><button style="width: 200px" type="submit"
+                onclick="location.href='KontrolaPonoviPrihodi/{{ x.id }}'">Ponovi</button></td>
+
+        {% elif x.Status == "PONOVI ČIŠČENJE" %}
+            <td><button style="width: 200px" type="submit"
+                onclick="location.href='KontrolaResetPrihodi/{{ x.id }}'">Reset</button></td>
+        {% else %}
+            <!--če je Status prazen ""-->
+            <td><button style="width: 200px" type="submit"
+                onclick="location.href='KontrolaConfirmPrihodi/{{ x.id }}'">Potrdi</button></td>
+
+        {% endif %} 
+    {% else %}
+      
+    <!-- Prijavljen kot delavec-->
+        {% if x.Status == "OK" %}
+        <td><button style="width: 200px" type="submit"
+            onclick="location.href='reset/{{ x.id }}'"><img src='{% static "slike/niOK.png" %}'></button></td>
+        {% else %} 
+            {% if x.Status == "KO" %}
+              <td><img src="{% static 'slike/vseOK.png' %}" alt="" /></td>
+            {% elif x.Status == "NE ČISTI!" %}
+              <td><img src="{% static 'slike/niOK.png' %}" alt="" /></td>
+            {% elif x.Status == "Bila prazna" %}
+                <td><button style="width: 200px" type="submit"
+                    onclick="location.href='confirm/{{ x.id }}'">Preglej</button></td> 
+              
+            {% elif x.Status == "" or x.Status == "PONOVI ČIŠČENJE" %}
+              <td><button style="width: 200px;" type="submit" 
+                onclick="location.href='/checklist/{{ x.id }}_prihodi'">Check</button></td>
+              
+          {% endif %} 
+    {% endif %} 
+{% endif %}
+
+    </tr>
+    {% endfor %}
+  </table>
+
+  <p>
+    <a href="/">Domov</a>
+  </p>
+
+{% else %}
+  <h1>Ne bo šlo. Moraš se logirati!</h1>
+  <a href="{% url 'login' %}">Logiraj se tu!</a>
+
+{% endif %}
+</body>

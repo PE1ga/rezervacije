@@ -1,19 +1,18 @@
 {
-    "avtovnos": true,
-    "cena": "269.10",
-    "ime": "Van Gaans Conny",
+    "vrsta": "avtovnos",
+    "cena": "149.40",
+    "ime": "Uljee Evalien",
     "agencija": "Booking.com",
     "stoseb": "",
-    "od": "25.05.2023",
-    "do": "27.05.2023",
-    "rna": "ExpColl",
-    "email": "cgaans.534117@guest.booking.com",
-    "zahteve": "You have received a virtual credit card for this reservation.You may charge it as of 2023-05-25. Approximate time of arrival: between 16:00 and 17:00, booker_is_genius",
-    "list_prostih_sob": [
-        10,
-        11,
-        12
-    ],
-    "tip": "g",
-    "stsobe": "10"
+    "od": "24.06.2023",
+    "do": "25.06.2023",
+    "rna": "refOK",
+    "email": "euljee.990183@guest.booking.com",
+    "zahteve": "Collect payment from guests at your property. For cancellation and no-show fees, please visit extranet, booker_is_genius",
+    "tip_avto": "x",
+    "drzava": "NL",
+    "odpovedni_rok": "2",
+    "avans_eur": null,
+    "rok_placila_avansa": null,
+    "multiroom": false
 }

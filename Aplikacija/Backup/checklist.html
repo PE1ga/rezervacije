@@ -1,0 +1,265 @@
+{% load static %}
+<head>
+    <title>Checklist</title>
+    <!--<meta http-equiv="refresh" content="30">-->
+    
+    {% if user.is_authenticated %}
+    <!--{{ user }}    -->
+    
+    <style>
+        table {border-collapse: collapse; }
+            table, tr, th {border: 2px solid black; text-align:center; font-size:50px; padding: 5px;}
+            td {height: 100px; background-color: khaki;}
+            h1,p {font-size: 50;}
+            h2 {font-size: 40;}
+            a {color: solid rgb(39, 3, 239); font-size:55px}
+            a:hover {color: rgb(243, 4, 68);}
+            a:visited {color: brown;}
+            
+            button {
+                border: 2px;
+                background-color: rgb(130, 127, 127);
+                color: rgb(243, 243, 7);
+                padding: 10px 45px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 45px;
+                margin: 8px 8px;
+                cursor: pointer;
+                height: 100px;
+                
+                
+            }
+            #gumb {
+                border: solid 2px;
+                background-color: whitesmoke;
+                font-weight: bold;
+                color: darkblue;
+                height: 150px;
+                width:400px;
+            }
+            #gumbOK {
+                border: solid 2px;
+                background-color: green;
+                font-weight: bold;
+                color: white;
+                height: 150px;
+                width:400px;
+            }
+            
+            td {width: 440;
+                border: 5px solid green; 
+                text-align:center; 
+                font-size:30px; 
+                padding: 15px;
+
+            }
+            img {
+                width: 440px
+            }
+            </style>
+
+
+</head>
+<body>
+    
+    <p>CHECK-LISTA za sobo {{ Soba }}</p> 
+             
+    <p>
+        <a><button style="background-color: rgb(28, 4, 248);" 
+            type="submit" onclick="location.href='/'" name='mybtn1'>DOMOV</button></a>
+            
+            <a><button style="background-color: rgb(28, 4, 248);" 
+                type="submit" onclick="location.href='/pospravljanje/'" name='mybtn1'>POSPRAVLJANJE</button></a>
+            
+                    
+                    
+                        
+        </p>
+        <table> <!--WC-->
+            
+            
+            
+            
+            
+            {% for y in Akcija %}
+            
+                {% if y == "ok1" %}
+                    {% if Akcija.ok1 != "OK" %}
+                    <tr>
+                        <td><img src="{% static 'fotke/wc školjka.jpg' %}" alt="Wc Školjka">wc školjka</td>         
+                        <td><img src="{% static 'fotke/wc tuš.jpg' %}" alt="Wc Školjka">tuš kabina</td>
+                    </tr>
+                    <tr>
+                        <td><img src="{% static 'fotke/wc papir.jpg' %}" alt="Wc papir">wc papir</td>         
+                        <td><img src="{% static 'fotke/wc rezervni papir.jpg' %}" alt="wc papir rezerva">wc papir rezerva</td>
+                    </tr>
+                   
+            
+                    <tr><td colspan="2"; style="text-align: center; background-color: coral;"
+                        onclick="location.href='confirm/ok1'" >POTRDI</td></tr>
+                    {% comment %}
+                    {% else %}
+                    <tr><td style="width:800px; text-align: center; background-color: greenyellow;">WC_1 OK</td></tr>
+                    {% endcomment %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </table>
+            <br><br>
+    
+
+
+
+        <table> <!--WC2-->
+            {% for y in Akcija %}
+                {% if y == "ok2" %}
+                    {% if Akcija.ok2 != "OK" %}
+                    <tr>
+                        <td><img src="{% static 'fotke/wc robčki.jpg' %}" alt="robčki">robčki</td>         
+                        <td><img src="{% static 'fotke/wc šampon.jpg' %}" alt="šampon">šampon</td>
+                    </tr>
+                    <tr>
+                        <td><img src="{% static 'fotke/wc koš.jpg' %}" alt="koš za smeti">koš prazen</td>         
+                        <td>    ---   </td>
+                    </tr>
+            
+                    <tr><td colspan="2"; style="text-align: center; background-color: coral;"
+                        onclick="location.href='confirm/ok2'" >POTRDI</td></tr>
+        
+                        {% comment %}
+                        {% else %}
+                        <tr><td style="width:800px; text-align: center; background-color: greenyellow;">WC_1 OK</td></tr>
+                        {% endcomment %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </table><!--KONEC WC 2-->
+            <br><br>
+
+
+
+
+
+            
+        <table> <!--SOBA1-->
+            {% for y in Akcija %}
+                {% if y == "ok3" %}
+                    {% if Akcija.ok3 != "OK" %}
+                    <tr>
+                        <td><img src="{% static 'fotke/daljinci.jpg' %}" alt="daljinci">daljinci in kozarci</td>         
+                        <td><img src="{% static 'fotke/hladilnik.jpg' %}" alt="hladilnik">hladilnik</td>
+                    </tr>
+                    <tr>
+                        <td><img src="{% static 'fotke/obešalniki.jpg' %}" alt="obešalniki">obešalniki, vrečka za perilo</td>         
+                        <td><img src="{% static 'fotke/postelja.jpg' %}" alt="brisače">brisače</td>
+                    </tr>
+                    
+                    <tr><td colspan="2"; style="text-align: center; background-color: coral;"
+                        onclick="location.href='confirm/ok3'" >POTRDI</td></tr>
+        
+                        {% comment %}
+                        {% else %}
+                        <tr><td style="width:800px; text-align: center; background-color: greenyellow;">WC_1 OK</td></tr>
+                        {% endcomment %}
+
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </table><!--KONEC SOBA1-->
+            <br><br>
+
+
+            <table> <!--SOBA2-->
+                {% for y in Akcija %}
+                    {% if y == "ok4" %}
+                        {% if Akcija.ok4 != "OK" %}
+                        <tr>
+                            <td><img src="{% static 'fotke/Tv.jpg' %}" alt="TV deluje">TV deluje</td>         
+                            <td><img src="{% static 'fotke/Zavese.jpg' %}" alt="zavese poravnane">zavese poravnane</td>
+                        </tr>
+                        <tr>
+                            <td><img src="{% static 'fotke/ogledalo.jpg' %}" alt="čista ogledala">čisto ogledalo</td>         
+                            <td><img src="{% static 'fotke/stekla.jpg' %}" alt="stekla brez odtisov">čista stekla</td>
+                        </tr>
+                        
+
+
+
+                        <tr><td colspan="2"; style="text-align: center; background-color: coral;"
+                            onclick="location.href='confirm/ok4'" >POTRDI</td></tr>
+            
+                            {% comment %}
+                            {% else %}
+                            <tr><td style="width:800px; text-align: center; background-color: greenyellow;">WC_1 OK</td></tr>
+                            {% endcomment %}
+    
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </table><!--KONEC SOBA2-->
+                <br><br>
+    
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        {% comment %}
+        <table>
+        {% for x in Akcija %}
+            {% if not forloop.counter|divisibleby:"2" %}    
+                {% if x.Status != "OK" %}
+                    <tr><td id="gumb" type="submit" 
+                        onclick="location.href='confirm/{{ x.id }}'" >{{ x.Akcija }}</td>
+                {% else %}
+                    <tr><td id="gumbOK" type="submit" 
+                        onclick="location.href='confirm/{{ x.id }}'" >{{ x.Akcija }}</td>
+                {% endif %}
+            {% else %}
+                {% if x.Status != "OK" %}
+                    <td id="gumb" type="submit" 
+                        onclick="location.href='confirm/{{ x.id }}'" >{{ x.Akcija }}</button></td></tr>
+                {% else %}
+                    <td id="gumbOK" type="submit" 
+                        onclick="location.href='confirm/{{ x.id }}'" >{{ x.Akcija }}</td></tr>
+                {% endif %}
+            
+            
+            {% endif %}
+        
+
+        
+        {% endfor %}
+        
+        {% endcomment %}
+        
+        
+        </table>
+        
+        
+        
+        
+        
+        
+        
+
+        <p>
+            <a href="/">Domov</a>
+        </p>
+
+    
+{% else %}
+<h1>Ne bo šlo. Moraš se logirati!</h1>
+<a href="{% url 'login' %}">Logiraj se tu!</a>
+
+
+{% endif %}
+
+</body>

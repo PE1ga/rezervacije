@@ -1,0 +1,179 @@
+{% load static %}
+<head>
+    <title>Zajtrki</title>
+    <meta http-equiv="refresh" content="30" /> 
+</head>
+<body>
+
+{% if user.is_authenticated %}
+    <!--{{ user }}    -->
+    {% if user.username == "Peter" or user.username == "Kellie" %}
+        <style>
+            table {border-collapse: collapse; padding: 5px;}
+            tr, td, th {border: 2px solid rgb(1, 1, 1); text-align:center; 
+                font-size:50px;padding: 5px;}
+            
+            tr:nth-child(even) {background-color: lightgray;}
+
+
+            h1 {font-size: 50;}
+            h2 {font-size: 40;}
+            a {color: solid rgb(39, 3, 239); font-size:55px}
+            a:hover {color: rgb(243, 4, 68);}
+            a:visited {color: brown;}
+
+            button {
+                border: 2px;
+                background-color: rgb(130, 127, 127);
+                color: rgb(243, 243, 7);
+                padding: 20px 45px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 35px;
+                margin: 8px 8px;
+                cursor: pointer;
+                
+                }
+        
+        </style>
+
+        <!-- OHRANJA POZICIJO NA STRANI PO REFRESHU -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var sep = '\uE000'; // an unusual char: unicode 'Private Use, First'
+
+            window.addEventListener('pagehide', function(e) {
+                window.name += sep + window.pageXOffset + sep + window.pageYOffset;
+            });
+
+            if(window.name && window.name.indexOf(sep) > -1)
+            {
+                var parts = window.name.split(sep);
+                if(parts.length >= 3)
+                {
+                    window.name = parts[0];
+                    window.scrollTo(parseFloat(parts[parts.length - 2]), parseFloat(parts[parts.length - 1]));
+                }
+            }
+        });
+        </script>
+
+
+
+        <h1> {{ ObDatum.DatumObravnavani }} - ZAJTRK</h1> 
+        <h2> Še zajtrkov: {{ StZajtrk }}</h2>
+                         
+        <p>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/'" name='mybtn1'>DOMOV</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/pospravljanje/'" name='mybtn1'>POSPRAVLJANJE</button></a>
+            <a><button style="background-color: rgb(28, 4, 248);" type="submit" onclick="location.href='/pospravljanje_prihodi/'" name='mybtn1'>PRIHODI</button></a>
+        </p>
+
+        <table>
+            <th>Dr.</th>
+            <th>Sob</th>
+            <th>Osb</th>
+            <th>Alergija</th>
+            <th>Status</th>
+            <th style="width: 180px;">Potrdi</th>
+            <!-- <th>Res</th> -->
+            <th style="width: 180px;">Ven</th>
+
+            {% for x in SobeSeznam %}
+            <tr style="height: 80px">
+                
+                <!-- Država-->
+                {% if x.Akcija == "odhod" %}
+                <td style="background-color: coral;">{{ x.Drzava }}</td>
+                {% else %}
+                <td>{{ x.Drzava }}</td>
+                {% endif %}
+                
+                <!-- Številka sobe - -obarvaj jo glede na to, v katerem nadstropju se nahaja -->
+                {% if x.Soba >= 10 and x.Soba < 20 %}
+                    <td><strong><a style="color: rgb(100, 16, 115);" href="/pospravljanje/detajli/{{ x.id }}">{{ x.Soba }}</a> </strong></td>
+                {% elif x.Soba >= 20 and x.Soba < 30 %}
+                    <td><strong><a style="color: green;" href="/pospravljanje/detajli/{{ x.id }}">{{ x.Soba }}</a></strong> </td>
+                {% elif x.Soba >= 30 and x.Soba < 40 %}
+                    <td><strong><a style="color: rgb(22, 15, 231);" href="/pospravljanje/detajli/{{ x.id }}">{{ x.Soba }}</a></strong> </td>
+                {% elif x.Soba >= 40 and x.Soba < 50 %}
+                    <td><strong><a style="color: rgb(191, 9, 9);" href="/pospravljanje/detajli/{{ x.id }}">{{ x.Soba }}</a></strong> </td>
+                {% elif x.Soba >= 50 and x.Soba < 60 %}
+                    <td><strong><a style="color: rgb(18, 17, 17);" href="/pospravljanje/detajli/{{ x.id }}">{{ x.Soba }}</a></strong> </td>
+
+                
+            {% else %}
+                <td>{{ x.Soba }}</td>
+            {% endif %}
+            
+            
+            <!-- Število oseb -->
+            <td> {{ x.Oseb }} </td>
+
+            <!-- Alergija -->
+            <td style="font-size:35 ;" >  {{ x.Alergije }} </td>
+
+            
+            
+            
+            <!-- status - če je ok, obarvaj celico z zeleno -->
+            {% if x.StatusZajtrk == "OK" %}
+                <td style="background-color: rgb(11, 242, 38);">{{ x.StatusZajtrk }} </td>
+            {% elif x.StatusZajtrk == "1/2" %}
+                <td style="background-color: rgb(193, 105, 28);">{{ x.StatusZajtrk }} </td>
+            {% else %}
+                <td>{{ x.StatusZajtrk }} </td>
+            {% endif %}
+            
+            <!-- linki OK in reset - aktivirajo viewse za spremmebo statusa v OK, oz izbriše OK iz statusa -->
+            <!-- Če je statusZajtrk OK, potem spremeni spodnji link v POL . to je za sobe, kjer je prišla samo polovica sobe na zajtrk -->
+            {% if x.StatusZajtrk == "OK" %}
+                <td><button type="submit" onclick="location.href='confirmZajtrkPOL/{{ x.id }}'">1/2</button></td>
+            {% elif x.StatusZajtrk == "1/2" %}
+            <td><button type="submit" onclick="location.href='resetZajtrk/{{ x.id }}'"><img src="{% static 'slike/niOK.png' %}" alt="iks"></button></td>    
+            {% elif x.StatusZajtrk == "" %}
+            <td><button type="submit" onclick="location.href='confirmZajtrk/{{ x.id }}'"> <img height="40px" src="{% static 'slike/vseOK.png' %}" alt="kljukica"></button></td> 
+            {% endif %}
+            
+            <!-- <td><button type="submit" onclick="location.href='resetZajtrk/{{ x.id }}'"><img src="{% static 'slike/niOK.png' %}" alt="iks"></button></td> -->
+            
+            <!--<td> <a href="confirm/{{ x.id }}">OK</a>  </td> 
+            <td> <a href="reset/{{ x.id }}">Reset</a></td> -->
+        
+        <!--GUMB ŠLI VEN -->
+        {% if x.Status == "ŠLI VEN" %}
+        <td>OK</td>
+        
+        {% elif x.Status == "OK" or x.Status == "KO" %}
+        <td style="background-color: greenyellow;">OK</td>
+
+        {% else %}
+            <td><a><button style="height: 80px; font-weight: bold; color: black; font-size: 35px; background-color: tomato;" type="submit" 
+                onclick="location.href='gosti_sli_ven/{{ x.id }}'">VEN</button></a>
+            </td>
+        
+        {% endif %}
+        
+        
+        </tr>
+        {% endfor %} 
+        </table>
+
+        <p>
+            <a href="/">Domov</a>
+        </p>
+    {% else %}
+    <h1>Dostop zavrnjen. Nimaš ustreznih pravic za ogled te strani!</h1>
+
+    {% endif %}
+
+    
+{% else %}
+<h1>Ne bo šlo. Moraš se logirati!</h1>
+<a href="{% url 'login' %}">Logiraj se tu!</a>
+
+
+{% endif %}
+
+</body>

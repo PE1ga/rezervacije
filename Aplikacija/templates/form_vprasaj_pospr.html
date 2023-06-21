@@ -1,0 +1,14 @@
+{% load static %}
+
+<div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+<p style="font-size: 200px; font-weight: bold; color: brown;" > Soba 
+    <span style="border: solid red 5px; color: blueviolet; font-size: 250px;"> {{soba.Soba}}</span>?</p>
+
+<button type="submit" style="margin-bottom: 50px;"
+    onclick="location.href='/pospravljanje/confirm/{{soba.id}}'" ><img width="300px" src="{% static 'slike/vseOK.png' %}" alt="ok"></button>
+<button type="submit"
+    onclick="location.href='/pospravljanje'"><img width="300px" src="{% static 'slike/niOK.png' %}" alt="ok"></button>
+
+
+
+</div>

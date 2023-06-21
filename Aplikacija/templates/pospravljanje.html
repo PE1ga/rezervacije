@@ -1,111 +1,36 @@
-{% extends 'baseApl.html' %}
 {% load static %}
-{% block title %}Pospravljanje{% endblock %}
-
-{% block content %}
-{% if user.is_authenticated %}
-
-<style>
-.container{
-        border: solid 5px blue;
-        width: auto;
-        display: flex; 
-        float: left;
-        flex-direction: column;
-        justify-content: space-between; 
-        flex-wrap: wrap; /* da stlači vse itemse v div  napsortni he nowrap*/
-        position: relative;
-        
-    }
-[class ^="box-"]{                       /*!!!!!!!!!!!!!*/
-    justify-content: space-between;
-    text-align: center;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-    
-        
-    }
-.box_gumbi{
-    display: flex; 
-    flex-wrap: wrap;
-    float: left;
-    flex-direction: row;
-    justify-content:space-evenly; /* prazen prostor spredaj in med itemi je enakomerno razdeljen prostor */
-    align-items: baseline;  /* obstaja še flex-start in flex-end ter baseline >> da so vsi itemi poravnani na spodnjem robu*/
-    align-content: center; /* deluje samo, če imaš več vrstic raznih itemov - npr form fildov.... */
-    position: relative;
-    
-}
-
-
-table {border-collapse: collapse; }
-table, tr, td, th {border: 2px solid black; text-align:center; font-size:2rem; padding: 5px;}
-td {height: auto;}
-h1, p {font-size: 2rem;}
-h2 {font-size: 2rem;}
-/*a {color: solid rgb(39, 3, 239); font-size:2rem}
-a:hover {color: rgb(243, 4, 68);}
-a:visited {color: brown;}*/
-tr{height: 70px;}
-
-button {
-    border: 2px;
-    background-color: rgb(130, 127, 127);
-    color: rgb(243, 243, 7);
-    padding: 5px 5px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 2rem;
-    margin: 0px 0px;
-    cursor:crosshair;
-    width:100%;
-    height:100%;
-    
-}
-
-</style>
-   
-<div class="container" >
-
-    <div class="box">
-    <p> {{ ObDatum.DatumObravnavani }} - POSPRAVLJANJE__<strong><a style="color: rgb(255, 0, 30);">Še: {{ STSOB }} sob </a></strong> </p> 
-    </div>
-
-
-<div class="box_gumbi">
-
-    <a><button class="btn btn-primary"  
-        type="submit" onclick="location.href='/'" >DOMOV</button></a>
-            {% if SeSobPrih > 0 %}
-            <a><button class="btn btn-danger" 
-                type="submit" onclick="location.href='/pospravljanje_prihodi/'" >PRIHODI {{ SeSobPrih }}</button></a>
-            {% else %}
-            <a><button class="btn btn-danger" 
-                type="submit" onclick="location.href='/pospravljanje_prihodi/'" >PRIHODI</button></a>
-            {% endif %}
-            
-            {% if request.user.groups.all.0.name == "boss" %}
-            
-           <!-- % if user.username == "Peter" or user.username == "Kellie" %} -->
-                <a><button class="btn btn-primary"
-                    type="submit" onclick="location.href='/zajtrk/'" >ZAJTRK</button></a>
-            {% endif %}
-            
-</div>
-            
-    
-            
-        
-<div class="box">
-  
+<head>
+    <title>Pospravljanje</title>
     <meta http-equiv="refresh" content="30" /> 
     
-    
+    {% if user.is_authenticated %}
     <!--{{ user }}    -->
     
-    
+    <style>
+        table {border-collapse: collapse; }
+            table, tr, td, th {border: 2px solid black; text-align:center; font-size:50px; padding: 5px;}
+            td {height: 100px;}
+            h1,p {font-size: 50;}
+            h2 {font-size: 40;}
+            a {color: solid rgb(39, 3, 239); font-size:55px}
+            a:hover {color: rgb(243, 4, 68);}
+            a:visited {color: brown;}
+            
+            button {
+                border: 2px;
+                background-color: rgb(130, 127, 127);
+                color: rgb(243, 243, 7);
+                padding: 20px 45px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 35px;
+                margin: 8px 8px;
+                cursor: pointer;
+                
+            }
+        
+            </style>
 
 <!-- OHRANJA POZICIJO NA STRANI PO REFRESHU -->
 <script>
@@ -129,28 +54,51 @@ button {
         </script>
 
 
+</head>
+<body>
 
+<p style="font-size: 40px;"> {{ ObDatum.DatumObravnavani }} - Posp.__<strong><a style="font-size: 50px; color: blue;">Še: {{ STSOB }} sob </a></strong> 
+{% if st_sob_ne_cisti > 0 %} <span style="font-size: 40px; color: red;">(Ne čisti: {{st_sob_ne_cisti}} sob) </span>{% endif %}                 </p> 
 
-
-                 
-
+<div style="display: flex; orientation: row;">
+    <a><button style="background-color: rgb(28, 4, 248);" 
+        type="submit" onclick="location.href='/'" >DOM</button></a>
+            {% if SeSobPrih > 0 %}
+            <a><button style="background-color: rgb(243, 10, 10);" 
+                type="submit" onclick="location.href='/pospravljanje_prihodi/'" >PRH {{ SeSobPrih }}</button></a>
+            {% else %}
+            <a><button style="background-color: rgb(28, 4, 248);" 
+                type="submit" onclick="location.href='/pospravljanje_prihodi/'" >PRH</button></a>
+            {% endif %}
+                <form action="" method="post">
+            {% csrf_token %}
+            <a><button style="background-color: green;" type="submit" name="btn_reset">RESET</button></a>
+        </form>
+            {% if user.username == "Peter" or user.username == "Kellie" %}
+                <a><button style="background-color: rgb(28, 4, 248);" 
+                    type="submit" onclick="location.href='/zajtrk/'" >ZAJ</button></a>
+            {% endif %}
+            
+                </div>
 
         <table>
             <th>Soba</th>
             <th>Akcija</th>
             <th>Za oseb</th>
-            <th style="width: 100px">Status</th>
+            <th style="width: 200px;">Status</th>
             <th>Potrditev</th>
             <!-- <th>Reset</th> -->
 
-        {% for x in SobeSeznam %}
-        <tr >
-                
+    {% for x in SobeSeznam %}
+    <!-- if delavec se mu izbriše soba iz seznama, ko jo potrdi  -->
+    {% if user.username == "Delavec" and x.Status in list_ok_ko %} <!-- aa -->
+    
+            {% else %} <!-- aa -->
+            <tr style="height: 80px">
+            
+            
             <!-- ŠTEVILKA SOBE - Če ADMIN - potem so st sob z linki na detalje -obarvaj jo glede na to, v katerem nadstropju se nahaja -->                
-            
-            
-            <!--% if user.username == "Peter" or user.username == "Kellie" or user.username == "Delavec" %} -->
-            {% if request.user.groups.all.0.name == "boss" or request.user.groups.all.0.name == "worker" %}
+            {% if user.username == "Peter" or user.username == "Kellie" or user.username == "Delavec" %}
                 
                 {% if x.Soba >= 10 and x.Soba < 20 %}
                     <td><strong><a style="color: rgb(100, 16, 115);" href="detajli/{{ x.id }}">{{ x.Soba }}</a> </strong></td>
@@ -233,11 +181,28 @@ button {
             <!-- STATUS - če je ok, obarvaj celico z zeleno -->
             
             
-
-            {% if x.Status == "OK" %}
-                <td style="background-color:lightgreen;">{{ x.Status }} </td>
+    {% if x.Status == "OK" %}
+                
             
-            {% elif x.Status == "NE ČISTI!" %}
+        {% if x.Soba == st_sobe_zadnje_ocisc %} <!-- AAA -->
+            {% if user.username == "Peter" or user.username == "Kellie" %} <!-- CCC -->
+                <td style="background-color:darkgreen; font-size: 2.5rem; color: white; font-weight: bold;">OK {{x.cas_ciscenja|time:"H:i"}} </td>
+            {% else %} <!-- CCC -->
+                <td style="background-color:darkgreen;">{{ x.Status }} </td>
+            {% endif %}  <!-- CCC -->
+        {% else %}   <!-- AAA -->
+            {% if user.username == "Peter" or user.username == "Kellie" %} <!-- DDD -->
+                <td style="background-color:lightgreen; font-size: 2.5rem; font-weight: bold;">OK {{x.cas_ciscenja|time:"H:i"}} </td>
+            {% else %} <!-- DDD -->
+                <td style="background-color:lightgreen;">{{ x.Status }} </td>
+            {% endif %}  <!-- DDD -->
+            
+        {% endif %}  <!-- AAA -->
+            
+            
+            
+            
+    {% elif x.Status == "NE CISTI!" %}
                 <td style="background-color: white; color: red;">{{ x.Status }} </td>
             
             {% elif x.Status == "ŠLI VEN" %}
@@ -258,25 +223,23 @@ button {
             <!--POTRDITEV GUMB-->
             <!-- linki OK in reset - aktivirajo viewse za spremmebo statusa v OK, oz izbriše OK iz statusa -->
             <!-- ČE delavec, ima gumb funkcijo, da potrdi čiščenje (OK), če pa ADMIN, pa ima gumb funkcijo, KonOK - kontrola čiščenja OK -->
-    
-    {% if request.user.groups.all.0.name == "boss" %}
-
-    <!--% if user.username == "Peter" or user.username == "Kellie" %} -->
+    {% if user.username == "Peter" or user.username == "Kellie" %}
+        
         {% if x.Akcija == "odhod" %}
         
             
             {% if x.Status == "OK" %}
-                <td style="background-color: rgb(234, 255, 0);"><button style="color: tomato; font-weight: bold;" type="submit" 
+                <td style="background-color: rgb(234, 255, 0);"><button style="width: 200px; color: tomato; font-weight: bold;" type="submit" 
                     onclick="location.href='KontrolaConfirm/{{ x.id }}'">Kontrola</button></td>
             {% elif x.Status == "KO" %}
-                <td><button  type="submit" 
+                <td><button style="width: 200px; " type="submit" 
                     onclick="location.href='KontrolaPonovi/{{ x.id }}'">Ponovi</button></td>
             
             {% elif x.Status == "PONOVI ČIŠČENJE" %}
-                <td><button type="submit" 
+                <td><button style="width: 200px;" type="submit" 
                     onclick="location.href='KontrolaReset/{{ x.id }}'">Reset</button></td>
             {% else %} <!--če je Status prazen ""-->
-            <td><button  type="submit" 
+            <td><button style="width: 200px;" type="submit" 
                 onclick="location.href='/checklist/{{ x.id }}_pospravljanje'">Check</button></td>
             {% endif %}    
                 <!--<td><button style="width: 200px;" type="submit" 
@@ -285,18 +248,21 @@ button {
         
 
             {% if x.Status == "OK" %}
-                <td><button style="color: tomato; font-weight: bold;" type="submit" 
+                <td><button style="width: 200px; color: tomato; font-weight: bold;" type="submit" 
                     onclick="location.href='KontrolaConfirm/{{ x.id }}'">Kontrola</button></td>
             {% elif x.Status == "KO" %}
-                <td><button type="submit" 
+                <td><button style="width: 200px; " type="submit" 
                     onclick="location.href='KontrolaPonovi/{{ x.id }}'">Ponovi</button></td>
             
             {% elif x.Status == "PONOVI ČIŠČENJE" %}
-                <td><button  type="submit" 
+                <td><button style="width: 200px;" type="submit" 
                     onclick="location.href='KontrolaReset/{{ x.id }}'">Reset</button></td>
             {% else %} <!--če je Status prazen ""-->
-                <td><button  type="submit" 
-                    onclick="location.href='KontrolaConfirm/{{ x.id }}'">Potrdi</button></td> 
+                <td><button style="width: 200px;" type="submit" 
+                    onclick="location.href='vpras_pred_kontrolo_pospr/{{ x.id }}'" >Potrdi</button></td>
+                
+                <!-- <td><button style="width: 200px;" type="submit" 
+                    onclick="location.href='KontrolaConfirm/{{ x.id }}'">Potrdi</button></td>  -->
 
         {% endif %}   
             
@@ -306,31 +272,33 @@ button {
         {% else %} <!-- Prijavljen kot delavec __Če imaš odhod, dodaj CHECK s povezavo na CHECKLISTO-->
             {% if x.Akcija == "odhod" %}
                 {% if x.Status == "OK" %}
-                    <td><button  type="submit" 
+                    <td><button style="width: 200px;" type="submit" 
                         onclick="location.href='reset/{{ x.id }}'" ><img src='{% static "slike/niOK.png" %}'></button></td>
                 
                 {% elif x.Status == "KO" %}
                     <td><img src="{% static 'slike/vseOK.png' %}" alt=""></td>
                 {% else %}
-                    <td><button  type="submit" 
+                    <td><button style="width: 200px;" type="submit" 
                         onclick="location.href='/checklist/{{ x.id }}_pospravljanje'">Check</button></td>
                 {% endif %}
             {% else %}   <!-- Akcija ni ODHOD, ampak MENJAVA ali POSPRAVI-->     
 
                 {% if x.Status == "OK" %}
-                <td><button  type="submit" 
+                <td><button style="width: 200px;" type="submit" 
                     onclick="location.href='reset/{{ x.id }}'" ><img src='{% static "slike/niOK.png" %}'></button></td>
                 {% else %}
                 
                     {% if x.Status == "KO" %}
                         <td><img src="{% static 'slike/vseOK.png' %}" alt="ok"></td>
-                    {% elif x.Status == "NE ČISTI!" %}
-                        <td><img src="{% static 'slike/niOK.png' %}" alt="ni ok"></td>
+                    <!-- % elif x.Status == "NE CISTI!" %}
+                        <td><img src="% static 'slike/niOK.png' %}" alt="ni ok"></td> -->
                         
                         
                     {% else %}
-                        <td><button  type="submit" 
-                            onclick="location.href='confirm/{{ x.id }}'" >Potrdi</button></td>
+                    <td><button style="width: 200px;" type="submit" 
+                        onclick="location.href='vpras_pred_potrd_pospr/{{ x.id }}'" >Potrdi</button></td>
+                        <!-- <td><button style="width: 200px;" type="submit" 
+                            onclick="location.href='confirm/{{ x.id }}'" >Potrdi</button></td> -->
                     {% endif %}
                 {% endif %}
                             
@@ -339,6 +307,7 @@ button {
         {% endif %}
         
         </tr>
+        {% endif %} <!-- aa -->
         {% endfor %} 
         </table>
 
@@ -346,12 +315,11 @@ button {
             <a href="/">Domov</a>
         </p>
 
-</div>   
 {% else %}
-    <h1>Ne bo šlo. Moraš se logirati!</h1>
-    <a href="{% url 'login' %}">Logiraj se tu!</a>
+<h1>Ne bo šlo. Moraš se logirati!</h1>
+<a href="{% url 'login' %}">Logiraj se tu!</a>
 
 
 {% endif %}
 
-{% endblock %}
+</body>

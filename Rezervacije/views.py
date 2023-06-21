@@ -1,3 +1,4 @@
+import clipboard # Shranjevanje v clipboard !!!!!!!!!!
 import environ
 environ.Env.read_env()
 env = environ.Env()
@@ -7,7 +8,7 @@ from typing import Any
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-
+from django.http import QueryDict
 
 from django.urls import reverse
 
@@ -18,7 +19,9 @@ from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from Aplikacija.models import Graf
+from Aplikacija.models import Graf, Pospravljanje, PospravljanjePrihodi, PrazneSobe, ObravnavaniDatum
+
+
 from .models import *
 import json
 import os
@@ -26,6 +29,9 @@ import pandas as pd
 
 from datetime import datetime, timedelta, date
 import datetime as dt
+
+from .filters import RezervacijeFilter
+
 from .forms import (VnosRezForm, izborDatuma, izborProsteSobeVnos, 
                     SearchForm, IzborAgencije, IzborDatumovPonudba, 
                     PonudbaForm, Bar_form, Dn_form_izberi_datum)
@@ -37,9 +43,14 @@ from .definicije.tabelaProsteSobe import *
 from .definicije.ponudbaIzdelava import *
 from .definicije.ponudbaObdelava import *
 from .definicije.dn_izracuni import *
+from .definicije.app_podatki import *
+from .definicije.info_tekst import *
+from .definicije.grafikoni import *
 
 from .definicije.dashboard import *
 from .definicije.siteminder import *
+
+
 
 """def home_view(request):
     context ={}
@@ -47,7 +58,41 @@ from .definicije.siteminder import *
     return render(request, "formularTEST.html", context)"""
 
 
+
 def form_rezervacije(request):
+     # Get all VnosGostov objects
+    if 'reset' in request.GET:
+        return HttpResponseRedirect(request.path_info)
+    
+    queryset = VnosGostov.objects.filter(status_rez="rezervirano")
+
+    # Create a FilterSet instance and apply the filter if the form is submitted
+    filter_form = RezervacijeFilter(request.GET, queryset=queryset)
+    filtered_queryset = filter_form.qs
+
+    # Create a Paginator instance and get the current page number from the request's GET parameters
+    paginator = Paginator(filtered_queryset, per_page=10)  # You can set the desired number of objects per page here
+    page = request.GET.get('page', 1)
+
+    # Get the Page object for the current page number
+    page_obj = paginator.get_page(page)
+
+    context = {
+        'filter_form': filter_form,
+        'page_obj': page_obj,
+    }
+
+    return render(request, 'form_rezervacije.html', context)
+
+
+
+
+
+
+
+
+
+"""def form_rezervacije(request):
     gosti_seznam = VnosGostov.objects.filter(status_rez="rezervirano")
     # gosti_seznam = VnosGostov.objects.all().values()        #.order_by("-id").values()>> mi treba več -, ker je že definiran v models
     template = loader.get_template("form_rezervacije.html")
@@ -70,6 +115,8 @@ def form_rezervacije(request):
     context = {"gost": gosti, "form": search_form}
     return HttpResponse(template.render(context, request))
 
+"""
+
 def form_avtovnos_file(request):
     template = loader.get_template("form_predVnos_avto.html")
     context={}
@@ -90,24 +137,23 @@ def form_avtovnos_file(request):
 
 
 def avtovnos(request):
+    
+    
     JS_file = os.path.join(settings.BASE_DIR, 'Rezervacije//static//json//jsonFILE_IzborSob.json')
     
     submitted = False  # Dokler ni gumb, form ni submt (Codemy.com)
     # Pridobi podatke o rez
-    #datumOD, datumDO, ime = Autofill_def()
     podatki = odpriJson(js_file=JS_file)
     datumOD = podatki["od"] 
     datumDO = podatki["do"] 
+    tip = podatki["tip_avto"]
     ime = podatki["ime"] 
-    
-    
     
     if request.method == "POST":
         formular = izborProsteSobeVnos(request.POST)
         if formular.is_valid():
             tipS = formular.cleaned_data['tip']
-            
-            
+    
             # queryset >> pandas
             queryset = VnosGostov.objects.filter(status_rez="rezervirano")
             data = list(queryset.values())
@@ -118,8 +164,11 @@ def avtovnos(request):
             df_sifrant_sob = pd.DataFrame.from_records(data=data)
             
             L_prosteSobe = proste_sobe(df_data, df_sifrant_sob, tipS, datumOD, datumDO)
-            L_prosteSobeJson = proste_sobe(df_data, df_sifrant_sob, tipS, datumOD, datumDO)
+            L_prosteSobe = [x for x in L_prosteSobe if x != 99]
             
+            L_prosteSobeJson = proste_sobe(df_data, df_sifrant_sob, tipS, datumOD, datumDO)
+            L_prosteSobeJson = [x for x in L_prosteSobeJson if x != 99]
+
             # Izdelaj tabelo s prostimi sobami
             Datum_OD = pd.to_datetime(datumOD, format=("%d.%m.%Y"))
             Datum_DO = pd.to_datetime(datumDO, format=("%d.%m.%Y"))
@@ -142,14 +191,22 @@ def avtovnos(request):
             
             ##############  END json ########
 
-            # "/form_vnos_rocni")
-            return HttpResponseRedirect("/form_vnos_izbor_sob/form_izberiSobo")
+            if L_prosteSobeJson == []:
+                formular = izborProsteSobeVnos(data={"od": datumOD, "do": datumDO})
+                template = loader.get_template("form_predVnos.html")
+                context = {"forma": formular, "errmsg":"Ni prostih sob tega tipa", "ime":ime,}
+                return HttpResponse(template.render(context, request))
+                
+            else:
+                return HttpResponseRedirect("/form_predvnos_rez/form_izberiSobo")
+
+
         else:
             print("Formular ni v celoti izpolnjen. Ni valid")
 
     else:  # GET __Form še ni bil (pravilno) izpolnjen
         #datumOD, datumDO, ime = Autofill_def()
-        formular = izborProsteSobeVnos(data={"od": datumOD, "do": datumDO})
+        formular = izborProsteSobeVnos(data={"od": datumOD, "do": datumDO, "tip":tip})
         if "submitted" in request.GET:  # Ali je bil form že submitan?
             submitted = True
 
@@ -160,142 +217,107 @@ def avtovnos(request):
     # "form_vnos_rocni.html"
     return render(request, "form_predVnos.html", context)
 
+
+
+
+def predvnos_rezerv(request):  
+    """Začetek vnosa- izbereš od, do , tip sobe + submit """
     
-
-
-def form_vnos_rocni(request):
-    submitted = False  # Dokler ni gumb, form ni submt (Codemy.com)
+    # Počisti Json
     js_file = os.path.join(
-        settings.BASE_DIR, 'Rezervacije//static//json//jsonFILE_IzborSob.json')
-    jsonData = odpriJson(js_file=js_file)
-    od = jsonData["od"]
-    do = jsonData["do"]
-    tip = jsonData["tip"]
-    datumvnosa = pd.to_datetime("today").strftime(format="%d.%m.%Y")
-    if "avtovnos" in jsonData: # Podatki od AVTOVNOSA
-        ime = jsonData["ime"]
-        stoseb = jsonData["stoseb"]
-        stsobe = jsonData["stsobe"]
-        cena = jsonData["cena"]
-        agencija = jsonData["agencija"]
-        rna = jsonData["rna"]
-        zahteve = jsonData["zahteve"]
-        email = jsonData["email"]
-        if agencija == "Siteminder" or agencija == "Cesta" or agencija == "Nasi":
-            stanjeTtax = "Ttax JE VKLJ"
-        elif agencija == "":
-            stanjeTtax = ""
-        else:
-            stanjeTtax = "Ttax NI VKLJ"
-    print(request.POST)
-    if request.method == "POST":
-        formular = VnosRezForm(request.POST)
-        if (request.POST['dniPredr'] == ''):
-
-            dniPredr = 0
-        # Ker ne zazna polja AvansEUR, ne spustim validacije, dokler ni AvansEUR poln
-        if request.POST['RNA'] == 'Avans':
-            formular.fields['AvansEUR'].widget.attrs['required']= True
-            if request.POST['AvansEUR'] != "":
-                Msg_Manjka_Avans=""
-
-                if formular.is_valid():
-                    formular.save()
-                    formular = VnosRezForm()
-
-                    return HttpResponseRedirect("/form_vnos_rocni?submitted=True")
-                else:
-                    print("Formular ni v celoti izpolnjen. Ni valid")
-            else: # AvansEUR je prazen
-                Msg_Manjka_Avans = "Vnesi AVANS"
-        else:
-            Msg_Manjka_Avans = ""
-            if formular.is_valid():
-                formular.save()
-                formular = VnosRezForm()
-                return HttpResponseRedirect("/form_vnos_rocni?submitted=True")
-    else:  # GET __Form še ni bil (pravilno) izpolnjen
-        
-        if jsonData["list_prostih_sob"] != "0": # V jsonu so samo prvič v GET podatki o sobi in rezervaciji, potem se zbrišejo
-            Msg_Manjka_Avans=""
-            if "avtovnos" in jsonData: # Podatki od AVTOVNOSA
-                formular = VnosRezForm(data={"datumvnosa": datumvnosa, "od": od, "do": do, "tip": tip, "stsobe": stsobe,
-                                         "imestranke": ime, "CENA": cena, "agencija": agencija, "RNA": rna, 
-                                         "zahteve": zahteve, "email": email, "StanjeTTAX": stanjeTtax,
-                                         "SO":stoseb,})
-            else: #ročni vnos
-                formular = VnosRezForm(data={"datumvnosa": datumvnosa, "od": od, "do": do, "tip": tip, })
+            settings.BASE_DIR, 'Rezervacije//static//json//jsonFILE_IzborSob.json')
+    shraniJson(js_file=js_file, jsonData={})
     
-
-        # Resetiraj JsonFile
-    #    jsonData = [[], "", "", "", "", "", "", "", "", "", "", "", "",]
-     #   shraniJson(js_file=js_file, jsonData=jsonData)
-        
-        if "submitted" in request.GET:  # Ali je bil form že submitan?
-            submitted = True
-
-    context = {"forma": formular, "submitted": submitted, "Msg_Manjka_Avans": Msg_Manjka_Avans}
-
-    return render(request, "form_vnos_rocni.html", context)
-
-
-def form_vnos_izbor_sob(request):  
     submitted = False  # Dokler ni gumb, form ni submt (Codemy.com)
     if request.method == "POST":
-        formular = izborProsteSobeVnos(request.POST) # od, do , tip
-        # formular = VnosRezForm(data={"imestranke":"Peter","agencija":"Nasi"})
-        if formular.is_valid():
-            datumOD = formular.cleaned_data['od']
-            datumDO = formular.cleaned_data['do']
-            tipS = formular.cleaned_data['tip']
-
+        # vnesi zadnjo rezervacijo v ročni_vnos
+        if "btn_zadnja" in request.POST:
+            # pridobi zadnjo rezervacijo 
+            zadnja_rez = VnosGostov.objects.filter(status_rez="rezervirano").order_by("-id").first()
             
-            # queryset >> pandas
-            queryset = VnosGostov.objects.filter(status_rez="rezervirano")
-            data = list(queryset.values())
-            df_data = pd.DataFrame.from_records(data=data)
-            # queryset >> pandas
-            queryset_sifrant = SifrantSob.objects.all()
-            data = list(queryset_sifrant.values())
-            df_sifrant_sob = pd.DataFrame.from_records(data=data)
-            
-            
-            L_prosteSobe = proste_sobe(df_data, df_sifrant_sob, tipS, datumOD, datumDO)
-            L_prosteSobeJson = proste_sobe(df_data, df_sifrant_sob, tipS, datumOD, datumDO)
-            print(L_prosteSobe)
-           # datumOD = datumOD.strftime("%d.%m.%Y")
-           # datumDO = datumDO.strftime("%d.%m.%Y")
-
-            # Izdelaj tabelo s prostimi sobami
-            Datum_OD = pd.to_datetime(datumOD, format=("%d.%m.%Y"))
-            Datum_DO = pd.to_datetime(datumDO, format=("%d.%m.%Y"))
-            # print(type(DatumOD), DatumOD)
-
-            
-            
-            data = IzdelavaGrafa(df_data, Datum_OD, "DN")
-
-            tabelaProstihSob(data, Datum_OD, Datum_DO, L_prosteSobe)
-
-            # Vnos podatkov v JSON #######
-
-            js_file = os.path.join(
-                settings.BASE_DIR, 'Rezervacije//static//json//jsonFILE_IzborSob.json')
-            jsonData = odpriJson(js_file=js_file)
-            
-            jsonData["list_prostih_sob"] = L_prosteSobeJson
-            jsonData["od"] = datumOD
-            jsonData["do"] = datumDO
-            jsonData["tip"] = tipS
-            
+            jsonData = {}
+            jsonData["vrsta"]= "zadnja_rezervacija"
+            jsonData["od"] = zadnja_rez.od
+            jsonData["do"] = zadnja_rez.do
+            jsonData["agencija"] = zadnja_rez.agencija
+            jsonData["ime"]= zadnja_rez.imestranke
+            jsonData["email"]= zadnja_rez.email
+            jsonData["rna"]= zadnja_rez.RNA
+            jsonData["zahteve"]= zadnja_rez.zahteve
+            jsonData["drzava"]= zadnja_rez.DR
+            jsonData["stanjeTtax"]= zadnja_rez.StanjeTTAX
+            jsonData["tip"]= None
+            jsonData["tip_avto"]= None
+            jsonData["stsobe"]= None
+            jsonData["list_prostih_sob"]= []
+            jsonData["datumvnosa"]= datetime.strftime(datetime.now().date(), "%d.%m.%Y")
+            jsonData["multiroom"]= None
             shraniJson(js_file=js_file, jsonData=jsonData)
-            
-            ##############  END json ########
-
-            # "/form_vnos_rocni")
-            return HttpResponseRedirect("/form_vnos_izbor_sob/form_izberiSobo")
+            return HttpResponseRedirect("/form_avtovnos/")
+        
         else:
-            print("Formular ni v celoti izpolnjen. Ni valid")
+            formular = izborProsteSobeVnos(request.POST) # od, do , tip
+            # formular = VnosRezForm(data={"imestranke":"Peter","agencija":"Nasi"})
+            if formular.is_valid():
+                datumOD = formular.cleaned_data['od']
+                datumDO = formular.cleaned_data['do']
+                tipS = formular.cleaned_data['tip']
+                
+
+                
+                # queryset >> pandas
+                queryset = VnosGostov.objects.filter(status_rez="rezervirano")
+                data = list(queryset.values())
+                df_data = pd.DataFrame.from_records(data=data)
+                # queryset >> pandas
+                queryset_sifrant = SifrantSob.objects.all()
+                data = list(queryset_sifrant.values())
+                df_sifrant_sob = pd.DataFrame.from_records(data=data)
+                
+                
+                L_prosteSobe = proste_sobe(df_data, df_sifrant_sob, tipS, datumOD, datumDO)
+                L_prosteSobe = [x for x in L_prosteSobe if x != 99]
+                L_prosteSobeJson = proste_sobe(df_data, df_sifrant_sob, tipS, datumOD, datumDO)
+                L_prosteSobeJson = [x for x in L_prosteSobeJson if x!=99]
+                
+                # Izdelaj tabelo s prostimi sobami
+                Datum_OD = pd.to_datetime(datumOD, format=("%d.%m.%Y"))
+                Datum_DO = pd.to_datetime(datumDO, format=("%d.%m.%Y"))
+                
+                data = IzdelavaGrafa(df_data, Datum_OD, "DN")
+
+                tabelaProstihSob(data, Datum_OD, Datum_DO, L_prosteSobe)
+
+                # Vnos podatkov v JSON #######
+
+                js_file = os.path.join(
+                    settings.BASE_DIR, 'Rezervacije//static//json//jsonFILE_IzborSob.json')
+                jsonData = odpriJson(js_file=js_file)
+                jsonData["vrsta"]= "rocni_vnos"
+                jsonData["list_prostih_sob"] = L_prosteSobeJson
+                jsonData["od"] = datumOD
+                jsonData["do"] = datumDO
+                jsonData["tip"] = tipS
+                jsonData["agencija"]= "Nasi"
+                
+                shraniJson(js_file=js_file, jsonData=jsonData)
+                
+                ##############  END json ########
+            
+                # if "NI PROSTIH SOB" in L_prosteSobeJson:
+                if L_prosteSobeJson == []:
+                    formular = izborProsteSobeVnos(data={"od": datumOD, "do": datumDO})
+                    template = loader.get_template("form_predVnos.html")
+                    context = {"forma": formular, "errmsg":"Ni prostih sob tega tipa"}
+                    return HttpResponse(template.render(context, request))
+                    #render(request, template, context)
+                    #return HttpResponseRedirect("/form_predvnos_rez/")
+                else:
+                    return HttpResponseRedirect("/form_predvnos_rez/form_izberiSobo")
+            
+            
+            else:
+                print("Formular ni v celoti izpolnjen. Ni valid")
 
     else:  # GET __Form še ni bil (pravilno) izpolnjen
         # (data={"imestranke":"Peter","agencija":"Nasi"})
@@ -310,11 +332,141 @@ def form_vnos_izbor_sob(request):
     return render(request, "form_predVnos.html", context)
 
 
-#  0: Razpoložljive sobe,
-#  1: Od  2: Do  3: Tip4: Ime
-#  5: Št oseb 6: Št Sobe 7: Cena
-#  8: Agencija 9: Država 10: RNA
-#  11: Zahteve 12: email
+ 
+def form_vnos_rocni(request):
+    submitted = False  # Dokler ni gumb, form ni submt (Codemy.com)
+    js_file = os.path.join(
+        settings.BASE_DIR, 'Rezervacije//static//json//jsonFILE_IzborSob.json')
+    jsonData = odpriJson(js_file=js_file)
+    
+    od = jsonData["od"]
+    do = jsonData["do"]
+    tip = jsonData["tip"]
+    datumvnosa = pd.to_datetime("today").strftime(format="%d.%m.%Y")
+    stsobe = jsonData["stsobe"]
+    
+    if jsonData["vrsta"] == "avtovnos": # in jsonData: # Podatki od AVTOVNOSA
+        od = jsonData["od"]
+        do = jsonData["do"]
+        tip = jsonData["tip"]
+        ime = jsonData["ime"]
+        stoseb = jsonData["stoseb"]
+        cena = jsonData["cena"]
+        agencija = jsonData["agencija"]
+        rna = jsonData["rna"]
+        zahteve = jsonData["zahteve"]
+        email = jsonData["email"]
+        drzava= jsonData["drzava"]
+        avans_eur= jsonData["avans_eur"]
+        if jsonData["rok_placila_avansa"] == None:
+            rok_placila_avansa = None
+        else:
+            rok_placila_avansa= datetime.strptime(jsonData["rok_placila_avansa"],"%d.%m.%Y")
+
+        if agencija == "Siteminder" or agencija == "Cesta" or agencija == "Nasi":
+            stanjeTtax = "Ttax JE VKLJ"
+        elif agencija == "":
+            stanjeTtax = ""
+        else:
+            stanjeTtax = "Ttax NI VKLJ"
+    
+    if jsonData["vrsta"]== "zadnja_rezervacija":
+        stsobe= jsonData["stsobe"]
+        od = jsonData["od"]
+        do = jsonData["do"]
+        agencija= jsonData["agencija"]
+        ime = jsonData["ime"]
+        email= jsonData["email"]
+        rna = jsonData["rna"]
+        drzava = jsonData["drzava"]
+        stanjeTtax= jsonData["stanjeTtax"]
+        zahteve= jsonData["zahteve"]
+        datumvnosa = jsonData["datumvnosa"] 
+        stsobe = jsonData["stsobe"]
+        tip = jsonData["tip"]
+        
+
+    #print(request.POST)
+    
+    # POST ############
+    if request.method == "POST":
+        formular = VnosRezForm(request.POST)
+        if (request.POST['dniPredr'] == ''):
+
+            dniPredr = 0
+
+
+
+        if formular.is_valid():
+            stoseb= formular.cleaned_data["SO"]
+            formular.save()
+            # dodaj še število oseb v json
+            jsonData["stoseb"]= stoseb
+            shraniJson(js_file=js_file, jsonData=jsonData)
+            
+            formular = VnosRezForm()
+            
+            # Pošlji na APP, če je od rezervacije manjši od 7 dni.
+                # Če je ura 2000, naredi prenos na APP za jutri, sicer pa za danes
+            if (datetime.strptime(od, "%d.%m.%Y") - datetime.now()).days < 7:
+                datum_sedaj = datetime.strftime(datetime.now().date(), "%d.%m.%Y")
+                
+                if datetime.now().time().hour < 10:
+                    ob_datum =datetime.strptime(datum_sedaj, "%d.%m.%Y")  # datetime.now()
+                else:
+                    ob_datum = datetime.strptime(datum_sedaj, "%d.%m.%Y")+ timedelta(days=1)
+               
+                data_class = App_podatki(ob_datum= ob_datum, vir="app")
+                data_class.PodatkiZaWebApplic()
+                
+              
+            return HttpResponseRedirect("/form_vnos_update_availability")
+            #return HttpResponseRedirect("/form_vnos_rocni?submitted=True")
+
+    ####   GET  #######
+    else:  # GET __Form še ni bil (pravilno) izpolnjen
+        
+        if jsonData["list_prostih_sob"] != "0": # V jsonu so samo prvič v GET podatki o sobi in rezervaciji, potem se zbrišejo
+            #Msg_Manjka_Avans=""
+            if jsonData["vrsta"]== "avtovnos": # Podatki od AVTOVNOSA
+                formular = VnosRezForm(data={"datumvnosa": datumvnosa, "od": od, "do": do, "tip": tip, "stsobe": stsobe,
+                                         "imestranke": ime, "CENA": cena, "agencija": agencija, "RNA": rna, 
+                                         "zahteve": zahteve, "email": email, "StanjeTTAX": stanjeTtax,
+                                         "SO":stoseb, "DR": drzava, "AvansEUR": avans_eur,
+                                         "RokPlacilaAvansa": rok_placila_avansa})
+            elif jsonData["vrsta"]== "zadnja_rezervacija":
+                formular = VnosRezForm(data={"od": od, "do": do, "imestranke": ime,
+                                             "agencija": agencija, "RNA": rna, "stsobe": "",
+                                             "zahteve": zahteve, "email": email, 
+                                             "StanjeTTAX": stanjeTtax,
+                                             "DR": drzava, "datumvnosa": datumvnosa,
+                                             "tip": tip, "stsobe":stsobe,
+                                             })
+            
+            
+            
+            else: #ročni vnos
+                formular = VnosRezForm(data={"datumvnosa": datumvnosa, "od": od, "do": do, "tip": tip, "stsobe": stsobe})
+        
+        if "submitted" in request.GET:  # Ali je bil form že submitan?
+            submitted = True
+
+
+    dict_zahteve = {"Izberi":"Izberi", "2 rooms!":"2 rooms!","3 rooms!":"3 rooms!","4 rooms!":"4 rooms!",
+                    "Quiet!":"Quiet!","High floor!":"High floor!",
+                    "Must that room!":"Must that room!","":"","Repeat":"Repeat",
+                    "1 adult":"1 adult","2 adults":"2 adults","3 adults":"3 adults",
+                    "4 adults":"4 adults","1 ad 1 ch":"1 ad 1 ch","2 ad 2 ch":"2 ad 2 ch",
+                    "2 ad 1 ch":"2 ad 1 ch","3 ad 1 ch":"3 ad 1 ch","ACAP":"ACAP",
+                    "at 11:00":"at 11:00","at 12:00":"at 12:00","at 13:00":"at 13:00",
+                    "at 14:00":"at 14:00","at 15:00":"at 15:00","at 16:00":"at 16:00",
+                    "at 17:00":"at 17:00","at 18:00":"at 18:00","at 19:00":"at 19:00",
+                    "at 20:00":"at 20:00","at 21:00":"at 21:00","at 22:00 informed":"at 22:00 informed",}
+    context = {"forma": formular, "submitted": submitted, 
+               "dict_zahteve": dict_zahteve}
+
+    return render(request, "form_vnos_rocni.html", context)
+
 
 
 def form_izberi_sobo(request):
@@ -323,6 +475,9 @@ def form_izberi_sobo(request):
     jsonData = odpriJson(js_file=js_file)
     listRazpolozljSob = jsonData["list_prostih_sob"]
     datumOD= jsonData["od"]
+    datumDO= jsonData["do"]
+    st_nocitev = (datetime.strptime(datumDO, "%d.%m.%Y") - datetime.strptime(datumOD, "%d.%m.%Y")).days 
+    stolpec_Sxx_do = f"S{str(st_nocitev + 16)}" # TO je stolpec v tabeli, kjer se pojavi vertik. rdeča črta , ki označuje do (konec rezervacije)
     tipSobe= jsonData["tip"]
     
     if request.method == "POST":
@@ -355,15 +510,93 @@ def form_izberi_sobo(request):
         my_dict = df_graf.to_dict(orient="records")
         my_instances = [Graf(**d) for d in my_dict]
         Graf.objects.bulk_create(my_instances)
-        rezervacije = Graf.objects.values("S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7",
-                                          "S8", "S9", "S10", "S11", "S12", "S13", "S14", "S15", "S16", "S17",
+        rezervacije = Graf.objects.values("S0", "S11", "S12", "S13", "S14", "S15", "S16", "S17",
                                           "S18", "S19", "S20", "S21", "S22", "S23", "S24", "S25", "S26", "S27", "S28")
 
         listSob = seznamSob(tipSobe)
-        context = {"choices": listRazpolozljSob, "rezervacije": rezervacije, "listSob": listSob}
+        # Odstrani 99
+        listSob= [x for x in listSob if x!= 99]
+        context = {"choices": listRazpolozljSob, 
+                   "rezervacije": rezervacije, "listSob": listSob,
+                   "stolpec_Sxx_do": stolpec_Sxx_do}
 
     return HttpResponse(template.render(context, request))
 
+def update_availability(request):
+    js_file = os.path.join(
+            settings.BASE_DIR, 'Rezervacije//static//json//jsonFILE_IzborSob.json')
+    podatki = odpriJson(js_file=js_file)
+    datum_od = podatki["od"]
+    datum_od_dt = datetime.strptime(datum_od, "%d.%m.%Y")
+    datum_od_sm = datetime.strftime(datum_od_dt, "%Y-%m-%d")
+    agencija = podatki["agencija"]
+    info_tekst="Info teksta ni potrebno pošiljati"
+    email=""
+    pokazi_textarea_infotext = False
+    submitted = False
+    if agencija =="Siteminder" or agencija =="Booking.com" or agencija =="Expedia":
+        pokazi_textarea_infotext = True
+        ime = podatki["ime"]
+        drzava = podatki["drzava"]
+        stoseb= podatki["stoseb"]
+        tip = podatki["tip"]
+        multiroom= podatki["multiroom"]
+        email = podatki["email"]
+        info_tekst = info_tekst_def(ime, agencija, drzava, stoseb, tip, multiroom)
+    
+    template=loader.get_template("form_vnos_update_availability.html")
+    
+    if request.method == "POST":
+        if "btn_uredi_sm" in request.POST:
+            url_sitem = f"https://app.siteminder.com/web/extranet/hoteliers/96/inventory#!?startDate={datum_od_sm}"
+            context={"zazeni_siteminder": url_sitem, }  
+            clipboard.copy(url_sitem)
+        
+        if "btn_brez_sm" in request.POST:
+            return HttpResponseRedirect("/form_rezervacije")
+        
+        if "btn_poslji_info" in request.POST:
+            tekst_iz_textarea_www = request.POST.get("info_po_rezervaciji")
+            email_iz_wwww = request.POST.get("email_www")
+            submitted = True
+            pokazi_textarea_infotext = False
+
+            # zamenjaj email z email_www
+            if email == "":
+                email = email_iz_wwww
+
+            if email != "":
+                email = EmailMessage(subject="Important message ", 
+                                    body= tekst_iz_textarea_www, #info_tekst, 
+                                    from_email= settings.EMAIL_HOST_USER, 
+                                    to= ["peter.gasperin@siol.net"] #[email]
+                        )
+                # Set the HTML version of the message
+                email.content_subtype = 'html'
+                email.body = tekst_iz_textarea_www
+                
+                email.send()
+                context={"info_tekst":info_tekst, 
+                 "email":email, 
+                 "pokazi_textarea_infotext": pokazi_textarea_infotext,
+                 "submitted": submitted}
+            
+            
+
+            else:  # Ni email naslova, zato se vrni
+                return HttpResponseRedirect("/form_vnos_update_availability")
+
+        
+            
+    
+    else: # GET
+        
+        context={"info_tekst":info_tekst, 
+                 "email":email, 
+                 "pokazi_textarea_infotext": pokazi_textarea_infotext,
+                 "submitted": submitted}
+    return HttpResponse(template.render(context, request))
+    
 
 def updateIzSeznama(request, id):
 
@@ -407,6 +640,7 @@ def delete_gost(request, id):
     template = loader.get_template("form_delete.html")
     if request.method == "POST":
         gost.status_rez="odpovedano"  #delete()
+        gost.datum_odpovedi_dt = datetime.now()
         gost.save()
         return HttpResponseRedirect("/form_rezervacije")
 
@@ -426,6 +660,7 @@ def form_graf(request):
     data = list(queryset.values())
     df_data = pd.DataFrame.from_records(data=data)
     df_graf= IzdelavaGrafa(df_data, pd.to_datetime("today"), "R_Optimi")
+    print(df_graf)
     # Pretvori Padas >> Queryset
     my_dict = df_graf.to_dict(orient="records")
     my_instances = [Graf(**d) for d in my_dict]
@@ -484,49 +719,7 @@ def form_graf(request):
 
         return HttpResponse(template.render(context, request))
 
-"""
-def updateIzGrafa(request, komande):
-    id = int(komande.split(sep="_")[0])
-    gost = VnosGostov.objects.get(id=id)
-    template = loader.get_template("form_update.html")
-    form = VnosRezForm(request.POST, instance=gost)
-    datumOD = gost.od
-    rezervacije = Graf.objects.values("S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7",
-                                      "S8", "S9", "S10", "S11", "S12", "S13", "S14", "S15", "S16", "S17",
-                                      "S18", "S19", "S20", "S21", "S22", "S23", "S24", "S25", "S26", "S27", "S28")
 
-    if request.method == 'POST':
-        if form.is_valid():
-            # update the existing `Band` in the database
-            form.save()
-            # redirect to the detail page of the `Band` we just updated
-            # return HttpResponseRedirect(template, gost.id)
-            return HttpResponseRedirect("/form_graf")
-        else:
-            context = {"forma": form, "gost": gost, "rezervacije": rezervacije}
-
-            print("Form ni VALID")
-
-    else:  # GET
-        form = VnosRezForm(instance=gost)
-        tipSobe = gost.tip
-        listSob = seznamSob(tipSobe)
-        
-        # queryset >> pandas
-        queryset = VnosGostov.objects.all()
-        data = list(queryset.values())
-        df_data = pd.DataFrame.from_records(data=data)
-        
-        IzdelavaGrafa(df_data, pd.to_datetime(datumOD, format="%d.%m.%Y"), "R_Optimi")
-        rezervacije = Graf.objects.values("S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7",
-                                          "S8", "S9", "S10", "S11", "S12", "S13", "S14", "S15", "S16", "S17",
-                                          "S18", "S19", "S20", "S21", "S22", "S23", "S24", "S25", "S26", "S27", "S28")
-
-        context = {"forma": form, "gost": gost,
-                   "rezervacije": rezervacije, "listSob": listSob}
-
-    return HttpResponse(template.render(context, request))
-"""
 
 def updateIzGrafa2(request, komande):
     #print(request.method)
@@ -550,11 +743,71 @@ def updateIzGrafa2(request, komande):
     template = loader.get_template("form_update.html")
     form = VnosRezForm(request.POST, instance=gost)
     
+
     if request.method == 'POST':
         if form.is_valid():
+            """In Django, when you access request.POST, it returns an immutable QueryDict object. 
+            An immutable object means that its values cannot be modified directly. 
+            However, if you need to modify the data, you can create a mutable copy of the QueryDict object.
+            Creating a mutable copy allows you to modify the values within the copy without affecting the original QueryDict object. 
+            It provides you with a way to make changes to the form data and assign it back to the form for further processing."""
+            
+            if "btn_update_rna" in request.POST:
+                if form.cleaned_data['RNA'] == 'Avans':
+                    # Create a mutable copy of the POST data
+                    mutable_post_data = request.POST.copy()
+                    # Clear the value of "zahteve" field in the mutable copy
+                    mutable_post_data['RNA'] = 'AVANSOK'
+                    # Create a new mutable QueryDict with the modified data
+                    modified_post = QueryDict(mutable_post_data.urlencode(), mutable=True)
+                    # Assign the modified QueryDict to the form's data attribute
+                    form.data = modified_post
+                    gost.RNA="AVANSOK"
+                    gost.save()
+                    
+                    
+                elif form.cleaned_data['RNA'] == 'NONref':
+                    # Create a mutable copy of the POST data
+                    mutable_post_data = request.POST.copy()
+                    # Clear the value of "zahteve" field in the mutable copy
+                    mutable_post_data['RNA'] = 'NONREFOK'
+                    # Create a new mutable QueryDict with the modified data
+                    modified_post = QueryDict(mutable_post_data.urlencode(), mutable=True)
+                    # Assign the modified QueryDict to the form's data attribute
+                    form.data = modified_post
+                    gost.RNA="NONREFOK"
+                    gost.save()
+                    
 
-            # Izbris sobe
-
+                elif form.cleaned_data['RNA'] == 'ref':
+                    # Create a mutable copy of the POST data
+                    mutable_post_data = request.POST.copy()
+                    # Clear the value of "zahteve" field in the mutable copy
+                    mutable_post_data['RNA'] = 'refOK'
+                    # Create a new mutable QueryDict with the modified data
+                    modified_post = QueryDict(mutable_post_data.urlencode(), mutable=True)
+                    # Assign the modified QueryDict to the form's data attribute
+                    form.data = modified_post
+                    gost.RNA="refOK"
+                    gost.save()
+                    
+                    
+                
+            
+            if "btn_brisi_zahteve" in request.POST:
+                 # Create a mutable copy of the POST data
+                mutable_post_data = request.POST.copy()
+                # Clear the value of "zahteve" field in the mutable copy
+                mutable_post_data['zahteve'] = ''
+                # Create a new mutable QueryDict with the modified data
+                modified_post = QueryDict(mutable_post_data.urlencode(), mutable=True)
+            
+                # Assign the modified QueryDict to the form's data attribute
+                form.data = modified_post
+                gost.zahteve=""
+                gost.save()
+                
+                
             # Preveri, če nisi prenesel sobe na POLNO sobo pri optimizaciji
             errorMess = ""
             DatumODform = form.cleaned_data['od']
@@ -574,6 +827,8 @@ def updateIzGrafa2(request, komande):
 
             # Briši vse instance v GRAF
             #Graf.objects.all().delete()
+            
+            
              # queryset >> pandas  ARHIV GOSTOV
             queryset = VnosGostov.objects.filter(status_rez="rezervirano")
             data = list(queryset.values())
@@ -584,8 +839,12 @@ def updateIzGrafa2(request, komande):
             df_sifrant_sob = pd.DataFrame.from_records(data=data)
             
             L_prosteSobe = proste_sobe(df_data, df_sifrant_sob, TipSobeForm, DatumODform, DatumDOform)
+            #L_prosteSobe.append(99)
             
-            # Prestavi sobo v drugo sobo
+            
+            # SAVE FORM
+            
+            # Prestavi sobo v drugo sobo oz. na obravnavni sobi shrani vse opravljene spremembe
             if StSobeForm in L_prosteSobe or StSobeForm == stSobe:  # or TipSobeForm == tipSobe:
                 # S formom je vse ok, shrani ga
                 form.save()
@@ -597,6 +856,7 @@ def updateIzGrafa2(request, komande):
                 df_data = pd.DataFrame.from_records(data=data)
                 
                 df_graf=IzdelavaGrafa(df_data, pd.to_datetime(datumOD, format="%d.%m.%Y"), "R_Optimi")
+                #print(df_graf)
                 # Pretvori Padas >> Queryset
                 my_dict = df_graf.to_dict(orient="records")
                 my_instances = [Graf(**d) for d in my_dict]
@@ -652,6 +912,7 @@ def updateIzGrafa2(request, komande):
             tipSobe = "vse"
         else:
             listSob = seznamSob(tipSobe)
+            
         
         # Briši vse instance v database Graf
         Graf.objects.all().delete()
@@ -660,6 +921,7 @@ def updateIzGrafa2(request, komande):
         data = list(queryset.values())
         df_data = pd.DataFrame.from_records(data=data)
         df_graf= IzdelavaGrafa(df_data, pd.to_datetime(datumOD, format="%d.%m.%Y"), "R_Optimi")
+        
         # Pretvori Padas >> Queryset
         my_dict = df_graf.to_dict(orient="records")
         my_instances = [Graf(**d) for d in my_dict]
@@ -673,7 +935,8 @@ def updateIzGrafa2(request, komande):
 
         context = {"forma": form, "DatumTabela": DatumTabela, "gost": gost,
                    "IDstr": str(gost.id), "rezervacije": rezervacije,
-                   "listSob": listSob, "IzbrTipSobe": tipSobe}
+                   "listSob": listSob, "IzbrTipSobe": tipSobe,
+                   }
 
     return HttpResponse(template.render(context, request))
 
@@ -732,8 +995,31 @@ def virtual(request):
 def virtual_podrobno(request, id):
     record = VnosGostov.objects.get(id=id, status_rez="rezervirano")
     template = loader.get_template('form_virt_podrobno.html')
-    context = {"rezervacija": record}
-
+    
+    if request.method == "POST":
+        msg=""
+        if "status_ok" in request.POST:
+            if record.AvansEUR == "":
+                record.AvansEUR = None
+            if record.IDponudbe == "":
+                record.IDponudbe = None
+            record.RNA = "NONREFOK"
+            msg = "Račun je PLAČAN!"
+            record.save()
+        elif "poslji_racun" in request.POST:
+            record.RNA = "racun poslan " + datetime.strftime(datetime.now(), "%d.%m.")
+            record.save()
+            msg = "Račun je bil poslan!"
+        elif "undo" in request.POST:
+            record.RNA = "ExpColl"
+            record.save()
+            msg = "Status se ni spremenil"
+        context = {"rezervacija": record, "msg": msg}
+        #return HttpResponseRedirect("/form_virtual")
+    
+    else: # GET
+        context = {"rezervacija": record}
+    
     return HttpResponse(template.render(context, request))
 
 
@@ -745,7 +1031,7 @@ def virtual_spremeni_status(request, id):
         record.IDponudbe = None
 
     record.RNA = "NONREFOK"
-    record.save()
+    #record.save()
 
     return HttpResponseRedirect("/form_virtual")
 
@@ -769,8 +1055,9 @@ def ponudba_faza_1(request):
             avans = form.cleaned_data['avans']
             odpoved = form.cleaned_data['odpoved']
 
+
             dictVhodovPonudba = {'jezik': jezik, 'vrstaInAli': vrstaInAli, 'od': odDatum, 'do': doDatum,
-                                 'ime': ime, 'email': email, 'rna': rna, 'avans': avans, 'odpoved': odpoved}
+                                 'ime': ime, 'email': email, 'rna': rna, 'avans': avans, 'odpoved': odpoved,}
             # Sosed: Razno.py
             shraniJson(js_file=js_file, jsonData=dictVhodovPonudba)
 
@@ -806,7 +1093,10 @@ def ponudba_faza_2(request: Any) -> HttpResponse:
     dictVhodovPonudba = odpriJson(js_file=js_file)  # Sosed: Razno.py
     odDatum = dictVhodovPonudba["od"]
     doDatum = dictVhodovPonudba["do"]
+    jezik = dictVhodovPonudba["jezik"]
     
+    # k sosedu po dict dodatnih zahtev glede na izbrani jezik
+    dict_zahteve = dodatne_zahteve(jezik=jezik)
     
      # queryset >> pandas  ARHIV GOSTOV
     queryset = VnosGostov.objects.filter(status_rez="rezervirano")
@@ -819,7 +1109,9 @@ def ponudba_faza_2(request: Any) -> HttpResponse:
     
     dictProstihSob = prosteSobeZaPonudbo(df_data, df_sifrant_sob, odDatum=odDatum, doDatum=doDatum)
     template = loader.get_template("form_ponudba_faza_2.html")
-    context = {"dictProstihSob": dictProstihSob, "dictVhodovPonudba": dictVhodovPonudba}
+    context = {"dictProstihSob": dictProstihSob, 
+               "dictVhodovPonudba": dictVhodovPonudba,
+               "dict_zahteve":dict_zahteve}
     return HttpResponse(template.render(context, request))
 
 
@@ -923,7 +1215,7 @@ def ponudba_predogled(request):
 # Gumb za pošiljanje ponudbe na email
 def ponudba_poslji(request):
     modificiran_html = request.POST.get("html_text")
-    email = EmailMessage(subject="Ponudba ", body= modificiran_html, from_email= "peter.gasperin57@gmail.com", to= ["peter.gasperin@siol.net",]
+    email = EmailMessage(subject="Ponudba ", body= modificiran_html, from_email= settings.EMAIL_HOST_USER, to= [settings.RECIPIENT_ADDRESS,]
                     )
     # Set the HTML version of the message
     email.content_subtype = 'html'
@@ -1033,6 +1325,7 @@ def ponudba_obdelava(request, id):
                             ponudba_rna = Ponudba.objects.get(id=ponudba_rna_id)
                             ponudba_rna.rna ="refOK"
                             ponudba_rna.save()
+                        
 
 
             else: # Tu gre za MonoRoom
@@ -1052,12 +1345,13 @@ def ponudba_obdelava(request, id):
             js_file = os.path.join(
                 settings.BASE_DIR, 'Rezervacije//static//json//jsonFILE_ponudba_obdelava.json')
             
-            http_odgovor, sklic, rna = ponudba_obdelava_Html(my_dict)
+            http_odgovor, sklic, rna, rokPlacila = ponudba_obdelava_Html(my_dict)
             # Če je Avans ali Nonref, v bazo shrani sklic
             if rna == "Nonref" or rna == "Avans":
                 id_ponudbe = my_dict[0]["id"]
                 ponudba1 = Ponudba.objects.get(id=id_ponudbe)
                 ponudba1.sklic = sklic
+                ponudba1.rokPlacilaAvansa= datetime.strptime(rokPlacila, "%d.%m.%Y")
                 ponudba1.save()
 
             # Shrani http tekst v json, da ga boš odprl v form pon obd predogl
@@ -1070,7 +1364,7 @@ def ponudba_obdelava(request, id):
     
     
     
-    else:
+    else:   # GET
         ponudba = Ponudba.objects.get(id=id)
         form = PonudbaForm(instance= ponudba)
         
@@ -1097,7 +1391,7 @@ def ponudba_obdelava_poslji(request):
     js_file = os.path.join(
         settings.BASE_DIR, 'Rezervacije//static//json//jsonFILE_ponudba_obdelava.json')
     html_tekst = odpriJson(js_file=js_file)
-    email = EmailMessage(subject="Ponudba ", body= html_tekst, from_email= "peter.gasperin57@gmail.com", to= ["peter.gasperin@siol.net",])
+    email = EmailMessage(subject="Ponudba ", body= html_tekst, from_email= settings.EMAIL_HOST_USER, recipient_list=[settings.RECIPIENT_ADDRESS])
     #print(html_tekst)                
     # Set the HTML version of the message
     email.content_subtype = 'html'
@@ -1130,98 +1424,45 @@ def ponudba_vnos_iz_ponudbe(request, id):
     
     
     L_prosteSobe = proste_sobe(df_data, df_sifrant_sob, ponudba.tip, ponudba.od, ponudba.do)
-    print(L_prosteSobe)
     
     odpriJson(js_file=js_file)
-    data=["","","","","","","","","","","","","",""]
-    data[0]= L_prosteSobe
-    data[1]= ponudba.od
-    data[2]= ponudba.do
-    data[3]= ponudba.tip
-    data[4]= ponudba.ime
-    data[5]= str(int(ponudba.stOdr)+int(ponudba.stOtr))
-    data[6]= L_prosteSobe[0]
-    data[7]= ponudba.cena
-    data[8]= "Nasi"
-    data[9]= ""
-    data[10]= ponudba.rna
-    data[11]= ""
-    data[12]= ponudba.email
-    data[13]= id
-    
-    shraniJson(js_file=js_file, jsonData=data)
+   
+    jsonData= {}
+    jsonData["vrsta"]= "avtovnos"
+    jsonData["cena"] = ponudba.cena
+    jsonData["ime"] = ponudba.ime
+    jsonData["agencija"] = "Nasi"
+    jsonData["od"] = ponudba.od
+    jsonData["do"] = ponudba.do
+    jsonData["rna"] = ponudba.rna
+    jsonData["avans_eur"]= ponudba.avans
+    jsonData["email"] = ponudba.email
+    jsonData["list_prostih_sob"] = L_prosteSobe
+    jsonData["tip"] = ponudba.tip
+    jsonData["id_ponudbe"] = id
+    jsonData["stsobe"] = L_prosteSobe[0]
+    jsonData["stoseb"]= str(int(ponudba.stOdr)+int(ponudba.stOtr))
+    jsonData["zahteve"]= ""
+    jsonData["drzava"]= ""
+    if ponudba.rokPlacilaAvansa == None:
+        jsonData["rok_placila_avansa"]= None
+    else:
+        jsonData["rok_placila_avansa"]= datetime.strftime(ponudba.rokPlacilaAvansa,"%d.%m.%Y")
+
+    shraniJson(js_file=js_file, jsonData=jsonData)
     # Spremeni status ponudbe, ki si jo poslal gostu:
     ponudba.status = "2_1_Vneseno"
     ponudba.save()
-
-
-    
     return HttpResponseRedirect("/form_vnos_rocni")
-    """L_prosteSobeJson = proste_sobe(df_data, df_sifrant_sob, ponudba.tip, ponudba.od, ponudba.do)
-    # datumOD = datumOD.strftime("%d.%m.%Y")
-    # datumDO = datumDO.strftime("%d.%m.%Y")
-
-    # Izdelaj tabelo s prostimi sobami
-    Datum_OD = pd.to_datetime(ponudba.od, format=("%d.%m.%Y"))
-    Datum_DO = pd.to_datetime(ponudba.do, format=("%d.%m.%Y"))
-    # print(type(DatumOD), DatumOD)
-
-    
-    
-    data = IzdelavaGrafa(df_data, Datum_OD, "DN")
-
-    tabelaProstihSob(data, Datum_OD, Datum_DO, L_prosteSobe)"""
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    shraniJson(js_file=js_file,jsonData=data)
-
-     # JSON 
-            # 0: Razpoložljive sobe, 
-            #  1: Od
-            #  2: Do
-            #  3: Tip 
-            #  4: Ime
-            #  5: Št oseb
-            #  6: Št Sobe
-            #  7: Cena
-            #  8: Agencija
-            #  9: Država
-            #  10: RNA
-            #  11: Zahteve
-            #  12: email    
-    
-    
-    pass
-
-
-
-
-
-
-
-
+   
 
 def dashboard(request):
+    js_file = os.path.join(
+        settings.BASE_DIR, 'Rezervacije//static//json//dash_datum_raport.json')
+    
     template = loader.get_template("form_dashboard.html")
     danes = datetime.now().date()
+    jutri = danes+ timedelta(days=1)
     letos = danes.year
     # Zberi podatke iz Vnos-a kot QS, in jih pretvori v DF, ki ga pošlješ k sosedu dashboard.py >> querset to pandas
     queryset = VnosGostov.objects.filter(status_rez="rezervirano")
@@ -1239,10 +1480,13 @@ def dashboard(request):
 
     # PROFIT PO AGENCIJAH
     df_profit_agencije = df_podatki.profit_po_agencijah()
-    print(df_profit_agencije)
+    
     
     # LISTA GOSTOV
     lista_gostov = df_podatki.lista_gostov_danes()
+
+    # PROSTE SOBE DANES
+    proste_sobe_danes = df_podatki.proste_sobe_danes()
     
     # ZADNJE REZERVACIJE
     zadnje_rezervacije= df_podatki.zadnje_rezervacije_danes()
@@ -1252,21 +1496,75 @@ def dashboard(request):
     # print(zadnje_rezervacije)
 
     # ID PONUDB
-    id_ponudb = Ponudba.objects.filter(status = "2_Potrjeno").values("id")
+    id_ponudb = Ponudba.objects.filter(status = "2_Potrjeno").values("id", "ime")
     # Izdelaj list samo 1 stolpca v QS: !!!!!
-    id_ponudb = list(id_ponudb.values_list("id", flat=True))
-    
+    id_ponudb = list(id_ponudb.values_list("id", "ime"))# flat=True))
+    #print(id_ponudb)
     # CCD AVANSI
-    avansi = VnosGostov.objects.filter(Q(status_rez = "rezervirano") & Q(RNA="Avans")).values("id", "imestranke") 
-    print(avansi)
+    avansi = VnosGostov.objects.filter(Q(status_rez = "rezervirano") & Q(RNA="Avans")).values("id", "imestranke", "stsobe", "RokPlacilaAvansa") 
+    # SKUPAJ EUR (Raport)
+    #  T_RaportVsi=IzdelavaGrafa(self.datumRaport,"DN") # SOSED graf2
+    #  T_RaportIzbDan=T_RaportVsi.iloc[-5:,51].to_frame(name="Podatki").reset_index()
+    #  T_RaportIzbDan["Podatki"]=T_RaportIzbDan["Podatki"].astype(int)
+    raport = IzdelavaGrafa(df_data= df_data_rezervirano, 
+                           DatumObravnave= pd.Timestamp(jutri), 
+                           Vir= "raport")
+    
+    
+    if request.method == "POST":
+        if "btn_danes" in request.POST:
+            raport = IzdelavaGrafa(df_data= df_data_rezervirano, 
+                           DatumObravnave= pd.Timestamp(danes), 
+                           Vir= "raport")
+            shraniJson(js_file=js_file, jsonData=datetime.strftime(danes, "%d.%m.%Y"))  
 
+        if "btn_jutri" in request.POST:
+            raport = IzdelavaGrafa(df_data= df_data_rezervirano, 
+                           DatumObravnave= pd.Timestamp(jutri), 
+                           Vir= "raport")
+            shraniJson(js_file=js_file, jsonData=datetime.strftime(jutri, "%d.%m.%Y"))        
+
+        
+        if "btn_dan_nazaj" in request.POST:
+            zadnji_datum = odpriJson(js_file= js_file)
+            zadnji_datum_dt = datetime.strptime(zadnji_datum, "%d.%m.%Y") - timedelta(days=1)
+            raport = IzdelavaGrafa(df_data= df_data_rezervirano, 
+                           DatumObravnave= pd.Timestamp(zadnji_datum_dt), 
+                           Vir= "raport")
+            shraniJson(js_file=js_file, jsonData=datetime.strftime(zadnji_datum_dt, "%d.%m.%Y"))
+        
+        if "btn_dan_naprej" in request.POST:
+            zadnji_datum = odpriJson(js_file= js_file)
+            zadnji_datum_dt = datetime.strptime(zadnji_datum, "%d.%m.%Y") + timedelta(days=1)
+            raport = IzdelavaGrafa(df_data= df_data_rezervirano, 
+                           DatumObravnave= pd.Timestamp(zadnji_datum_dt), 
+                           Vir= "raport")
+            shraniJson(js_file=js_file, jsonData=datetime.strftime(zadnji_datum_dt, "%d.%m.%Y"))
+
+        
+        stevilka_dneva_datuma = odpriJson(js_file=js_file)
+        stevilka_dneva_datuma = datetime.strptime(stevilka_dneva_datuma, "%d.%m.%Y").weekday()
+        
+        ime_dneva_datuma = ime_dneva_v_tednu(st_dneva=stevilka_dneva_datuma)
+        
+        
+    else:   # GET
+        shraniJson(js_file=js_file,jsonData= datetime.strftime(jutri, "%d.%m.%Y"))
+        stevilka_dneva_datuma = jutri.weekday()
+        ime_dneva_datuma = ime_dneva_v_tednu(st_dneva=stevilka_dneva_datuma)
+        
+    
+    
     context={"df_nocitve":df_nocitve, "id_ponudb":id_ponudb, 
-             "lista_gostov": lista_gostov, 
-             "zadnje_rezervacije": zadnje_rezervacije,
-             "zadnje_odpovedi": zadnje_odpovedi,
-             "agencije_profit": df_profit_agencije,
-             "avansi": avansi,
-             }
+            "lista_gostov": lista_gostov, 
+            "proste_sobe": proste_sobe_danes,
+            "zadnje_rezervacije": zadnje_rezervacije,
+            "zadnje_odpovedi": zadnje_odpovedi,
+            "agencije_profit": df_profit_agencije,
+            "avansi": avansi,
+            "raport": raport,
+            "ime_dneva_v_tednu": ime_dneva_datuma,
+            }
     return HttpResponse(template.render(context, request))
 
 
@@ -1275,8 +1573,8 @@ def bar(request):
     js_file = os.path.join(
         settings.BASE_DIR, 'Rezervacije//static//json//bar.json')
     
-    print(request.method)
-    print(request.POST.get)
+    # print(request.method)
+    # print(request.POST.get)
     template = loader.get_template("form_bar.html")
     cenik = Bar_cenik.objects.all()
     forma  = Bar_form()    
@@ -1342,6 +1640,8 @@ def bar(request):
                 id_artikla = js_data["id_artikla"]
                 artikel = cenik.get(id=id_artikla)
                 cena_artiklov = js_data["cena_artikla"] * int(stevilo_artiklov)
+                # cena_artiklov= round(cena_artiklov,2)
+               
                 Bar_narocila.objects.create(gost=gost, artikel= artikel, kolicina= stevilo_artiklov)
                 gostova_narocila = Bar_narocila.objects.select_related("gost").filter(gost=id_gost)
                 context={"forma":forma,"cenik": cenik, 
@@ -1365,6 +1665,7 @@ def bar(request):
                 id_artikla = js_data["id_artikla"]
                 artikel = cenik.get(id=id_artikla)
                 cena_artiklov = js_data["cena_artikla"] * int(stevilo_artiklov)
+                # cena_artiklov= round(cena_artiklov,2)
                 Bar_narocila.objects.create(gost=gost, artikel= artikel, kolicina= stevilo_artiklov)
                 gostova_narocila = Bar_narocila.objects.select_related("gost").filter(gost=id_gost)
                 """Test_vsi_fildi = Bar_narocila.objects.select_related("gost").all()
@@ -1440,7 +1741,11 @@ def dn_podatki(request):
                  "forma": forma, "ob_datum": ob_datum_str}
             return HttpResponse(template.render(context, request))
 
-
+        if "btn_prenos_na_app" in request.POST:
+            data_class = App_podatki(ob_datum= ob_datum, vir="app")
+            data_class.PodatkiZaWebApplic()
+            
+            return HttpResponseRedirect("form_dn")
 
 
         if "gumb_preracunaj" in request.POST:
@@ -1488,7 +1793,7 @@ def dn_podatki(request):
                          values('artikel_id', 'artikel__opis', 'artikel__cena', 'artikel__ddv', 'artikel__enota')
                         .annotate(kolicina_skupaj=Sum('kolicina')))
 
-
+        # RAČUN
         elif "gumb_st_sobe" in request.POST:
             ob_datum_str= odpriJson(js_file=js_file)
             st_sobe = request.POST.get("gumb_st_sobe")  # Iz dicta dobi Value za Key="gumb_st_sobe"
@@ -1553,22 +1858,6 @@ def dn_podatki(request):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def tiskanje_racuna(request):
     js_file = os.path.join(
         settings.BASE_DIR, 'Rezervacije//static//json//racun_podatki.json')
@@ -1579,6 +1868,8 @@ def tiskanje_racuna(request):
     rna = dict_podatki_za_tiskanje_racuna["RNA"]
     
     gost = VnosGostov.objects.get(id=id_soba_za_racun)
+    gost.status_placila = "placano_" + datetime.strftime(datetime.now().date(), "%d.%m.%y")
+    gost.save()
     # OPCIJA, DA JE NA RAČUNU VSAK ARTIKEL VEČKRAT, 
     #gost_bar_narocila = Bar_narocila.objects.select_related("gost").filter(gost=id_soba_za_racun)
     
@@ -1594,8 +1885,61 @@ def tiskanje_racuna(request):
     context= {"gost":gost, "gost_bar_narocila": gost_bar_narocila,
               "tabela": tabela_za_racun, "tabela_ddv": tabela_ddv, "tabela_skupaj": tabela_skupaj}  
 
+    # Izbriši json s podatki za račun od prejšnje sobe:
+    js_file_pocisti = os.path.join(settings.BASE_DIR, 'Rezervacije//static//json//racun_podatki.json')
+    shraniJson(js_file=js_file_pocisti, jsonData={})
 
     return HttpResponse(template.render(context, request))
+
+
+
+
+
+
+
+
+
+
+
+
+
+def tiskanje_multiracun(request):
+    js_file = os.path.join(
+        settings.BASE_DIR, 'Rezervacije//static//json//dn_ob_datum.json')
+    ob_datum= odpriJson(js_file=js_file)
+    ob_datum_dt = datetime.strptime(ob_datum, "%d.%m.%Y") 
+
+    podatki_multiracun = Tebela_multiracun(ob_datum_dt= ob_datum_dt)
+    dict_multiracunov = podatki_multiracun.priprava_podatkov()
+    #print((dict_multiracunov))
+    
+    
+    
+
+    template= template = loader.get_template("form_dn_tiskanje_multiracun.html")   
+    context={"dict_mr": dict_multiracunov,
+             }
+
+    return HttpResponse(template.render(context, request))
+
+
+    #dict_podatki_za_tiskanje_racuna = odpriJson(js_file=js_file)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1609,32 +1953,96 @@ def tiskanje_vingcard(request):
     podatki = VnosGostov.objects.filter(status_rez="rezervirano")
     data = Dn_izracuni(podatki=podatki, ob_datum= ob_datum)
     prihodi = data.prihodi()
-
     template= loader.get_template("form_tiskanje_vingcard.html")
     context= {"prihodi": prihodi}
 
     return HttpResponse(template.render(context, request))
     
+def tiskanje_porocilo(request):
+    js_file=js_file = os.path.join(settings.BASE_DIR, 'Rezervacije//static//json//dn_ob_datum.json')  
+    ob_datum= odpriJson(js_file=js_file)
+    ob_datum= datetime.strptime(ob_datum, "%d.%m.%Y")
+    podatki = VnosGostov.objects.filter(status_rez="rezervirano")
+    data = Dn_izracuni(podatki=podatki, ob_datum= ob_datum)
+    zajtrki = data.zajtrki_def()
+    template= loader.get_template("form_tiskanje_porocilo.html")
+    context= {"zajtrki": zajtrki,
+              "ob_datum": ob_datum}
 
+    return HttpResponse(template.render(context, request))
 
 def siteminder(request):
     template = loader.get_template("form_siteminder.html")
     queryset = VnosGostov.objects.filter(status_rez="rezervirano")
-    zadnji_vnos = queryset.latest("id")
-    od_datum = zadnji_vnos.od
+    queryset_odpovedi = VnosGostov.objects.filter(status_rez="odpovedano")
     data = list(queryset.values())
+    zadnji_vnos = queryset.latest("id")
+    zadnja_odpoved = queryset_odpovedi.order_by("-datum_odpovedi_dt").first()
+    
+    od_datum = zadnji_vnos.od
     df_podatki = pd.DataFrame.from_records(data=data)
+    
 
-    df_podatki_obdelani = Siteminder(podatki=df_podatki, od_datum=od_datum)
-    podatki_sm = df_podatki_obdelani.obdelava_podatki_sm()
-    #podatki_sm = podatki_sm.to_dict()
-    # print(podatki_sm)
-    context={"sm":podatki_sm}
+    if request.method=="POST":
+        print(request.POST)
+        od_dat_templ = request.POST.get("datum_template")
+        if "od_zadnje_rez" in request.POST:
+            od_datum = zadnji_vnos.od
+        if "od_danes" in request.POST:
+            od_datum = datetime.now().date().strftime("%d.%m.%Y")
+        if "od_zadnje_odp" in request.POST:
+            od_datum = zadnja_odpoved.od
+        if "plus7" in request.POST:
+            od_datum = datetime.strptime(od_dat_templ, "%d.%m.%Y") + timedelta(days=7)
+            od_datum = datetime.strftime(od_datum, "%d.%m.%Y")
+        if "minus7" in request.POST:
+            od_datum = datetime.strptime(od_dat_templ, "%d.%m.%Y") - timedelta(days=7)
+            od_datum = datetime.strftime(od_datum, "%d.%m.%Y")
+        if "plus14" in request.POST:
+            od_datum = datetime.strptime(od_dat_templ, "%d.%m.%Y") + timedelta(days=14)
+            od_datum = datetime.strftime(od_datum, "%d.%m.%Y")
+        if "minus14" in request.POST:
+            od_datum = datetime.strptime(od_dat_templ, "%d.%m.%Y") - timedelta(days=14)
+            od_datum = datetime.strftime(od_datum, "%d.%m.%Y")
+        
+        
+            
+        
+        df_podatki_obdelani = Siteminder(podatki=df_podatki, od_datum=od_datum)
+        podatki_sm = df_podatki_obdelani.obdelava_podatki_sm()
+        context={"sm":podatki_sm, "od_datum": od_datum}
+    else: # GET
+    
+        df_podatki_obdelani = Siteminder(podatki=df_podatki, od_datum=od_datum)
+        podatki_sm = df_podatki_obdelani.obdelava_podatki_sm()
+        context={"sm":podatki_sm, "od_datum": od_datum}
 
 
 
     return HttpResponse(template.render(context, request))
 
+
+def grafikon(request):
+    leto_primerjava = "2022"
+    plot_image = Grafikoni().Pod_Kumulativa_DoDanes(leto_primerjava)              #Priprava_Podatkov(leto_primerjava="2022")
+    template= loader.get_template("form_grafikoni.html")
+    context = {
+        'plot_image': plot_image,
+        
+    }
+    return HttpResponse(template.render(context, request))
+    """return render(request, 'chart_template.html', context)
+    
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+    return response"""
+
+"""        
+    template= loader.get_template("form_grafikoni.html")
+    context={}
+
+    return HttpResponse(template.render(context, request))
+"""
 
 """
     # Pretvori string dat v dt_dat>> od c od_dt  ...
@@ -1665,7 +2073,7 @@ def siteminder(request):
 
 
 
-
+#list_st_dictov = list(range(len(dict_multiracunov))) #!!!!! ustvari list iz range
 
 
 

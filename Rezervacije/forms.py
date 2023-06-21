@@ -56,18 +56,15 @@ class izborProsteSobeVnos(forms.Form):  # ZA AUTOVNOS - predvnos _1.faza
 class IzberiSoboVnos(forms.Form):
     izberisobo = forms.ChoiceField()
     
-    """
-    prosteSobe = forms.CharField(
-        label="Razpoložljive sobe",
-        max_length= 10,
-        widget=forms.Select(choices=[("",""),("c","c"),("g","g"),("s","s"),("f","f"),("x","x"),("y","y"),("q","q"),("d","d"),])
-        ) """
+    
 
-
-
-
+# Rezervacije - seznam
 class SearchForm(forms.Form):
-    search_field = forms.CharField(max_length=100, required=False)
+    search_field = forms.CharField(max_length=100, required=False, widget=TextInput(attrs={"class":"form-control"}))
+    od = forms.DateField(required=False, widget=DateInput(attrs={'type': 'date', "class":"form-control"}, format=['%d.%m.%Y']), input_formats=['%d.%m.%Y'])  #forms.DateInput(format="%d.%m.%Y"))
+    do = forms.DateField(required=False, widget=DateInput(attrs={'type': 'date', "class":"form-control"}, format=['%d.%m.%Y']), input_formats=['%d.%m.%Y'])  #forms.DateInput(format="%d.%m.%Y"))
+    #moj_datum = forms.DateField(widget=DateInput(attrs={'type': 'date', "class":"form-control"}, format=['%d.%m.%Y']), input_formats=['%d.%m.%Y'])  #forms.DateInput(format="%d.%m.%Y"))
+
 
 
 class Gumbi(forms.Form):
@@ -75,21 +72,22 @@ class Gumbi(forms.Form):
 
 
 class VnosRezForm(forms.ModelForm):
-    #JS_file = os.path.join(settings.BASE_DIR, 'Rezervacije//static//json//jsonFILE_IzborSob.json')
-    #with open(JS_file, "r", encoding="utf-8") as f:
-    #    jsonData = json.load(f)
-    status_rez = forms.CharField(label="Status", max_length=50, initial="rezervirano",  widget=forms.TextInput(attrs={'class': 'form-control'}))
+    status_rez = forms.CharField(label="Status", max_length=50, initial="rezervirano",  widget=forms.Select(choices=[("rezervirano", "rezervirano"), ("odpovedano", "odpovedano")], attrs={'class': 'form-control'}))
     od = forms.CharField(label="Datum OD", max_length=50, error_messages={"required":"Manjka Podatek"}, widget=forms.TextInput(attrs={'class': 'form-control'}))
     do = forms.CharField(label="Datum DO",max_length=50, error_messages={"required":"Manjka Podatek"}, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    stsobe = forms.IntegerField(label="Št. Sobe", error_messages={"required":"Manjka vnos"}, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    stsobe = forms.IntegerField(label="Št. Sobe", error_messages={"required":"Manjka vnos"}, widget=forms.Select(choices=[
+        ("",""),(10,10),(11,11),(12,12),(20,20),(21,21),(30,30),(31,31),(32,32),(33,33),(34,34),(35,35),(36,36),(37,37),(38,38),(39,39)
+        ,(40,40),(41,41),(42,42),(43,43),(44,44),(45,45),(46,46),(50,50),(51,51),(52,52),(99,99)
+        ], attrs={'class': 'form-control'}))
     imestranke = forms.CharField(label="Ime", max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
     CENA = forms.CharField(label="Cena", max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
     dniPredr = forms.CharField(required=False, max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    AvansEUR = forms.CharField(label="Avans", required=False, max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    AvansEUR = forms.IntegerField(required=False, widget= forms.NumberInput(attrs={'class':'form-control'}))
+    #AvansEUR = forms.CharField(label="Avans", required=False, max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
     zahteve = forms.CharField(label="Zahteve", required=False, max_length=255,widget=forms.Textarea(attrs={'class':'form-control', 'style':'height:100px;'}))
     Alergije = forms.CharField(label="Alergije", required=False, max_length=255,widget=forms.Textarea(attrs={'class':'form-control', 'style':'height:30px;'}))
-    SOTR= forms.CharField(label="Št. Otrok", required=False, max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    SOMAL= forms.CharField(label="Št. Malčkov",required=False, max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    SOTR= forms.CharField(label="Št. Otrok", required=False, max_length=255, widget=forms.Select(choices=[("",""),(1,1),(2,2),(3,3)], attrs={'class': 'form-control'}))
+    #SOMAL= forms.CharField(label="Št. Malčkov",required=False, max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
     datumvnosa = forms.CharField(label="Datum Vnosa", required=False, max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
     SO = forms.CharField(label="Št. Oseb", max_length=20, widget=Select(choices=[("",""),(1,1),(2,2),(3,3),(4,4),(5,5)], attrs={'class': 'form-control',"style":""}))
     Zaklenjena = forms.CharField(label="Zaklenjena D/N", required=False, max_length=50, widget=Select(choices={("",""), ("Zaklenjena","Zaklenjena")}, attrs={'class': 'form-control'}))
@@ -117,11 +115,23 @@ class VnosRezForm(forms.ModelForm):
             return None
         return dniPredr
     
-    def clean_AvansEUR(self):
-        AvansEUR = self.cleaned_data.get('AvansEUR')
-        if not AvansEUR:
-            return None
-        return AvansEUR
+    
+    # def clean_RNA(self):
+    #     cleaned_data= super().clean()
+    #     RNA = self.cleaned_data.get("RNA")
+    #     AvansEUR= self.cleaned_data.get("AvansEUR")
+    #     print(RNA, AvansEUR)
+    #     if RNA == "Avans" and not AvansEUR:
+    #         cleaned_data["AvansEUR"]= 100
+    #     return cleaned_data
+
+    
+    
+    # def clean_AvansEUR(self):
+    #     AvansEUR = self.cleaned_data.get('AvansEUR')
+    #     if not AvansEUR:
+    #         return None
+    #     return AvansEUR
     
     def clean_SOTR(self):
         SOTR = self.cleaned_data.get('SOTR')
@@ -151,11 +161,11 @@ class VnosRezForm(forms.ModelForm):
             #'od': forms.widgets.DateInput(format='%d.%m.%Y', attrs={'type': 'text', 'class': 'form-control'}),
             #'do': forms.widgets.DateInput(format='%d.%m.%Y', attrs={'type': 'text', 'class': 'form-control'}),
             "tip": Select(choices=[("",""),("c","c"),("g","g"),("s","s"),("f","f"),("x","x"),("y","y"),("q","q"),("d","d"),], attrs={'class': 'form-control',"style":""}),
-            "agencija": Select(attrs={'class': 'form-control',"style":"; " }, choices=[("",""),("Nasi","Nasi"),("Siteminder","Siteminder"),("Booking.com","Booking.com"),("Expedia","Expedia"),("Agoda","Agoda"),("HotelBEDS","HotelBEDS"),("Cesta","Cesta"),("Vrh","Vrh"),("LTO","LTO"),("TuristBiro","TuristBiro")]),
+            "agencija": Select(attrs={'class': 'form-control',"style":"; " }, choices=[("",""),("Nasi","Nasi"),("Siteminder","Siteminder"),("Booking.com","Booking.com"),("Expedia","Expedia"),("Agoda","Agoda"),("HotelBEDS","HotelBEDS"),("Cesta","Cesta"),("Vrh","Vrh"),("LTO","LTO"),("TuristBiro","TuristBiro"),("Helia","Helia")]),
             "email": forms.EmailInput(attrs={"input_type" :'email', "placeholder": "@","style":"", "class": "form-control" }),
             "StanjeTTAX": Select(choices=[("",""),("Ttax JE VKLJ","Ttax JE VKLJ"),("Ttax NI VKLJ","Ttax NI VKLJ")],  attrs={'class': 'form-control',"style":""}),
-            "RNA": Select(choices=[("",""),("ref","ref"),("refOK","refOK"),("ExpColl","ExpColl"),("Nonref","Nonref"),("NONREFOK","NONREFOK"),("Virtual","Virtual"),("Avans","Avans"),("AVANSOK","AVANSOK")], attrs={'class': 'form-control',"style":""}), 
-            
+            "RNA": Select(choices=[("",""),("ref","ref"),("refOK","refOK"),("ExpColl","ExpColl"),("NONref","NONref"),("NONREFOK","NONREFOK"),("Virtual","Virtual"),("Avans","Avans"),("AVANSOK","AVANSOK")], attrs={'class': 'form-control',"style":""}), 
+                        
             }
         
         
@@ -167,10 +177,11 @@ class VnosRezForm(forms.ModelForm):
                 "tip",	
                 "od", 
                 "do", 
-                "dniPredr",
                 "CENA", 
                 "stsobe",
                 "SO",	
+                "SOTR",
+                "dniPredr",
                 "RNA",
                 "AvansEUR",
                 "email",
@@ -181,18 +192,15 @@ class VnosRezForm(forms.ModelForm):
                 "StanjeTTAX",
                 #"OdpRok", 
                 #"IDponudbe",
-                #"RokPlacilaAvansa",
+                "RokPlacilaAvansa",
                 "Zaklenjena",
                 #"OdpovedDne",
-                "SOTR",
-                "SOMAL",
+                #"SOMAL",
                 "datumvnosa",
-                "zahteve",
                 "status_rez",
+                "zahteve",
 
                 ]
-   
-
 
 class IzborDatumovPonudba(forms.Form):  # PONUDBA - 1. FAZA
     od = forms.CharField(label="OD", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -200,13 +208,10 @@ class IzborDatumovPonudba(forms.Form):  # PONUDBA - 1. FAZA
     ime = forms.CharField(label="Ime", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     jezik = forms.CharField(error_messages={'required':'Izberi jezik'}, label="Jezik", max_length=100, widget=forms.Select(choices=[("",""),("SLO","SLO"),("GB","GB")], attrs={'class': 'form-control'})) 
     vrstaInAli = forms.CharField(label="In Ali", max_length=100, widget=forms.Select(choices=[("",""),("IN","IN"),("ALI","ALI")], attrs={'class': 'form-control'})) 
-    email = forms.EmailField(max_length=100, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(initial="peter.gasperin@siol.net", max_length=100, widget=forms.EmailInput(attrs={'class': 'form-control'}))
     rna = forms.CharField(label="Tip rezerv.", widget=forms.Select(choices=[("",""),("Avans","Avans"),("Nonref","Nonref"),("CCD","CCD"),("Brez","Brez")],attrs={'class': 'form-control'}))
     avans = forms.IntegerField(required=False , widget=forms.TextInput(attrs={'class': 'form-control'}))
     odpoved = forms.IntegerField(label="Odp. rok",widget=forms.Select(choices=[("",""),("2","2"),("7","7"),("14","14")],attrs={'class': 'form-control'}))
-
-
-
 
 
 class PonudbaForm(forms.ModelForm):

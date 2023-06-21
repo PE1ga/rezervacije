@@ -17,6 +17,8 @@ class ObravnavaniDatum(models.Model):
     Naziv = models.CharField(max_length=25)
     DatumObravnavani = models.CharField(max_length=25)
 
+    objects = models.Manager()
+
 
 class Pospravljanje(models.Model):
     choicesStSob=[(10,10),(20,20)]
@@ -40,7 +42,36 @@ class Pospravljanje(models.Model):
     Alergije = models.CharField(max_length= 25)
     RNA = models.CharField(max_length=20)
     StatusZajtrk= models.CharField(max_length=20)
+    ok1 = models.CharField(max_length=45, null=True)
+    ok2 = models.CharField(max_length=45, null=True)
+    ok3 = models.CharField(max_length=45, null=True)
+    ok4 = models.CharField(max_length=45, null=True)
+    cas_ciscenja = models.DateTimeField(null=True)
+    uni_koda = models.CharField(max_length= 20, null= True)
+    cas_zajtrka = models.DateTimeField(null=True)
+    status_zajtrk_num = models.IntegerField(null=True)
+    status_num = models.IntegerField(null=True)
+    
+    def save(self, *args, **kwargs):
+        if self.StatusZajtrk =="OK":
+            self.status_zajtrk_num= 1
+        else:
+            self.status_zajtrk_num= None
+        
+        if self.Status == "NE CISTI!":
+            self.status_num = 1
+        elif self.Status == "OK" or self.Status == "KO":
+            self.status_num = 2
+        else:
+            self.status_num = None
 
+        
+        
+        super(Pospravljanje, self).save(*args, **kwargs)
+
+
+
+    objects = models.Manager()
 
 class PospravljanjePrihodi(models.Model):
     Soba = models.IntegerField()
@@ -60,11 +91,13 @@ class PospravljanjePrihodi(models.Model):
     Alergije = models.CharField(max_length= 25)
     RNA = models.CharField(max_length=20)
     Ttax = models.CharField(max_length=45, null=True)
-    ok1 = models.CharField(max_length=45, null=True)
-    ok2 = models.CharField(max_length=45, null=True)
-    ok3 = models.CharField(max_length=45, null=True)
-    ok4 = models.CharField(max_length=45, null=True)
+    uni_koda = models.CharField(max_length= 20, null= True)
+    cas_checkin = models.DateTimeField(null=True)
+    st_noci = models.IntegerField(null=True)
     
+    objects = models.Manager()
+
+
 
 class Graf(models.Model):
     S0 = models.CharField(max_length= 20, null=True)
@@ -99,15 +132,34 @@ class Graf(models.Model):
 
     objects = models.Manager()
 
+
+
 class PrazneSobe(models.Model):
     Soba = models.IntegerField()
     NaslPrh = models.CharField(max_length= 20)
     DniDoPrih = models.CharField(max_length= 10)
 
+    objects = models.Manager()
+
 class CheckLista(models.Model):
     Akcija = models.CharField(max_length=255)
     Status = models.CharField(max_length=10)
-    
+    #Soba = models.IntegerField()
+    #Akcija1 =  models.CharField(max_length=20)
+    #Akcija2 =  models.CharField(max_length=20)
+    #Akcija3 =  models.CharField(max_length=20)
+    #Akcija4 =  models.CharField(max_length=20)
+    #Akcija5 =  models.CharField(max_length=20)
+    #Akcija6 =  models.CharField(max_length=20)
+    #Akcija7 =  models.CharField(max_length=20)
+    #Akcija8 =  models.CharField(max_length=20)
+    #Akcija9 =  models.CharField(max_length=20)
+    #Akcija10=  models.CharField(max_length=20)
+
+    objects = models.Manager()
+
+
+
 
 
 
@@ -117,41 +169,5 @@ class ChListSobaID(models.Model):
     StSobe = models.IntegerField()
     VseOK = models.CharField(max_length=10)
 
+    objects = models.Manager()
 
-
-
-# TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
-"""
-class VnosGostov(models.Model):
-    datumvnosa = models.CharField(max_length=30, null=True, blank=True)  #models.DateField(auto_now_add=True)
-    sifravnosa	= models.CharField(verbose_name="Šifra vnosa", max_length=100, null=True, blank=True)
-    imestranke	= models.CharField(verbose_name="Ime Stranke", max_length=100)
-    agencija	= models.CharField(verbose_name="Agencija", max_length=100)
-    od = models.CharField(max_length=100) #models.DateField(verbose_name="Datum OD")
-    do = models.CharField(max_length=100)#models.DateField(verbose_name="Datum DO")
-    dniPredr = models.IntegerField(null=True, blank=True)
-    CENA = models.DecimalField(verbose_name="Cena", decimal_places=2, max_digits=10)
-    stsobe = models.IntegerField()
-    SO	= models.IntegerField()
-    tip	= models.CharField(max_length=100)
-    RNA = models.CharField(max_length=100)
-    AvansEUR = models.IntegerField(null=True, blank=True)
-    email = models.EmailField(null=True, blank=True)
-    DR	= models.CharField(max_length=100)
-    zahteve = models.TextField(null=True, blank=True )
-    Alergije = models.CharField(max_length=100, null=True, blank=True)
-    Mes_Let	= models.CharField(max_length=100, null=True, blank=True)
-    Noc_SK = models.IntegerField(null=True, blank=True)
-    StanjeTTAX = models.CharField(max_length=100, null=True, blank=True)
-    OdpRok = models.IntegerField(null=True, blank=True)
-    IDponudbe = models.IntegerField(null=True, blank=True)
-    RokPlacilaAvansa =models.CharField(max_length=100,null=True, blank=True) #models.DateField(null=True, blank=True)
-    Zaklenjena = models.CharField(max_length=100, null=True, blank=True)
-    OdpovedDne= models.CharField(max_length=100,null=True, blank=True)     #models.DateField(null=True, blank=True)
-    SOTR= models.IntegerField(null=True, blank=True)
-    SOMAL= models.IntegerField(null=True, blank=True)
-
-    
-    def __str__(self):
-        return self.imestranke
-"""

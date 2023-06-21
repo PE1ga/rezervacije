@@ -5,6 +5,7 @@ from datetime import datetime
 
 def ponudba_izdelava_Html(dictPonudba):
     jezik = dictPonudba["jezik"]
+    rna = dictPonudba["rna"]
     if jezik == "SLO":
         jezik = 0
     elif jezik == "GB":
@@ -133,7 +134,7 @@ def ponudba_izdelava_Html(dictPonudba):
         "brez": ["""<br><br><b>POTRDITEV:</b><br>Za potrditev vaše rezervacije ne bomo zahtevali avansa.""",
                 """<br><br><b>CONFIRMATION:</b><br>We will not require any advance payment for your reservation."""],
         
-        "avans": [f"""<br><br><b>POTRDITEV:</b>
+        "Avans": [f"""<br><br><b>POTRDITEV:</b>
             <br>Če vam ponudba ustreza, nam vašo potrditev sporočite preko e-maila. 
             <br>Potem vam pošljemo podatke za plačilo {AvansEUR} EUR avansa.
             <br><br><b>POGOJI ZA ODPOVED REZERVACIJE:</b>
@@ -307,10 +308,38 @@ def ponudba_izdelava_Html(dictPonudba):
     
    # ZAKLJUČNI TEKST - SKUPNI 
     if multiroom == True:
-        html = header["pozdrav"][jezik] + "<br>" + zahteve + "<br> " + header["uvod"][jezik] + htmlSobeMR + garancija["ccd"][jezik] + footer[jezik]
+        html = header["pozdrav"][jezik] + "<br>" + zahteve + "<br> " + header["uvod"][jezik] + htmlSobeMR + garancija[rna][jezik] + footer[jezik]
 
     else:
-        html = header["pozdrav"][jezik] + "<br>" + zahteve + "<br>"  + header["uvod"][jezik] + tekstSobe + garancija["ccd"][jezik] +footer[jezik]
+        html = header["pozdrav"][jezik] + "<br>" + zahteve + "<br>"  + header["uvod"][jezik] + tekstSobe + garancija[rna][jezik] +footer[jezik]
     
 
     return html
+
+def dodatne_zahteve(jezik):
+    if jezik == "SLO":
+        dict_zahteve={"":"Izberi",
+                      "Veseli nas, da ste nam ponovno poslali povpraševanje.": "Veseli nas", 
+                      "Družinskih in štiriposteljnih sob v želenem terminu nimamo več, zato vam lahko ponudimo dvoposteljne sobe.":"4 posteljnih sob ni",
+                      "V tem terminu imamo na voljo tudi cenejše sobe. Če želite, lahko pripravim ponudbo tudi za cenejšo sobo.": "tudi cenejše ",
+                      "Če sta otroka starejša od 5 let, lahko ponudimo:":"Če otroci starejši od 5",
+                      "Nudimo nočitev z zajtrkom, kosila in večerje pa ne.<br>Spodaj v ponudbi so navedene možnostii za večerjo oz. kosilo v naši bližini.":"Ni kosila, večerje",
+                      "Ker gre za veliko skupino oseb, vas moramo opozoriti, da je v našem hotelu prepovedano izvajati privatne zabave in s tem motiti ostale goste. Če imate v planu to, prosim, da izberete drugo nastanitev.":"Skupina",
+                      "Tega tipa sobe v tem terminu ne moremo ponuditi, lahko pa ponudimo:":"Nimamo tega tipa",
+                      "Nudimo SKI karte Vogel s popustom. Popust velja za vsaj 2-dnevne karte. Družinskih kart ne nudimo.":"Ski karte Vogel",
+                      "OPOMBA<br> Ta ponudba je za rezervacijo, ki jo je možno odpovedati.<br> V primeru, da želite ponudbo za cenejšo rezervacijo s 100% predplačilom in brez možnosti odpovedi, nam to sporočitev, da pripravimo tudi to ponudo.<br>Rezervacije brez možnosti odpovedi so v povprečju 10% cenejše.":"cenejse sobe",
+                      "Postelja ima en okvir, dve žimnici in dve prešiti odeji.":"postelja-opis",
+                      "Apartmajev ne nudimo. Smo garni hotel - nudimo nočitev z zajtrkom.":"apartmajev ne nudimo",
+                      
+                      }
+
+    elif jezik == "GB":
+        dict_zahteve= {"":"Choose",
+                        "We are glad, that you decided to send us another inquiry.":"We are glad..",
+                       "Minimal number of nights in that period is 3, therefore we can't prepare you an offer.":"Minumum of 3 ngt",
+                       "Quadruple rooms are not available in that period. We can offer you Double rooms.":"Qadruple not avail",
+                       "Because you are a big group, we must warn you, that we don't tolerate excessive noice or party-like behaviour!":"Big group",
+                       "PLEASE NOTE<br>This offer is for a reservation, which is possible to cancel.<br>Please inform us, if you would like a cheaper, non-refundable offer (which requires 100% prepayment), and we will prepare you an additional offer. <br>Non-refundable offers are, on average, 10% cheaper.":"Also cheapper",
+                        }
+
+    return dict_zahteve

@@ -136,7 +136,11 @@ form {
         {% csrf_token %}
         <button class="btn btn-primary" type="submit" name="btn_datum_danes">Danes</button>
         <button class="btn btn-primary" type="submit" name="btn_datum_jutri">Jutri</button>
+        <button class="btn btn-outline-success" type="submit" name="btn_prenos_na_app">App</button>
+    
     </form>
+
+
         <!-- <script>
         document.addEventListener('DOMContentLoaded', function() {
           // Get the form element
@@ -194,9 +198,9 @@ form {
         
         <!-- Aktiviraj izdelavo računa <a><button style="background-color: rgb(28, 4, 248)" type="submit"
         onclick="location.href='/pospravljanje/'">POSPRAVLJANJE</button></a>-->
-       
+       {% if podatki_za_racun %}
         <button type="submit" name="gumb_tiskaj_racun" class="btn btn-primary" onclick="location.href='form_dn/form_tiskanje_racuna/'">Tiskaj račun</button>
-       
+       {% endif %}
         <table class="table table-bordered">
             {% for list in bar_narocila %}
             <tr>
@@ -209,8 +213,12 @@ form {
 
 
     </div>
-    <div class="odhodi">
+    
+    
+    
+    <div class="odhodi" style="overflow: scroll;">
         Odhodi
+        <button class="btn btn-warning" type="submit" name="btn_multiracun" onclick="location.href='form_dn/form_tiskanje_multiracun/'">Multiračun</button>
         <table class="table table-bordered">
             {% for odhod in odhodi %}
             <tr>
@@ -220,6 +228,8 @@ form {
                 </form>
                 <td>{{odhod.imestranke}}</td>
                 <td>{{odhod.agencija}}</td>
+                <td>{{odhod.CENA}}</td>
+                <td>{{odhod.RNA}}</td>
                 
             </tr>
             
@@ -228,15 +238,18 @@ form {
         </table>
         
     </div>
-    <div class="prihodi">
+    <div class="prihodi" style="overflow: scroll;">
         Prihodi
         <button type="submit" name="gumb_tiskaj_racun" class="btn btn-primary" onclick="location.href='form_dn/form_tiskanje_vingcard/'">Tiskaj vingcard</button>
+        <button type="submit" name="gumb_tiskaj_racun" class="btn btn-outline-success" onclick="location.href='form_dn/form_tiskanje_porocilo/'">Tiskaj poročilo</button>
+
         <table class="table table-bordered">
             {% for prihod in prihodi %}
             <tr>
                 <td><button class ="btn btn-warning" style="width: 40px;" onclick="location.href='/updateIzGrafa/{{prihod.id}}'">{{prihod.stsobe}}</button></td>
                 <td>{{prihod.imestranke}}</td>
                 <td>{{prihod.agencija}}</td>
+                <td>{{prihod.zahteve}}</td>
                 
             </tr>
             
@@ -252,6 +265,7 @@ form {
                 <td><button class ="btn btn-warning" style="width: 40px;" onclick="location.href='/updateIzGrafa/{{stay.id}}'">{{stay.stsobe}}</button></td>
                 <td>{{stay.imestranke}}</td>
                 <td>{{stay.agencija}}</td>
+                <td>{{stay.do}}</td>
                 
             </tr>
             
